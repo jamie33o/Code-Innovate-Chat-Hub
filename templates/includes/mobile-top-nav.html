@@ -20,37 +20,30 @@
         </form>
     </div>
 </li>
+<li class="list-inline-item">
+    <div class="col-lg-4 py-1 py-lg-0 text-center d-lg-none">
+        <a href="" class="nav-link main-logo-link">
+            <h2 class="logo-font text-white my-0"><strong>Code Institute<br></strong> Chat Hub</h2>
+        </a>
+    </div>
+</li>
 <li class="list-inline-item dropdown">
     <a class="text-black nav-link d-block d-lg-none" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <div class="text-center">
-            <div><i class="fas fa-user fa-lg"></i></div>
-            <p class="my-0">My Account</p>
+            <div><i class="fas fa-cog fa-lg"></i></div>
+            <p class="my-0">Settings</p>
         </div>
     </a>
     <div class="dropdown-menu border-0" aria-labelledby="user-options">
-        {% if request.user.is_authenticated %}
-            {% if request.user.is_superuser %}
-                <a href="{% url 'add_product' %}" class="dropdown-item">Product Management</a>
-            {% endif %}
-            <a href="{% url 'profile' %}" class="dropdown-item">My Profile</a>
-            <a href="{% url 'account_logout' %}" class="dropdown-item">Logout</a>
-        {% else %}
-            <a href="{% url 'account_signup' %}" class="dropdown-item">Register</a>
-            <a href="{% url 'account_login' %}" class="dropdown-item">Login</a>
+        
+        {% if request.user.is_superuser %}
+            <a href="" class="dropdown-item">Product Management</a>
         {% endif %}
+        <a href="{% url 'account_login' %}" class="dropdown-item">Privacy Policy</a>
+
+        <a href="{% url 'account_logout' %}" class="dropdown-item">Logout</a>
+    
+        <a href="{% url 'account_signup' %}" class="dropdown-item">Delete Account</a>
+    
     </div>
-</li>
-<li class="list-inline-item">
-    <a class="{% if grand_total %}text-primary font-weight-bold{% else %}text-black{% endif %} nav-link d-block d-lg-none" href="">
-        <div class="text-center">
-            <div><i class="fas fa-shopping-bag fa-lg"></i></div>
-            <p class="my-0">
-                {% if grand_total %}
-                    ${{ grand_total|floatformat:2 }}
-                {% else %}
-                    $0.00
-                {% endif %}
-            </p>
-        </div>
-    </a>
 </li>
