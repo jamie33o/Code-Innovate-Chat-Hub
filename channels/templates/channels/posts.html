@@ -1,16 +1,26 @@
 {% extends "base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center channels-list">
 
     <ul class="list-unstyled">
-        {% for channel in channels %}
+        {% for single_post in posts %}
         <li>
-            <a href="{% url 'channel_posts' channel.id %}">#{{channel.name }}</a>
-            <p>{{ channel.description }}</p>
+            <p>{{ single_post.post }}</p>
         </li>
         {% endfor %}
     </ul>
 </div>
+{% endblock %}
+
+{% block page_footer %}
+
+<form method="post">
+    {% csrf_token %}
+    {% crispy form %}
+</form>
+
+
 {% endblock %}
