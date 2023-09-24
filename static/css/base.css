@@ -26,6 +26,12 @@ header {
 }
 
 
+/* style for channels list */
+.channels-list {
+    width: 100%;
+    height: 100vh;
+}
+
 /* CSS for small screens (up to the "lg" breakpoint) */
 @media (max-width: 992px) {
  
