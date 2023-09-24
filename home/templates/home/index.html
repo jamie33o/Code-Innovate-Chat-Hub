@@ -1,26 +1,34 @@
 {% extends "base.html" %}
 {% load static %}
 {% block page_header %}
-    <div class="container header-container">
+    <!-- <div class="container header-container">
         <div class="row">
             <div class="col"></div>
         </div>
-    </div>
+    </div> -->
 {% endblock %}
 
 {% block content %}
-    <div class="container h-100">
-        <div class="row h-100">
-            <div class="col-7 col-md-6 my-auto">
-                <h1 class="display-4 logo-font text-black">
-                    The new collections are here
-                </h1>
-                <div class="my-5">
-                    <h4>
-                        <a href="" class="shop-now-button btn btn-lg rounded-0 text-uppercase py-3">Shop Now</a>
-                    </h4>
-                </div>
-            </div>
+<div class="container mt-5">
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="home">
+            <h3>Content for Tab 1</h3>
+            <p>This is the content for Tab 1.</p>
+        </div>
+        <div class="tab-pane fade" id="messages">
+            <h3>Content for Tab 2</h3>
+            <p>This is the content for Tab 2.</p>
+        </div>
+        <div class="tab-pane fade" id="profile">
+            <h3>Content for Tab 3</h3>
+            <p>This is the content for Tab 3.</p>
         </div>
     </div>
+</div>
+
 {% endblock %}    
+{% block postloadjs %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'home/js/tabs.js' %}"></script>
+{% endblock %}
