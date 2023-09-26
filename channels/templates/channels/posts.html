@@ -2,25 +2,59 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
+{% block extra_css %}
+
+    <link rel="stylesheet" href="{% static 'channels/css/posts.css' %}">
+
+{% endblock %}
+
+
+
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center channels-list">
+<div class="container scrollable-div d-flex justify-content-center align-items-center channels-list">
 
     <ul class="list-unstyled">
         {% for single_post in posts %}
         <li>
+            <h3>{{ single_post.created_by }}</h3>
+            <p>{{ single_post.created_date }}</p>
             <p>{{ single_post.post }}</p>
         </li>
         {% endfor %}
     </ul>
 </div>
+
 {% endblock %}
 
 {% block page_footer %}
 
-<form method="post">
-    {% csrf_token %}
-    {% crispy form %}
-</form>
+<div class="sticky-bottom posts-form">
+    <div class="popup">
+        <ul class="emoji-header list-inline d-flex justify-content-between mx-3 my-3"></ul>
+        <hr>
+        <ul class="emoji-body list-unstyled"></ul>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.media }} {# Include Summernote media files #}
+        <div class="form">
+            {{ form.as_p }}
+        </div>
+        <div class="summernote-btn-bottom">        
+            <button class ="btn" type="button" id="emoji-popup-btn"><span class="fa-regular fa-face-smile fa-xl emoji-btn"></span></button>
+            <button class="post-btn btn" type="submit"><span class="fa-solid fa-play fa-xl"></span></button>
+        </div>
+    </form>
+    
 
+</div>
+
+
+
+{% endblock %}
+
+{% block postloadjs %}    
+
+    <script src="{% static 'channels/js/posts.js' %}"></script>
 
 {% endblock %}
