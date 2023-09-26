@@ -22,6 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('channels.urls')),
+    path('summernote/', include('django_summernote.urls')),
+
 
     # get the files in the media folder url in settings.py
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
