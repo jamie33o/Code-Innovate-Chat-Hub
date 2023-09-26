@@ -28,7 +28,11 @@ def channel_posts(request, channel_id):
         if form.is_valid():
             # Add the channel information to the post (you can change this logic)
             form.instance.post_channel = channel
-            form.save()
+            
+            post = form.save(commit=False)
+            post.created_by = request.user
+            post.post_channel_id = channel_id
+            post.save()
             redirect_url = reverse('channel_posts', args=[channel_id])
             return redirect(redirect_url)
     else:
