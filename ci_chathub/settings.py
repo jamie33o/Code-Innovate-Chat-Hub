@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'channels',
     'crispy_forms',
+    'django_summernote',
 ]
 
 MIDDLEWARE = [
@@ -60,6 +61,29 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+SUMMERNOTE_CONFIG = {
+    'iframe': False,
+    'summernote': {
+        'toolbar': [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['fontsize', ['fontsize']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link', 'picture', 'video']],
+            ['codeview',['fullscreen', 'codeview', 'help']],
+        ],
+        'disable_upload': False,
+        'width': '100%',
+        'height': '150%',
+        'attachment_require_authentication': True,
+        "placeholder": 'Type @ to get a list of people you can tag',
+        
+        
+    },
+}
+
+SUMMERNOTE_THEME = 'bs4'
 
 ROOT_URLCONF = 'ci_chathub.urls'
 
