@@ -1,0 +1,105 @@
+.posts-form {
+    position: absolute;
+    height: 195px;
+    width: 90%;
+    border: 1px solid black;
+    padding: 0 5px;
+    z-index: -1;
+    position: relative;
+    margin: 5%;
+}
+
+/* for summernote text area */
+div.note-editing-area {
+    height: 140px;
+}
+/* label over summernote */
+label {
+    display: none;
+}
+
+/* summernote buttons */
+.note-btn-group .note-btn {
+    border-color: white !important;
+    font-size: 13px;
+    background-color: white;
+    border-right: 1px solid rgba(0, 0, 0, 0.349) !important;
+    padding: 3px !important;
+    margin-left: 2px !important;
+}
+
+
+    
+
+div.note-editing-area > textarea {
+    height: 440px;
+    color: aliceblue;
+}
+.emoji-btn.fa-xl {
+    line-height: normal;
+}
+.emoji-btn {
+    line-height: normal;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+}
+.emoji-btn:hover {
+    background-color: yellow;
+}
+
+.emoji-body {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px auto;
+    justify-content: center;
+}
+
+.popup {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    background-color: bisque;
+    display: none;
+    z-index: 5;
+}
+
+.emoji {
+    width: 20px;
+    height: auto;
+    margin: 5px;
+}
+
+.summernote-btn-bottom {
+    display: flex;
+    justify-content: space-between;
+    width: 98%;
+    height: fit-content;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 10px 1%;
+}
+
+
+.sticky-bottom {
+    position: fixed;
+    bottom: 0;
+    top:auto;
+   
+}
+
+.scrollable-div {
+    /* Set a fixed height for the scrollable div */
+    height: 300px; /* Adjust the height as needed */
+  
+    /* Add a border or other styling if desired */
+    border: 1px solid #ccc;
+    padding: 10px;
+  
+    /* Enable vertical scrolling */
+    overflow-y: auto;
+  
+    /* Optional: Enable horizontal scrolling if needed */
+    /* overflow-x: auto; */
+  }
