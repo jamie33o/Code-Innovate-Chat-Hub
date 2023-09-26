@@ -1,8 +1,9 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
-from crispy_forms.bootstrap import Field, FormActions
+from crispy_forms.bootstrap import FormActions
 from django import forms
 from .models import ChannelPosts
+from django_summernote.widgets import SummernoteInplaceWidget
 
 class ChannelPostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -10,7 +11,6 @@ class ChannelPostForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Row(
-                Column('name', css_class='col-md-6'),
                 Column('post', css_class='col-md-6'),
             ),
             FormActions(
@@ -18,6 +18,9 @@ class ChannelPostForm(forms.ModelForm):
             )
         )
 
+        # Add Summernote widget to the 'post' field
+        self.fields['post'].widget = SummernoteInplaceWidget(attrs={'class': 'summernote'})
+
     class Meta:
         model = ChannelPosts
-        fields = ['name', 'post']
+        fields = ['post']
