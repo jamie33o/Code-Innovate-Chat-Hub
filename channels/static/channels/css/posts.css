@@ -1,53 +1,123 @@
-.posts-form {
-    position: absolute;
-    height: 195px;
-    width: 90%;
-    border: 1px solid black;
-    padding: 0 5px;
-    z-index: -1;
+/* //////////////////////   Posts section styles /////////////////////// */
+
+
+
+
+/* makes divs scrollable */
+.scrollable-div {
+    /* Set a fixed height for the scrollable div */
+    height: 100%; /* Adjust the height as needed */
+    /* Enable vertical scrolling */
+    overflow-y: auto;
+   
+  
+    /* Optional: Enable horizontal scrolling if needed */
+    /* overflow-x: auto; */
+  }
+
+.posts {
     position: relative;
-    margin: 5%;
+    top: 90px;
+    height: 330px;
+    width: 100%;
 }
 
-/* for summernote text area */
-div.note-editing-area {
-    height: 140px;
+/* CSS to style the overlay */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
+    z-index: 10; /* Ensure it's above other elements */
+    backdrop-filter: blur(5px); /* Apply the blur effect */
 }
+
+/* CSS to style the "Add Channel" button on the overlay */
+#add-channel-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: #007bff; /* Blue color for the button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    
+}
+
+
+/* //////////////////// Summernote style overides ////////////////// */
+
+/* container for summernote */
+.posts-form {
+    position: absolute;
+    height: fit-content;
+    width: 90%;
+    z-index: -1;
+    position: relative;
+    margin: 10px 5%;
+    z-index: 3;
+}
+
+/* summernote container */
+form > div.form > p > div > div {
+    border-radius: 30px !important;
+    overflow:  hidden !important;
+}
+
 /* label over summernote */
 label {
     display: none;
 }
 
+/* summernote toolbar */
+div.note-toolbar.card-header{
+    background-color: white !important;
+}
+
 /* summernote buttons */
 .note-btn-group .note-btn {
-    border-color: white !important;
     font-size: 13px;
     background-color: white;
-    border-right: 1px solid rgba(0, 0, 0, 0.349) !important;
+    border: none!important;
     padding: 3px !important;
     margin-left: 2px !important;
 }
 
-
-    
-
+/* summernote code field */
 div.note-editing-area > textarea {
-    height: 440px;
-    color: aliceblue;
+    height: 100% !important;
 }
+
+/* for summernote text area */
+div.note-editing-area {
+    height: 150%;
+    margin-bottom: 30px;
+    max-height: 70vh;
+}
+
+/* emoji icon on summernote */
 .emoji-btn.fa-xl {
     line-height: normal;
 }
+
+/* emoji btn on summernote */
 .emoji-btn {
     line-height: normal;
     border-radius: 50%;
     width: 25px;
     height: 25px;
 }
+
 .emoji-btn:hover {
     background-color: yellow;
 }
 
+/* emoji picker body */
 .emoji-body {
     display: flex;
     flex-wrap: wrap;
@@ -55,21 +125,35 @@ div.note-editing-area > textarea {
     justify-content: center;
 }
 
+/* emoji picker pop up */
 .popup {
     position: absolute;
-    width: 90%;
-    height: 90%;
-    background-color: bisque;
+    bottom: 50px;
+    left: 100px;
+    width: 60%;
+    height: fit-content;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.347);
     display: none;
-    z-index: 5;
+    z-index: 10;
 }
 
+/* all emojis */
 .emoji {
     width: 20px;
     height: auto;
     margin: 5px;
 }
 
+.emoji:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Box shadow properties */
+    border-radius: 50%;
+    overflow:visible;
+}
+
+
+/* div for the buttons at the bottom of summernote */
 .summernote-btn-bottom {
     display: flex;
     justify-content: space-between;
@@ -78,28 +162,32 @@ div.note-editing-area > textarea {
     position: absolute;
     right: 0;
     bottom: 0;
-    margin: 10px 1%;
+    margin: 25px 1%;
+    border-top: 1px solid rgba(0, 0, 0, 0.393);
 }
 
+/* summernote arrow btn for posting */
+.post-arrow-btn:hover {
+    box-shadow: inset 0 0 5px 5px var(--ci-orange);
+}
 
+/* summernote modal overlay */
+div.modal-backdrop {
+    z-index: 0 !important;
+}
+
+/* pop for adding url images/video */
+div.modal.note-modal.show {
+    position: fixed !important;
+    bottom: 0 !important;
+    z-index: 1 !important;
+    margin-top: 200px;
+}
+
+/* class for getting div to stick to bottom of screen */
 .sticky-bottom {
     position: fixed;
     bottom: 0;
-    top:auto;
-   
+    top:auto;   
 }
 
-.scrollable-div {
-    /* Set a fixed height for the scrollable div */
-    height: 300px; /* Adjust the height as needed */
-  
-    /* Add a border or other styling if desired */
-    border: 1px solid #ccc;
-    padding: 10px;
-  
-    /* Enable vertical scrolling */
-    overflow-y: auto;
-  
-    /* Optional: Enable horizontal scrolling if needed */
-    /* overflow-x: auto; */
-  }
