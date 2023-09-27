@@ -6,6 +6,12 @@ from .models import ChannelPosts
 from django_summernote.widgets import SummernoteInplaceWidget
 
 class ChannelPostForm(forms.ModelForm):
+    """
+    This class is for the summernote editor form
+
+    Parameters:
+        super class: class the this class inherits from
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -24,3 +30,7 @@ class ChannelPostForm(forms.ModelForm):
     class Meta:
         model = ChannelPosts
         fields = ['post']
+
+# use for the tag drop down list
+# class AddUserToChannelForm(forms.Form):
+#     user = forms.ModelChoiceField(queryset=User.objects.all(), label='Select User')

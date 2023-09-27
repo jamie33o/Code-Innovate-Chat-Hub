@@ -1,3 +1,4 @@
+<!-- search icon on mobile -->
 <li class="list-inline-item">
     <a class="text-black nav-link d-block d-lg-none" href="#" id="mobile-search" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <div class="text-center">
@@ -5,7 +6,8 @@
             <p class="my-0">Search</p>
         </div>
     </a>
-    <div class="dropdown-menu border-0 w-100 p-3 rounded-0 my-0" aria-labelledby="mobile-search">
+    <!-- search bar icon-->
+    <div class="dropdown-menu border-0 w-100 p-0 rounded-0 my-0" aria-labelledby="mobile-search">
         <form class="form" method="GET" action="">
             <div class="input-group w-100">
                 <input class="form-control border border-black rounded-0" type="text" name="q" placeholder="Search our site">
@@ -20,20 +22,23 @@
         </form>
     </div>
 </li>
-<li class="list-inline-item">
-    <div class="col-lg-4 py-1 py-lg-0 text-center d-none d-sm-block d-lg-none ">
-        <a href="" class="nav-link main-logo-link">
+<!-- code institute logo -->
+<li class="list-inline-item mx-0">
+    <div class="col-lg-4 py-0 py-lg-0 text-center  d-sm-block d-lg-none ">
+        <a href="" class="nav-link mx-0 main-logo-link">
             <h2 class="logo-font text-white my-0"><strong>Code Institute<br></strong> Chat Hub</h2>
         </a>
     </div>
 </li>
-<li class="list-inline-item dropdown">
+<!-- settings button -->
+<li class="list-inline-item dropdown mx-0">
     <a class="text-black nav-link d-block d-lg-none" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <div class="text-center">
             <div><i class="fas fa-cog fa-lg"></i></div>
             <p class="my-0">Settings</p>
         </div>
     </a>
+    <!-- settings dropdown -->
     <div class="dropdown-menu border-0" aria-labelledby="user-options">
         
         {% if request.user.is_superuser %}

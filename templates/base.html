@@ -37,13 +37,15 @@
     <title>Code Institute Chat Hub {% block extra_title %}{% endblock %}</title>
   </head>
   <body>
+    <!-- logo on large screen -->
     <header class="container-fluid fixed-top px-0">
-        <div id="topnav" class="row bg-dark pt-lg-2 d-none d-lg-flex">
-            <div class="col-12 col-lg-4 my-auto py-1 py-lg-0 text-center text-lg-left">
+        <div id="topnav" class="row bg-dark pt-lg-0 d-none d-lg-flex">
+            <div class="col-12 col-lg-4 my-auto py-0 py-lg-0 text-lg-left">
                 <a href="" class="nav-link main-logo-link">
-                    <h2 class="logo-font text-black my-0"><strong>Code Institute</strong> Chat Hub</h2>
+                    <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong><br> Chat Hub</h1>
                 </a>
             </div>
+            <!-- search button and icon -->
             <div class="col-12 col-lg-4 my-auto py-1 py-lg-0">
                 <form method="GET" action="">
                     <div class="input-group w-100">
@@ -58,6 +60,7 @@
                     </div>
                 </form>
             </div>
+            <!-- settings button -->
             <div class="col-12 col-lg-4 my-auto py-1 py-lg-0">
                 <ul class="list-inline list-unstyled text-center text-lg-right my-0">
                     <li class="list-inline-item dropdown">
@@ -67,6 +70,7 @@
                                 <p class="my-0">Settings</p>
                             </div>
                         </a>
+                        <!-- settings drop down -->
                         <div class="dropdown-menu border-0" aria-labelledby="user-options">
                             
                             {% if request.user.is_superuser %}
