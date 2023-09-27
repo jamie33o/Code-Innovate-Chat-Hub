@@ -56,7 +56,7 @@ header {
     }
 }
 
-/* CSS for small screens (up to the "sm" breakpoint) */
+/* CSS for small screens (up to the "lg" breakpoint) */
 @media (max-width: 422px) {
  
     .nav-link {

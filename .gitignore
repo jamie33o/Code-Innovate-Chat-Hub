@@ -10,3 +10,4 @@ cloudinary_python.txt
 env.py
 .venv
 db.sqlite3
+.vscode

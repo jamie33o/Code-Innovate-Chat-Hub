@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
+# settings for summernote editor
 SUMMERNOTE_CONFIG = {
     'iframe': False,
     'summernote': {
@@ -75,16 +75,14 @@ SUMMERNOTE_CONFIG = {
         ],
         'disable_upload': False,
         'width': '100%',
-        'height': '150%',
+        'height': 'auto',
         'attachment_require_authentication': True,
         "placeholder": 'Type @ to get a list of people you can tag',
-        
-        
     },
 }
 
 SUMMERNOTE_THEME = 'bs4'
-
+# root urls setting
 ROOT_URLCONF = 'ci_chathub.urls'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
