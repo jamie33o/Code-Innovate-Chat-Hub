@@ -3,7 +3,16 @@
     margin: 0;
     padding: 0;
 }
+/* Define a CSS variable */
+:root {
+    --ci-orange: #e8610e;
+  }
+  
 
+h1 {
+    font-size: 2em;
+    float: left;
+}
 /* Style for the sticky bottom navigation */
 .tabs-nav {
     width: 100%;
@@ -42,5 +51,36 @@ header {
     bottom: 0;
     top:auto;
     }
+    h2 {
+        font-size: 160%;
+    }
 }
+
+/* CSS for small screens (up to the "sm" breakpoint) */
+@media (max-width: 422px) {
+ 
+    .nav-link {
+        padding: 5px 5px;
+    }
+
+    h2 {
+        font-size: 120%;
+    }
+}
+
   
+
+/* Customize the scrollbar */
+/* For WebKit-based browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 10px; /* Width of the scrollbar */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--ci-orange); /* Color of the scrollbar thumb (dragging area) */
+    border-radius: 5px; /* Rounded corners for the thumb */
+  }
+  
+  ::-webkit-scrollbar-track {
+   display: none; /* Color of the scrollbar track (background) */
+  }
