@@ -11,8 +11,8 @@
 
 
 {% block content %}
-<div class="container scrollable-div d-flex justify-content-center align-items-center channels-list">
-
+<div class="scrollable-div d-flex justify-content-center align-items-center posts">
+    <!-- list for channels posts -->
     <ul class="list-unstyled">
         {% for single_post in posts %}
         <li>
@@ -24,25 +24,51 @@
     </ul>
 </div>
 
+{% if not request.user in channel_users %}
+    <!-- Button to add channel -->
+    <div id="overlay">
+        <!-- add_user_to_channel.html -->
+        <a href="{% url 'add_user_to_channel' channel_id=channel.id user_id=user.id %}" id="add-channel-button" class="btn btn-primary">
+            Add to Channel
+        </a>
+    </div>
+{% endif %}
+
 {% endblock %}
 
 {% block page_footer %}
 
+<!-- container for summernote editor -->
 <div class="sticky-bottom posts-form">
-    <div class="popup">
+    <!-- pop up for emoji's -->
+    <div id="emoji-modal" class="popup">
         <ul class="emoji-header list-inline d-flex justify-content-between mx-3 my-3"></ul>
         <hr>
         <ul class="emoji-body list-unstyled"></ul>
     </div>
+    <!-- container for usernames list that the user can tag with @ -->
+    <div id="tag-name-modal" class="popup ">
+        <ul class="list-inline d-flex justify-content-between mx-3 my-3">
+            {% for user in channel_users %}
+                <li>{{ user.username }}</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+    <!-- summernote editor form -->
     <form method="post">
         {% csrf_token %}
         {{ form.media }} {# Include Summernote media files #}
         <div class="form">
             {{ form.as_p }}
         </div>
-        <div class="summernote-btn-bottom">        
-            <button class ="btn" type="button" id="emoji-popup-btn"><span class="fa-regular fa-face-smile fa-xl emoji-btn"></span></button>
-            <button class="post-btn btn" type="submit"><span class="fa-solid fa-play fa-xl"></span></button>
+        <!-- buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
+        <div class="summernote-btn-bottom">   
+            <div>  
+                <button class ="btn text-lg-left" type="button" id="emoji-popup-btn"><span class="fa-regular fa-face-smile fa-xl emoji-btn" style="color: var(--ci-orange);"></span></button>
+                <button class ="btn" type="button" id="at-symbol"><span class="fa-solid fa-at fa-xl" style="color: var(--ci-orange);"></span></button>
+            </div>   
+            <button class="post-arrow-btn btn" type="submit"><span class="fa-solid fa-play fa-xl" style="color: var(--ci-orange);"></span></button>
         </div>
     </form>
     
@@ -57,4 +83,5 @@
 
     <script src="{% static 'channels/js/posts.js' %}"></script>
 
+    
 {% endblock %}
