@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
         <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" href="{% static 'css/summernote.css' %}">
     {% endblock %}
 
     {% block extra_css %}
@@ -28,6 +29,7 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
+        <script src="{% static 'js/summernote.js' %}"></script>
 
     {% endblock %}
 
@@ -39,30 +41,42 @@
   <body>
     <!-- logo on large screen -->
     <header class="container-fluid fixed-top px-0">
-        <div id="topnav" class="row bg-dark pt-lg-0 d-none d-lg-flex">
-            <div class="col-12 col-lg-4 my-auto py-0 py-lg-0 text-lg-left">
-                <a href="" class="nav-link main-logo-link">
-                    <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong><br> Chat Hub</h1>
+       
+        <div id="topnav" class="d-flex justify-content-between pt-lg-0 ">
+            <!-- search icon  -->
+            <div class="my-auto mx-0 py-lg-0 ">
+                <a class="text-black nav-link d-block" href="#" id="mobile-search" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="text-center">
+                        <div><i class="fas fa-search fa-lg"></i></div>
+                        <p class="my-0">Search</p>
+                    </div>
+                </a>
+                <!-- search bar drop down-->
+                <div class="dropdown-menu border-0 w-100 p-0 rounded-0 my-0 mx-0" aria-labelledby="mobile-search">
+                    <form class="form" method="GET" action="">
+                        <div class="input-group w-100">
+                            <input class="form-control border border-black rounded-0" type="text" name="q" placeholder="Search our site">
+                            <div class="input-group-append">
+                                <button class="form-control form-control btn btn-black border border-black rounded-0" type="submit">
+                                    <span class="icon">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="my-auto py-0 py-lg-0 ">
+                <a href="" class="nav-link main-logo-link ">
+                    <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong> Chat Hub</h1>
                 </a>
             </div>
-            <!-- search button and icon -->
-            <div class="col-12 col-lg-4 my-auto py-1 py-lg-0">
-                <form method="GET" action="">
-                    <div class="input-group w-100">
-                        <input class="form-control border border-black rounded-0" type="text" name="q" placeholder="Search our site">
-                        <div class="input-group-append">
-                            <button class="form-control btn btn-black border border-black rounded-0" type="submit">
-                                <span class="icon">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+           
             <!-- settings button -->
-            <div class="col-12 col-lg-4 my-auto py-1 py-lg-0">
-                <ul class="list-inline list-unstyled text-center text-lg-right my-0">
+            <div class=" my-auto py-0 py-lg-0">
+                <ul class="list-inline list-unstyled text-center my-0">
                     <li class="list-inline-item dropdown">
                         <a class="text-black nav-link" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <div class="text-center">
@@ -87,18 +101,8 @@
 
                 </ul>
             </div>
-        </div>
-        <div class="row bg-dark"><!--mobile header navbar-->
-            <nav class="navbar navbar-expand-lg navbar-light w-100">
-                <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button> -->
-                {% block top_nav %}
-                    {% include 'includes/mobile-top-nav.html' %}
-                {% endblock %}
-            </nav>
-        </div>
-        
+             
+        </div>      
     </header>
 
 
@@ -120,5 +124,6 @@
     </script>
     
     {% endblock %}
+    <div class="hide-modal"></div>
   </body>
 </html>

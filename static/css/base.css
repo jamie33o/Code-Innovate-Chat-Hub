@@ -8,10 +8,19 @@
     --ci-orange: #e8610e;
   }
   
+.hide-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 3;
+}
 
 h1 {
     font-size: 2em;
-    float: left;
 }
 /* Style for the sticky bottom navigation */
 .tabs-nav {
@@ -29,18 +38,14 @@ body {
     background-color: paleturquoise;
 }
 header {
-    background-color: blueviolet;
+    background-color: white;
 }
 #topnav {
     background-color: brown;
 }
 
 
-/* style for channels list */
-.channels-list {
-    width: 100%;
-    height: 100vh;
-}
+
 
 /* CSS for small screens (up to the "lg" breakpoint) */
 @media (max-width: 992px) {
@@ -52,7 +57,7 @@ header {
     top:auto;
     }
     h2 {
-        font-size: 160%;
+        font-size: 1.5em;
     }
 }
 
@@ -63,8 +68,8 @@ header {
         padding: 5px 5px;
     }
 
-    h2 {
-        font-size: 120%;
+    h1 {
+        font-size: 1.2em;
     }
 }
 
