@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django_summernote.fields import SummernoteTextField
 
 
 class ChannelModel(models.Model):
@@ -38,7 +37,7 @@ class ChannelPosts(models.Model):
     name = models.CharField(max_length=254,default='')
     # Supports rich text, including images
     # ForeignKey to associate posts with channel
-    post = SummernoteTextField(default='')
+    post = models.TextField()
 
     post_channel = models.ForeignKey(
         ChannelModel,
