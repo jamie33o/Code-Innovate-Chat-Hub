@@ -1,3 +1,4 @@
+import bleach
 from django.shortcuts import render,get_object_or_404,redirect
 from django.urls import reverse
 from django.http import JsonResponse
@@ -5,6 +6,8 @@ from django.contrib.auth.models import User
 from .models import ChannelModel,ChannelPosts
 from .forms import ChannelPostForm
 from django.http import JsonResponse
+
+
 
 
 
@@ -41,11 +44,18 @@ def channel_posts(request, channel_id):
 
     if request.method == 'POST':
         form = ChannelPostForm(request.POST)
+        
         if form.is_valid():
             # Add the channel information to the post
             form.instance.post_channel = channel
-        
             post = form.save(commit=False)
+            allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img','ol','li','div','span','a']
+            allowed_attributes = {'*': ['style','src','href']}
+
+            # Clean and sanitize the HTML content
+            post.post = bleach.clean(post.post, tags=allowed_tags, attributes=allowed_attributes)
+            print(post.post)
+
             post.created_by = request.user
             post.post_channel_id = channel_id
             post.save()
@@ -62,7 +72,6 @@ def channel_posts(request, channel_id):
         'posts': posts,
         'form': form,
         'channel_users': channel.users.all(),  # Include user data
-
     }
 
     return render(request, 'channels/posts.html', context)
