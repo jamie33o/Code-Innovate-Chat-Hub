@@ -4,21 +4,25 @@
 
 {% block extra_css %}
 
-    <link rel="stylesheet" href="{% static 'channels/css/posts.css' %}">
+    <link rel="stylesheet" href="{% static 'channels/css/channels.css' %}">
 
 {% endblock %}
 
 
 
 {% block content %}
-<div class="scrollable-div d-flex justify-content-center align-items-center posts">
+<div class="scrollable-div d-flex justify-content-center w-90 bg-white align-items-center posts">
     <!-- list for channels posts -->
     <ul class="list-unstyled">
         {% for single_post in posts %}
-        <li>
-            <h3>{{ single_post.created_by }}</h3>
-            <p>{{ single_post.created_date }}</p>
-            <p>{{ single_post.post }}</p>
+        <li class="post-item">
+            <div class="post-header">
+                <h3>{{ single_post.created_by }}</h3>
+                <p>{{ single_post.created_date }}</p>
+            </div>
+            <div class="post-content">
+                <p>{{ single_post.post|safe }}</p>
+            </div>
         </li>
         {% endfor %}
     </ul>
@@ -37,51 +41,13 @@
 {% endblock %}
 
 {% block page_footer %}
-
-<!-- container for summernote editor -->
-<div class="sticky-bottom posts-form">
-    <!-- pop up for emoji's -->
-    <div id="emoji-modal" class="popup">
-        <ul class="emoji-header list-inline d-flex justify-content-between mx-3 my-3"></ul>
-        <hr>
-        <ul class="emoji-body list-unstyled"></ul>
-    </div>
-    <!-- container for usernames list that the user can tag with @ -->
-    <div id="tag-name-modal" class="popup ">
-        <ul class="list-inline d-flex justify-content-between mx-3 my-3">
-            {% for user in channel_users %}
-                <li>{{ user.username }}</li>
-            {% endfor %}
-        </ul>
-
-    </div>
-    <!-- summernote editor form -->
-    <form method="post">
-        {% csrf_token %}
-        {{ form.media }} {# Include Summernote media files #}
-        <div class="form">
-            {{ form.as_p }}
-        </div>
-        <!-- buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
-        <div class="summernote-btn-bottom">   
-            <div>  
-                <button class ="btn text-lg-left" type="button" id="emoji-popup-btn"><span class="fa-regular fa-face-smile fa-xl emoji-btn" style="color: var(--ci-orange);"></span></button>
-                <button class ="btn" type="button" id="at-symbol"><span class="fa-solid fa-at fa-xl" style="color: var(--ci-orange);"></span></button>
-            </div>   
-            <button class="post-arrow-btn btn" type="submit"><span class="fa-solid fa-play fa-xl" style="color: var(--ci-orange);"></span></button>
-        </div>
-    </form>
-    
-
-</div>
-
-
-
+    {% include 'includes/summernote.html' %}
 {% endblock %}
+
 
 {% block postloadjs %}    
 
-    <script src="{% static 'channels/js/posts.js' %}"></script>
+    <script src="{% static 'channels/js/channels.js' %}"></script>
 
     
 {% endblock %}
