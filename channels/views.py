@@ -44,7 +44,6 @@ def channel_posts(request, channel_id):
 
     if request.method == 'POST':
         form = ChannelPostForm(request.POST)
-        
         if form.is_valid():
             # Add the channel information to the post
             form.instance.post_channel = channel

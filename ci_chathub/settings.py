@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'channels',
     'crispy_forms',
     'django_summernote',
+    'user_profile',
 ]
 
 MIDDLEWARE = [
@@ -73,11 +74,11 @@ SUMMERNOTE_CONFIG = {
             ['insert', ['link', 'picture', 'video']],
             ['codeview',['fullscreen', 'codeview', 'help']],
         ],
-        'disable_upload': False,
         'width': '100%',
         'height': 'auto',
         'attachment_require_authentication': True,
         "placeholder": 'Type @ to get a list of people you can tag',
+        'safe': True, # change this back
     },
 }
 
@@ -123,6 +124,10 @@ AUTHENTICATION_BACKENDS = [
 # By default, Django assumes a single-site configuration with a SITE_ID of 1,
 # but you can configure and manage multiple sites within a single Django project if needed.
 SITE_ID = 1
+
+# needed to altar the built in user model
+AUTH_USER_MODEL = 'user_profile.CustomUser'
+
 
 EMAIL_BACKENDS = 'django.core.mail.backends.console.EmailBackend'
 
