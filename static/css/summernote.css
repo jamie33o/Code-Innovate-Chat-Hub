@@ -46,12 +46,12 @@ div.note-toolbar.card-header{
 
 /* summernote code field */
 div.note-editing-area > textarea {
-    height: 100% !important;
+    height: 90% !important;
 }
 
 /* for summernote text area */
 div.note-editing-area {
-    height: 150%;
+    height: 100%;
     margin-bottom: 30px;
     max-height: 70vh;
 }
@@ -109,7 +109,6 @@ div.note-editing-area {
     overflow:visible;
 }
 
-
 /* div for the buttons at the bottom of summernote */
 .summernote-btn-bottom {
     display: flex;
@@ -119,7 +118,7 @@ div.note-editing-area {
     position: absolute;
     right: 0;
     bottom: 0;
-    margin: 25px 1%;
+    margin: 15px 1%;
     border-top: 1px solid rgba(0, 0, 0, 0.393);
 }
 
@@ -146,5 +145,16 @@ div.modal.note-modal.show {
     position: fixed;
     bottom: 0;
     top:auto;   
-    z-index: 1022;
+}
+
+/* tag users list buttons */
+.users button {
+    background: none;
+    border: none;
+}
+
+/* uplaod image  in summernote editor*/
+div.note-editable.card-block p img {
+    width: 100px !important;
+    height: 100px !important;
 }

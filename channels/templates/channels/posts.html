@@ -11,14 +11,15 @@
 
 
 {% block content %}
-<div class="scrollable-div d-flex justify-content-center w-90 bg-white align-items-center posts">
+<div class="scrollable-div d-flex mx-auto justify-content-center bg-white posts">
     <!-- list for channels posts -->
-    <ul class="list-unstyled">
+    <div class="inner">
+    <ul class="list-unstyled ">
         {% for single_post in posts %}
         <li class="post-item">
-            <div class="post-header">
-                <h3>{{ single_post.created_by }}</h3>
-                <p>{{ single_post.created_date }}</p>
+            <div class="post-header d-flex flex-dir-row">
+                <h5>{{ single_post.created_by }}</h3>
+                <p class="ml-3">{{ single_post.created_date }}</p>
             </div>
             <div class="post-content">
                 <p>{{ single_post.post|safe }}</p>
@@ -26,6 +27,7 @@
         </li>
         {% endfor %}
     </ul>
+</div>
 </div>
 
 {% if not request.user in channel_users %}

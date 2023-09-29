@@ -1,9 +1,11 @@
 let emojiUnicodeArray = []; //array for emoji unicodes
 let emojisUnicodeCategory = [];// array for emoji unicode category
 let summernoteEditor = null; //summernote editor div
+let letterCount = 0
 
 $(document).ready(function() {
   
+//////////////////////////////// emoji functionality //////////////////////////////////////////
 
 /**
  * async function to retrieve the emoji categories and the emoji unicodes 
@@ -56,13 +58,7 @@ async function fetchCategoriesAndEmojis() {
 
   });
   
-  $('#at-symbol').click(function(){
-    tagNameModal.show()
-    $('div.note-editable.card-block').append('@');
-    moveCursorToEndOfsummerNoteTextArea( $('div.note-editable.card-block')[0])
-     //remove the placeholder from summernote when emoji added
-     $('div.note-placeholder').attr('style' , 'none !important');
-  });
+  
   
   // Unbind and rebind the click event to prevent multiple click handlers
   $(document).off('click', '.emoji').on('click', '.emoji', addToTextField);
@@ -72,46 +68,53 @@ async function fetchCategoriesAndEmojis() {
    */
   function showEmojis(){
   
-      for(let i = 0; i<emojiUnicodeArray.length; i++){
-          // Create a new <li> element
-          let imgLi = $("<li>");
-          let emojiUnicode = emojiUnicodeArray[i][0];
-          emojiHeaderImageUrl = twemoji.parse(emojiUnicode);
-          // Create a jQuery object from the HTML string
-          const $emojiImage = $(emojiHeaderImageUrl);
-          // Add a data attribute to the image element
-          $emojiImage.attr('data-num', i);
-          // Append the <img> element to the <li> element
-          imgLi.append($emojiImage);
-          // Append the <li> element to the '.emoji-Header' container
-          $('.emoji-header').append(imgLi);
-      }
-  
-          for(const emojiUnicode of emojiUnicodeArray[0]){
-              let imgLi2 = $("<li>");
-              let emojiBody = twemoji.parse(emojiUnicode);
-              // Append the <img> element to the <li> element
-              imgLi2.append(emojiBody);
-              // Append the <li> element to the '.emoji-body' container
-              $('.emoji-body').append(imgLi2);
-      }
-      summernoteEditor.html("")// clears the <br> from summernote editor 
-      summernoteEditor.focus()//sets the cursor in the editor
-  
-      
-        // check if user tryin to tag another user
-        summernoteEditor.on('input', function () {
-          let snText = $(this).html();
-  
-          // Check if "@" was the last character entered and the character before it is not a letter or symbol
-          if (snText.slice(-1) === '@' && !/[A-Za-z0-9@_]/.test(snText.slice(-2, -1))) {
-            tagNameModal.show()
-            tagUser(snText)
-            $(".hide-modal").show()
-                    
-          } 
-    });
-      
+    for(let i = 0; i<emojiUnicodeArray.length; i++){
+        // Create a new <li> element
+        let imgLi = $("<li>");
+        let emojiUnicode = emojiUnicodeArray[i][0];
+        emojiHeaderImageUrl = twemoji.parse(emojiUnicode);
+        // Create a jQuery object from the HTML string
+        const $emojiImage = $(emojiHeaderImageUrl);
+        // Add a data attribute to the image element
+        $emojiImage.attr('data-num', i);
+        // Append the <img> element to the <li> element
+        imgLi.append($emojiImage);
+        // Append the <li> element to the '.emoji-Header' container
+        $('.emoji-header').append(imgLi);
+    }
+
+        for(const emojiUnicode of emojiUnicodeArray[0]){
+            let imgLi2 = $("<li>");
+            let emojiBody = twemoji.parse(emojiUnicode);
+            // Append the <img> element to the <li> element
+            imgLi2.append(emojiBody);
+            // Append the <li> element to the '.emoji-body' container
+            $('.emoji-body').append(imgLi2);
+    }
+    summernoteEditor.html("<br>")// clears the <br> from summernote editor 
+    summernoteEditor.focus()//sets the cursor in the editor
+
+    
+      // check if user tryin to tag another user
+      summernoteEditor.on('input', function () {
+        let snText = $(this).html();
+
+        letterCount++
+        console.log(letterCount)
+        if(letterCount % 76 === 0 && summernoteEditor.find('p').length === 0){
+          letterCount = 0
+          $('div.note-editable.card-block p').append("<p>")
+          
+        }
+
+        // Check if "@" was the last character entered and the character before it is not a letter or symbol
+        if (snText.slice(-1) === '@' && !/[A-Za-z0-9@_]/.test(snText.slice(-2, -1))) {
+         
+          tagNameModal.show()
+          tagUser()
+          $(".hide-modal").show() 
+        } 
+      }); 
   };
   
   
@@ -123,36 +126,36 @@ async function fetchCategoriesAndEmojis() {
    * @param {click} event emoji clicked
    */
   function addToTextField(event) {
-          // Access the dataset.num property of the clicked element
-          const num = parseInt(event.currentTarget.dataset.num);
-          
-          if (num >= 0 && num <= emojiUnicodeArray.length) {
-             
-              $('.emoji-body li').each(function(index) {
-  
-                  // Create a new <img> element with the new image source
-                  let newImg = twemoji.parse(emojiUnicodeArray[num][index]);
-  
-                  // Replace the existing <img> element with the new one
-                  $(this).find('img').replaceWith(newImg);
-                  
-              });
-  
-          } else {
-             
-              // clone the img tag with the emoji link
-              let emojiImg = $(event.target).clone();
-              summernoteEditor.append(emojiImg);
-              console.log(event.target)
-  
-              // Move the cursor to the end of the summernote editor
-              moveCursorToEndOfsummerNoteTextArea(summernoteEditor[0]);  
-              //hide emoji pop up
-              $(".popup").hide()  
-              $(".hide-modal").hide()
-              //remove the placeholder from summernote when emoji added
-              $('div.note-placeholder').attr('style' , 'none !important');
-          }
+    // Access the dataset.num property of the clicked element
+    const num = parseInt(event.currentTarget.dataset.num);
+    
+    if (num >= 0 && num <= emojiUnicodeArray.length) {
+        
+        $('.emoji-body li').each(function(index) {
+
+            // Create a new <img> element with the new image source
+            let newImg = twemoji.parse(emojiUnicodeArray[num][index]);
+
+            // Replace the existing <img> element with the new one
+            $(this).find('img').replaceWith(newImg);
+            
+        });
+
+    } else {
+        
+        // clone the img tag with the emoji link
+        let emojiImg = $(event.target).clone();
+        summernoteEditor.append(emojiImg);
+        console.log(event.target)
+
+        // Move the cursor to the end of the summernote editor
+        moveCursorToEndOfsummerNoteTextArea(summernoteEditor[0]);  
+        //hide emoji pop up
+        $(".popup").hide()  
+        $(".hide-modal").hide()
+        //remove the placeholder from summernote when emoji added
+        $('div.note-placeholder').attr('style' , 'none !important');
+    }
   }
   
   /**
@@ -169,34 +172,47 @@ async function fetchCategoriesAndEmojis() {
       selection.addRange(range);
   }
   
+//////////////////////////////// tagging functionality using @ //////////////////////////////////////////
+
+  $('#at-symbol').click(function(){
+    tagNameModal.show()
+    tagUser()
+
+    $('div.note-editable.card-block').append('@');
+    moveCursorToEndOfsummerNoteTextArea( $('div.note-editable.card-block')[0])
+     //remove the placeholder from summernote when emoji added
+     $('div.note-placeholder').attr('style' , 'none !important');
+  });
   
-  function tagUser(snText) {
+  function tagUser() {
        
+    $(".users").empty()
     const nameSuggestions = channelUsers
-  
+    let snText = $('div.note-editable.card-block').html()
+
     const atIndex = snText.lastIndexOf("@");
     
     if (atIndex !== -1) {
 
-        const searchText = snText.slice(atIndex + 1);
-        
-        const matchingNames = nameSuggestions.filter(name =>
-            name.toLowerCase().startsWith(searchText.toLowerCase())
-        );
+      const searchText = snText.slice(atIndex + 1);
+      
+      const matchingNames = nameSuggestions.filter(name =>
+          name.toLowerCase().startsWith(searchText.toLowerCase())
+      );
 
-        // Display matching names as suggestions
-        $.each(matchingNames, function(index, name) {
-            const suggestion = $("<button>").text(name);
-            suggestion.on("click", function() {
-                // Replace the typed text with the selected name
-                const newText = snText.slice(0, atIndex + 1) + name + " ";
-                summernoteEditor.html(newText)
-                tagNameModal.hide()
-                $(".hide-modal").hide()
-            });
-            
-            $(".users").append(suggestion);
-        });
+      // Display matching names as suggestions
+      $.each(matchingNames, function(index, name) {
+          const suggestion = $("<button>").text(name);
+          suggestion.on("click", function() {
+              // Replace the typed text with the selected name
+              const newText = snText.slice(0, atIndex + 1) + name + " ";
+              summernoteEditor.html(newText)
+              tagNameModal.hide()
+              $(".hide-modal").hide()
+          });
+          
+          $(".users").append(suggestion);
+      });
     }
   }
 
