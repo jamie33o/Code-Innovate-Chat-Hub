@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class ChannelModel(models.Model):
@@ -10,14 +10,14 @@ class ChannelModel(models.Model):
     Parameters:
         super class: class the this class inherits from
     """
-    created_by = models.ForeignKey(User,
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
                                    on_delete=models.SET_NULL,
                                    null=True, related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     is_private = models.BooleanField(default=True)
     name = models.CharField(max_length=254,default='')
     description = models.TextField(blank=True, null=True)
-    users = models.ManyToManyField(User, related_name='channels')
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='channels')
 
     def __str__(self):
         return self.name
@@ -30,7 +30,7 @@ class ChannelPosts(models.Model):
     Parameters:
         super class: class the this class inherits from
     """
-    created_by = models.ForeignKey(User,
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
                                    on_delete=models.SET_NULL,
                                    null=True, related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
