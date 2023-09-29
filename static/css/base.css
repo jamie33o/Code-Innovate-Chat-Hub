@@ -3,6 +3,9 @@
     margin: 0;
     padding: 0;
 }
+html {
+    background-color: white;
+}
 /* Define a CSS variable */
 :root {
     --ci-orange: #e8610e;
@@ -35,13 +38,13 @@ h1 {
     color: #fff; 
 }
 body {
-    background-color: paleturquoise;
+    background-color: white;
 }
 header {
     background-color: white;
 }
 #topnav {
-    background-color: brown;
+    background-color: var(--ci-orange);
 }
 
 
@@ -56,7 +59,7 @@ header {
     bottom: 0;
     top:auto;
     }
-    h2 {
+    h1 {
         font-size: 1.5em;
     }
 }
@@ -73,6 +76,14 @@ header {
     }
 }
 
+.back-btn {
+    border-radius: 50%;
+}
+
+.back-btn:hover {
+    background-color: rgba(255, 255, 255, 0.372);
+    border-radius: 50%;
+}
   
 
 /* Customize the scrollbar */

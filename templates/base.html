@@ -40,11 +40,12 @@
   </head>
   <body>
     <!-- logo on large screen -->
-    <header class="container-fluid fixed-top px-0">
-       
+    <header class="container-fluid fixed-top px-0">        
         <div id="topnav" class="d-flex justify-content-between pt-lg-0 ">
             <!-- search icon  -->
-            <div class="my-auto mx-0 py-lg-0 ">
+            {% include 'includes/back-btn.html' %}
+
+            <div class="my-auto ml-3 px-3">
                 <a class="text-black nav-link d-block" href="#" id="mobile-search" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <div class="text-center">
                         <div><i class="fas fa-search fa-lg"></i></div>
@@ -68,14 +69,15 @@
                 </div>
             </div>
             
+            
             <div class="my-auto py-0 py-lg-0 ">
                 <a href="" class="nav-link main-logo-link ">
-                    <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong> Chat Hub</h1>
+                    <h1 class="logo-font text-black my-0 text-center">{% if channel.name %}#{{ channel.name }}{% else %}<strong>Code Institute</strong> Chat Hub{% endif %}</h1>
                 </a>
             </div>
            
             <!-- settings button -->
-            <div class=" my-auto py-0 py-lg-0">
+            <div class="my-auto mr-3 px-3">
                 <ul class="list-inline list-unstyled text-center my-0">
                     <li class="list-inline-item dropdown">
                         <a class="text-black nav-link" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
