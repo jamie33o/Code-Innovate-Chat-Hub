@@ -2,44 +2,61 @@
 
 /* makes divs scrollable */
 .scrollable-div {
-    /* Set a fixed height for the scrollable div */
-    height: 100%; /* Adjust the height as needed */
     /* Enable vertical scrolling */
     overflow-y: auto;
-   
-  
-    /* Optional: Enable horizontal scrolling if needed */
-    /* overflow-x: auto; */
-  }
+}
+
+p {
+    margin-bottom: .5rem;
+}
 
 .posts {
     position: relative;
-    top: 60px;
-    height: 430px;
     width: 100%;
-   
+    top: 60px;
+    height: 70vh;
+    
 }
+
 /* Style for the post item */
 .post-item {
     border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 20px;
+    padding: 5%;
+    margin: 5px 0;
+    margin-left: 5px;
     background-color: #f9f9f9;
     border-radius: 5px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    height: fit-content;  
+    width: 85vw; 
+    overflow-wrap: break-word;
+}
+
+.inner {
+    height: fit-content;
+    padding: 15px 0;
 }
 
 /* Style for the post header (user name and date) */
 .post-header {
-    font-weight: bold;
-    margin-bottom: 10px;
+    align-items: baseline;
+}
+
+.post-header p {
+    font-size: smaller;
 }
 
 /* Style for the post content */
 .post-content {
-    font-size: 16px;
+    font-size: 1em;
+    width: 100%;
 }
 
+/* post images */
+.post-content p img {
+    width: 30px;
+    height:30px;
+}
 
 /* CSS to style the overlay */
 #overlay {
@@ -51,6 +68,7 @@
     background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
     z-index: 10; /* Ensure it's above other elements */
     backdrop-filter: blur(5px); /* Apply the blur effect */
+    
 }
 
 /* CSS to style the "Add Channel" button on the overlay */
@@ -65,7 +83,5 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    
 }
-
 
