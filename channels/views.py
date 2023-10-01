@@ -6,12 +6,13 @@ from django.contrib.auth.models import User
 from .models import ChannelModel,ChannelPosts
 from .forms import ChannelPostForm
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
 
 
 
 
-
+@login_required
 def view_channels(request):
     """ A view that renders the channels page  with a list of channels"""
 
@@ -53,7 +54,6 @@ def channel_posts(request, channel_id):
 
             # Clean and sanitize the HTML content
             post.post = bleach.clean(post.post, tags=allowed_tags, attributes=allowed_attributes)
-            print(post.post)
 
             post.created_by = request.user
             post.post_channel_id = channel_id
