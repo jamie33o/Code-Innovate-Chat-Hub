@@ -71,7 +71,7 @@
             
             
             <div class="my-auto py-0 py-lg-0 ">
-                <a href="" class="nav-link main-logo-link ">
+                <a href="{% url 'channels' %}" class="nav-link main-logo-link ">
                     <h1 class="logo-font text-black my-0 text-center">{% if channel.name %}#{{ channel.name }}{% else %}<strong>Code Institute</strong> Chat Hub{% endif %}</h1>
                 </a>
             </div>
@@ -106,19 +106,19 @@
              
         </div>      
     </header>
-
+    
 
     {% block page_header %}
     {% endblock %}
 
     {% block content %}
     {% endblock %}  
-
+    
     {% block page_footer %}
         {% include 'includes/mobile-bottom-nav-tabs.html' %}
     {% endblock %}
 
-
+    
     {% block postloadjs %}
     <script type="text/javascript">
         $('.toast').toast('show');
