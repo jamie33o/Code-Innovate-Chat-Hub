@@ -10,6 +10,13 @@ html {
 :root {
     --ci-orange: #e8610e;
   }
+
+
+/* for sign up/sign-in/log-out */
+.allauth-account-container {
+    width: 100vw;
+    height:100vh;
+}
   
 .hide-modal {
     display: none;
@@ -25,7 +32,7 @@ html {
 h1 {
     font-size: 2em;
 }
-/* Style for the sticky bottom navigation */
+
 .tabs-nav {
     width: 100%;
     background-color: #333;
@@ -37,17 +44,34 @@ h1 {
 .nav-link {
     color: #fff; 
 }
+
 body {
     background-color: white;
 }
+
 header {
     background-color: white;
 }
+
 #topnav {
     background-color: var(--ci-orange);
 }
 
+/* buttons class */
+.btn-orange {
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: var(--ci-orange); /* Blue color for the button */
+    padding: 5px 10px;
+}
 
+.btn-orange:hover {
+    background-color: white;
+    box-shadow: inset 0 0 5px 5px var(--ci-orange);
+    color: var(--ci-orange)
+}
 
 
 /* CSS for small screens (up to the "lg" breakpoint) */
@@ -99,4 +123,19 @@ header {
   
   ::-webkit-scrollbar-track {
    display: none; /* Color of the scrollbar track (background) */
+  }
+
+
+  /* user profile */
+  .user-profile {
+    
+    width: 100vw;
+    height: 100vh;
+   
+  }
+
+  .user-profile img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
   }
