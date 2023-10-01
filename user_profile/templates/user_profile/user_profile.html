@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+
+{% block content %}
+
+    <div class="user-profile d-flex justify-content-center">
+        <div class="row">
+            <div class="col-md-12">
+                <img class="" src="{{ user_profile.profile_picture.url }}" alt="profile image">
+            </div>
+            <div class="col-md-12">
+                <h3>{{ user_profile.user.username }}</h3>
+                <p>{{ user_profile.is_active }}</p>
+                <p>Status:
+                    <select id="statusDropdown">
+                        <option value="active" {% if user_profile.is_active %}selected{% endif %}>Active</option>
+                        <option value="away" {% if not user_profile.is_active %}selected{% endif %}>Away</option>
+                    </select>
+                </p>
+                <a href="{% url 'edit_user_profile' %}">Edit Profile</a>
+
+            </div>
+            
+        </div><hr class="text-dark">
+    </div>
+
+    
+    
+{% endblock %}
