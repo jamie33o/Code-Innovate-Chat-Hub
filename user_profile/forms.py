@@ -1,8 +1,9 @@
 # forms.py
-from django import forms
-from .models import CustomUser
 
-class ProfileImageForm(forms.ModelForm):
+from django import forms
+from .models import UserProfile
+
+class UserProfileForm(forms.ModelForm):
     class Meta:
-        model = CustomUser
-        fields = ['profile_image']
+        model = UserProfile
+        fields = ['bio', 'is_active', 'profile_picture']  # Add other fields as needed

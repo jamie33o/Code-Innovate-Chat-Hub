@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-%et2*cabl-vp#zc5gud5_$^j=%qfvf^o!e#rtcyviwe2n8obg7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 
 # Application definition
@@ -126,8 +126,7 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 # needed to altar the built in user model
-AUTH_USER_MODEL = 'user_profile.CustomUser'
-
+AUTH_PROFILE_MODULE = 'user_profile.UserProfile'
 
 EMAIL_BACKENDS = 'django.core.mail.backends.console.EmailBackend'
 
