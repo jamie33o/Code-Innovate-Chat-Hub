@@ -70,11 +70,10 @@ SUMMERNOTE_CONFIG = {
     'iframe': False,
     'summernote': {
         'toolbar': [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['fontsize', ['fontsize']],
+            ['style', ['bold', 'italic', 'underline']],
             ['para', ['ul', 'ol', 'paragraph']],
-            ['insert', ['link', 'picture', 'video']],
-            ['codeview',['fullscreen', 'codeview', 'help']],
+            ['insert', ['link', 'picture']],
+            ['codeview',[ 'codeview']],
         ],
         'width': '100%',
         'height': 'auto',
@@ -126,9 +125,6 @@ AUTHENTICATION_BACKENDS = [
 # By default, Django assumes a single-site configuration with a SITE_ID of 1,
 # but you can configure and manage multiple sites within a single Django project if needed.
 SITE_ID = 1
-
-# needed to altar the built in user model
-AUTH_PROFILE_MODULE = 'user_profile.UserProfile'
 
 EMAIL_BACKENDS = 'django.core.mail.backends.console.EmailBackend'
 
