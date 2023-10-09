@@ -1,16 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Roboto:wght@400;500&display=swap');
 /* global classes */
+
 * {
     margin: 0;
     padding: 0;
 }
-html {
-    background-color: white;
-}
+
 /* Define a CSS variable */
 :root {
-    --ci-orange: #e8610e;
-  }
+    /** Fonts */
+    --title: 'EB Garamond', serif;
+    --main-font: 'Roboto', serif;
 
+    /* Colours */
+    --background: #3f006a0f;
+    --blue: #0d6efd;
+    --black: #000;
+    --off-white: #f6f6f6;
+    --white: #fff;
+    --ci-orange: #e8610e;
+  
+    /* Utils */
+    --smal-box-shadow: 1px -1px 7px 0 #00000061;
+    --border: 1px solid #00000030;
+
+    --small-break-point: 576px;
+}
+
+body {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--main-font);
+    height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--title);
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+main {
+    background-color: var(--white);
+    overflow-y: hidden;
+}
+
+/* makes divs scrollable */
+.scrollable-div {
+    /* Enable vertical scrolling */
+    overflow-y: auto;
+   
+}
+
+.scrollable-div-inner {
+    height: fit-content;
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+.stick-to-bottom {
+    position: fixed;
+    bottom: 0;
+}
+
+.stick-to-top {
+    position: fixed;
+    top: 0;
+}
+
+/* Footer */
+footer {
+    width: 100%;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+
+}
 
 /* for sign up/sign-in/log-out */
 .allauth-account-container {
@@ -18,15 +90,15 @@ html {
     height:100vh;
 }
   
-.hide-modal {
+.close-modal {
     display: none;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 3;
+    z-index: 2;
 }
 
 h1 {
@@ -45,13 +117,6 @@ h1 {
     color: #fff; 
 }
 
-body {
-    background-color: white;
-}
-
-header {
-    background-color: white;
-}
 
 #topnav {
     background-color: var(--ci-orange);
@@ -73,33 +138,6 @@ header {
     color: var(--ci-orange)
 }
 
-
-/* CSS for small screens (up to the "lg" breakpoint) */
-@media (max-width: 992px) {
- 
-      /* Style for the sticky bottom navigation */
-.tabs-nav {
-    position: fixed;
-    bottom: 0;
-    top:auto;
-    }
-    h1 {
-        font-size: 1.5em;
-    }
-}
-
-/* CSS for small screens (up to the "lg" breakpoint) */
-@media (max-width: 422px) {
- 
-    .nav-link {
-        padding: 5px 5px;
-    }
-
-    h1 {
-        font-size: 1.2em;
-    }
-}
-
 .back-btn {
     border-radius: 50%;
 }
@@ -116,26 +154,49 @@ header {
     width: 10px; /* Width of the scrollbar */
   }
   
-  ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background-color: var(--ci-orange); /* Color of the scrollbar thumb (dragging area) */
     border-radius: 5px; /* Rounded corners for the thumb */
-  }
+}
   
-  ::-webkit-scrollbar-track {
-   display: none; /* Color of the scrollbar track (background) */
+::-webkit-scrollbar-track {
+    display: none; /* Color of the scrollbar track (background) */
   }
 
 
-  /* user profile */
-  .user-profile {
-    
+/* user profile */
+.user-profile {
     width: 100vw;
     height: 100vh;
-   
-  }
 
-  .user-profile img {
+}
+
+.user-profile img {
     width: 200px;
     height: 200px;
     border-radius: 50%;
-  }
+}
+
+.navbar {
+    padding: 0 !important;
+}
+
+/* CSS for small screens (up to the "lg" breakpoint) */
+@media (max-width: 992px) {
+ 
+    h1 {
+        font-size: 1.5em;
+    }
+}
+
+/* CSS for small screens (up to the "lg" breakpoint) */
+@media (max-width: 422px) {
+ 
+    .nav-link {
+        padding: 5px 5px;
+    }
+
+    h1 {
+        font-size: 1.2em;
+    }
+}
