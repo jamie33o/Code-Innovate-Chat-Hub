@@ -2,9 +2,7 @@ let emojiUnicodeArray = []; //array for emoji unicodes
 let emojisUnicodeCategory = [];// array for emoji unicode category
 let summernoteEditor = null; //summernote editor div
 let letterCount = 0
-
 $(document).ready(function() {
-  
 //////////////////////////////// emoji functionality //////////////////////////////////////////
 
 /**
@@ -91,30 +89,21 @@ async function fetchCategoriesAndEmojis() {
             // Append the <li> element to the '.emoji-body' container
             $('.emoji-body').append(imgLi2);
     }
-    summernoteEditor.html("<br>")// clears the <br> from summernote editor 
+    //summernoteEditor.html("")// clears the <br> from summernote editor 
     summernoteEditor.focus()//sets the cursor in the editor
 
     
       // check if user tryin to tag another user
       summernoteEditor.on('input', function () {
-        let snText = $(this).html();
+        tagUser()
 
         letterCount++
-        console.log(letterCount)
         if(letterCount % 76 === 0 && summernoteEditor.find('p').length === 0){
           letterCount = 0
           $('div.note-editable.card-block p').append("<p>")
           
         }
-
-        // Check if "@" was the last character entered and the character before it is not a letter or symbol
-        if (snText.slice(-1) === '@' && !/[A-Za-z0-9@_]/.test(snText.slice(-2, -1))) {
-         
-          tagNameModal.show()
-          tagUser()
-          $(".hide-modal").show() 
-        } 
-      }); 
+      });
   };
   
   
@@ -142,11 +131,10 @@ async function fetchCategoriesAndEmojis() {
         });
 
     } else {
-        
+
         // clone the img tag with the emoji link
         let emojiImg = $(event.target).clone();
         summernoteEditor.append(emojiImg);
-        console.log(event.target)
 
         // Move the cursor to the end of the summernote editor
         moveCursorToEndOfsummerNoteTextArea(summernoteEditor[0]);  
@@ -174,26 +162,29 @@ async function fetchCategoriesAndEmojis() {
   
 //////////////////////////////// tagging functionality using @ //////////////////////////////////////////
 
-  $('#at-symbol').click(function(){
-    tagNameModal.show()
+  $('#at-symbol').click(function(){   
+   $('div.note-editable.card-block p').append('@');
     tagUser()
-
-    $('div.note-editable.card-block').append('@');
     moveCursorToEndOfsummerNoteTextArea( $('div.note-editable.card-block')[0])
      //remove the placeholder from summernote when emoji added
      $('div.note-placeholder').attr('style' , 'none !important');
   });
   
+  
   function tagUser() {
-       
+    let nameSuggestions = channelUsers;;
+    let snText = $('div.note-editable.card-block p').text();
+    let atIndex = snText.lastIndexOf("@");
+     // Check if "@" was the last character entered and the character before it is not a letter or symbol
+    if (snText.slice(-1) === '@' &! /[A-Za-z\d]/.test(snText.slice( -2, -1))) {
+      $("#tag-name-modal").show()
+
+      $(".hide-modal").show()       
+      
+    }
     $(".users").empty()
-    const nameSuggestions = channelUsers
-    let snText = $('div.note-editable.card-block').html()
-
-    const atIndex = snText.lastIndexOf("@");
+     
     
-    if (atIndex !== -1) {
-
       const searchText = snText.slice(atIndex + 1);
       
       const matchingNames = nameSuggestions.filter(name =>
@@ -202,23 +193,28 @@ async function fetchCategoriesAndEmojis() {
 
       // Display matching names as suggestions
       $.each(matchingNames, function(index, name) {
+
           const suggestion = $("<button>").text(name);
           suggestion.on("click", function() {
               // Replace the typed text with the selected name
               const newText = snText.slice(0, atIndex + 1) + name + " ";
-              summernoteEditor.html(newText)
-              tagNameModal.hide()
+              $('div.note-editable.card-block p').html(newText)
+              moveCursorToEndOfsummerNoteTextArea( $('div.note-editable.card-block')[0])
+
+              $("#tag-name-modal").hide()
+
               $(".hide-modal").hide()
           });
           
           $(".users").append(suggestion);
       });
-    }
   }
+    
 
   $(".hide-modal").click(function(){
     $("#emoji-modal").hide()
-    tagNameModal.hide()
+      $("#tag-name-modal").hide()
     $(".hide-modal").hide()
+    tagnamesAcctive = false
   })
   });
