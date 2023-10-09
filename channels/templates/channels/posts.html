@@ -1,33 +1,22 @@
-{% extends "base.html" %}
-{% load static %}
-{% load crispy_forms_tags %}
-
-{% block extra_css %}
-
-    <link rel="stylesheet" href="{% static 'channels/css/channels.css' %}">
-
-{% endblock %}
-
-
 
 {% block content %}
-<div class="scrollable-div d-flex mx-auto justify-content-center bg-white posts">
+<div class="scrollable-div w-100 bg-white posts">
     <!-- list for channels posts -->
-    <div class="inner">
-    <ul class="list-unstyled ">
-        {% for single_post in posts %}
-        <li class="post-item">
-            <div class="post-header d-flex flex-dir-row">
-                <h5>{{ single_post.created_by }}</h3>
-                <p class="ml-3">{{ single_post.created_date }}</p>
-            </div>
-            <div class="post-content">
-                <p>{{ single_post.post|safe }}</p>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
+    <div class="scrollable-div-inner">
+        <ul class="list-unstyled mx-auto">
+            {% for single_post in posts %}
+            <li class="post-item mx-auto">
+                <div class="post-header d-flex flex-dir-row">
+                    <h5>{{ single_post.created_by }}</h3>
+                    <p class="ml-3">{{ single_post.created_date }}</p>
+                </div>
+                <div class="post-content">
+                    <p>{{ single_post.post|safe }}</p>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 {% if not request.user in channel_users %}
@@ -39,17 +28,10 @@
         </a>
     </div>
 {% endif %}
+<div class="tag-name-modal">
+    <ul>
+       
+    </ul>
+</div>
 
-{% endblock %}
-
-{% block page_footer %}
-    {% include 'includes/summernote.html' %}
-{% endblock %}
-
-
-{% block postloadjs %}    
-
-    <script src="{% static 'channels/js/channels.js' %}"></script>
-
-    
 {% endblock %}

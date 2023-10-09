@@ -1,17 +1,48 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block content %}
-<!-- container for the channels list -->
-<div class="container d-flex justify-content-center align-items-center channels-list">
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'channels/css/channels.css' %}">
+   
+{% endblock %}
 
-    <ul class="list-unstyled">
-        {% for channel in channels %}
-        <li>
-            <a href="{% url 'channel_posts' channel.id %}">#{{channel.name }}</a>
-            <p>{{ channel.description }}</p>
-        </li>
-        {% endfor %}
-    </ul>
+{% block content %}
+<div class="w-100 h-100 d-flex flex-dir-row">
+<!-- container for the channels list -->
+    <div id="channel-links-container" class="channels-list scrollable-div ">
+        <div class="scrollable-div-inner">
+            <ul class="list-unstyled">
+                {% for channel in channels %}
+                    <li>
+                        <a class="channel-link" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}</a>
+                        <p>{{ channel.description }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+<div id="channnnel-posts" class="w-100 hide">
+    {% if channel.id %}
+        {% include 'channels/posts.html' %}
+    {% endif %}
 </div>
+
+</div>
+{% endblock %}
+
+{% block page_footer %}
+    <div class="channels-summernote d-none d-sm-flex d-lg-flex">
+        {% if channel.id %}
+            {% include 'includes/summernote.html' %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block postloadjs %}
+<script src="{% static 'channels/js/channels.js' %}"></script>
+<script>
+    let channel_id = {{ channel.id }}
+    console.log(channel_id)
+</script>
+
 {% endblock %}

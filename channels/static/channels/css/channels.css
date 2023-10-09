@@ -1,21 +1,33 @@
 /* //////////////////////   Posts section styles /////////////////////// */
 
-/* makes divs scrollable */
-.scrollable-div {
-    /* Enable vertical scrolling */
-    overflow-y: auto;
-}
-
 p {
     margin-bottom: .5rem;
 }
 
+#tagnames {
+    display: none;
+}
+
+/* style for channels list */
+.channels-list { 
+    border-right: 2px solid var(--ci-orange);
+    width: 300px;
+    padding: 50px 50px;
+}
+
+.hide {
+    display: flex;
+}
+
+
 .posts {
-    position: relative;
-    width: 100%;
-    top: 60px;
-    height: 70vh;
-    
+    height: 85%;
+}
+/* summer-note editor on the channels page */
+.channels-summernote {
+    padding-left: 215px;
+    margin-left: 4%;
+    padding-right: 10px;
 }
 
 /* Style for the post item */
@@ -23,19 +35,15 @@ p {
     border: 1px solid #ddd;
     padding: 5%;
     margin: 5px 0;
-    margin-left: 5px;
     background-color: #f9f9f9;
     border-radius: 5px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     height: fit-content;  
-    width: 85vw; 
+    width: 90%; 
+    max-width: 90%;
     overflow-wrap: break-word;
 }
 
-.inner {
-    height: fit-content;
-    padding: 15px 0;
-}
 
 /* Style for the post header (user name and date) */
 .post-header {
@@ -50,6 +58,7 @@ p {
 .post-content {
     font-size: 1em;
     width: 100%;
+    max-width: 700px;
 }
 
 /* post images */
@@ -78,4 +87,28 @@ p {
     left: 50%;
 }
 
+/* CSS for small screens (up to the "lg" breakpoint) */
+@media (max-width: 575px) {
+    /* style for channels list */
+    .channels-list { 
+        margin: 0 auto;
+        height: 100vh;
+        border-right: none;
+        width: 100%;
+        padding: 100px 50px;
+        text-align: center;
+    }
 
+    .hide {
+        display: none;
+    }
+
+    /* summer-note editor on the channels page */
+    .channels-summernote {
+        padding-left: 0;
+        margin-left: 0;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+}
