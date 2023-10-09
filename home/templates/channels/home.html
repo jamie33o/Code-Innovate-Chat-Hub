@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'channels/css/channels.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/channels.css' %}">
    
 {% endblock %}
 
@@ -39,10 +39,9 @@
 {% endblock %}
 
 {% block postloadjs %}
-<script src="{% static 'channels/js/channels.js' %}"></script>
+<script src="{% static 'home/js/channels.js' %}"></script>
 <script>
     let channel_id = {{ channel.id }}
-    console.log(channel_id)
 </script>
 
 {% endblock %}

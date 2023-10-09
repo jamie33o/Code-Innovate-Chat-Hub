@@ -139,9 +139,10 @@ div.modal.note-modal.show {
 
 
 /* tag users list buttons */
-.users button {
+.channel-users button {
     background: none;
     border: none;
+    width: fit-content;
 }
 
 /* uplaod image  in summernote editor*/

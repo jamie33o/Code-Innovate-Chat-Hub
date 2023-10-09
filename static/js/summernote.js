@@ -182,7 +182,7 @@ async function fetchCategoriesAndEmojis() {
       $(".hide-modal").show()       
       
     }
-    $(".users").empty()
+    $(".channel-users").empty()
      
     
       const searchText = snText.slice(atIndex + 1);
@@ -206,7 +206,7 @@ async function fetchCategoriesAndEmojis() {
               $(".hide-modal").hide()
           });
           
-          $(".users").append(suggestion);
+          $(".channel-users").append(suggestion);
       });
   }
     

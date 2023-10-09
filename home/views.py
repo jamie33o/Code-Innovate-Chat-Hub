@@ -12,7 +12,7 @@ from .forms import ChannelPostForm
 
 
 @login_required
-def view_channels(request, channel_id=0):
+def home_view(request, channel_id=0):
     """ A view that renders the channels page  with a list of channels"""
 
     channels = ChannelModel.objects.all()
@@ -68,7 +68,7 @@ def view_channels(request, channel_id=0):
     if channel:
         context['channel_users'] = channel.users.all()
 
-    return render(request, 'channels/channels.html', context)
+    return render(request, 'channels/home.html', context)
 
 
 
