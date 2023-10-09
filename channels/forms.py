@@ -2,12 +2,12 @@ from django import forms
 from django_summernote.widgets import SummernoteInplaceWidget
 from .models import ChannelPosts
 
-class ChannelPostForm(forms.ModelForm): 
+class ChannelPostForm(forms.ModelForm):
     """
     This class is for the summernote editor form
 
     Parameters:
-        super class: class the this class inherits from
+        super class: class that this class inherits from
     """
     class Meta:
         model = ChannelPosts
