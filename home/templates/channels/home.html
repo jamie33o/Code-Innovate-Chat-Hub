@@ -41,7 +41,7 @@
 {% block postloadjs %}
     {% if channel.id %}
         <script>
-            let channel_id = {{ channel.id }}
+            let channel_id = {{ channel.id }};
         </script>
 
         <script src="{% static 'home/js/home.js' %}"></script>
