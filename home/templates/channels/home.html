@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'home/css/channels.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
    
 {% endblock %}
 
@@ -39,9 +39,11 @@
 {% endblock %}
 
 {% block postloadjs %}
-<script src="{% static 'home/js/channels.js' %}"></script>
-<script>
-    let channel_id = {{ channel.id }}
-</script>
+    {% if channel.id %}
+        <script>
+            let channel_id = {{ channel.id }}
+        </script>
 
+        <script src="{% static 'home/js/home.js' %}"></script>
+    {% endif %}
 {% endblock %}

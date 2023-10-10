@@ -37,6 +37,7 @@ ALLOWED_HOSTS = ['127.0.0.1','localhost','ci-chathub-f163e2297a1b.herokuapp.com'
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,11 +49,16 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'home',
-    'crispy_forms',
-    'django_summernote',
-    'user_profile',
     'storages',
+    'crispy_forms',
+    # rich text editor
+    'django_summernote',
+    # for live messaging
+    'channels',
+    # apps i created
+    'home',
+    'user_profile',
+    
 ]
 
 MIDDLEWARE = [
@@ -64,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 # settings for summernote editor
 SUMMERNOTE_CONFIG = {
@@ -80,6 +87,17 @@ SUMMERNOTE_CONFIG = {
         'attachment_require_authentication': True,
         "placeholder": 'Type @ to get a list of people you can tag',
         'safe': True, # change this back
+    },
+}
+
+# for channels app 
+ASGI_APPLICATION = 'ci_chathub.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
     },
 }
 

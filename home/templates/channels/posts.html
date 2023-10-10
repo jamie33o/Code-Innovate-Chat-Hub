@@ -3,12 +3,12 @@
 <div class="scrollable-div w-100 bg-white posts">
     <!-- list for channels posts -->
     <div class="scrollable-div-inner">
-        <ul class="list-unstyled mx-auto">
+        <ul id="posts-ul" class="list-unstyled mx-auto">
             {% for single_post in posts %}
             <li class="post-item mx-auto">
                 <div class="post-header d-flex flex-dir-row">
                     <h5>{{ single_post.created_by }}</h3>
-                    <p class="ml-3">{{ single_post.created_date }}</p>
+                    <p class="ml-3">{{ single_post.created_date|date:"H:i" }}</p>
                 </div>
                 <div class="post-content">
                     <p>{{ single_post.post|safe }}</p>
