@@ -13,12 +13,11 @@ from asgiref.sync import async_to_sync
 @login_required
 def home_view(request, channel_id=0):
     channels = ChannelModel.objects.all()
-    
+
     if request.method == 'POST':
         form = handle_form_submission(request, channel_id)
 
-    if request.user.userprofile.last_viewed_channel_id:
-        last_viewed_channel_id = request.user.userprofile.last_viewed_channel_id
+    last_viewed_channel_id = request.user.userprofile.last_viewed_channel_id
 
     if last_viewed_channel_id and channel_id == 0:
         channel_id = last_viewed_channel_id
