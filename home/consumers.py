@@ -6,7 +6,6 @@ class PostConsumer(AsyncWebsocketConsumer):
         # Extract channel ID from URL parameters
         self.channel_id = self.scope["url_route"]["kwargs"]["channel_id"]
         self.room_group_name = f"post_channel_{self.channel_id}"
-
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
@@ -22,7 +21,6 @@ class PostConsumer(AsyncWebsocketConsumer):
             'message': event['message'],
             'post_content': event['post_content'],
             'post_creator': event['post_creator'],
-            
         }))
 
    

@@ -39,11 +39,28 @@
 {% endblock %}
 
 {% block postloadjs %}
+
+
+
     {% if channel.id %}
         <script>
+            
+            {% if request.build_absolute_uri|slice:":4" == "http" %}
+            {# Development environment #}
+            let socket = new WebSocket('ws://127.0.0.1:8000/ws/home/{{ channel.id }}/');
+            {% else %}
+            {# Production environment #}
+            let socket = new WebSocket('wss://' + window.location.host + '/ws/home/{{ channel.id }}/');
+            {% endif %}
             let channel_id = {{ channel.id }};
         </script>
 
         <script src="{% static 'home/js/home.js' %}"></script>
+    {% else %}
+    <script>
+        let socket = null
+    </script>
     {% endif %}
+
+
 {% endblock %}
