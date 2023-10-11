@@ -13,37 +13,40 @@ from asgiref.sync import async_to_sync
 @login_required
 def home_view(request, channel_id=0):
     channels = ChannelModel.objects.all()
-
-    form = handle_form_submission(request, channel_id)
+    if request.method == 'POST':
+        form = handle_form_submission(request, channel_id)
 
     last_viewed_channel_id = request.user.userprofile.last_viewed_channel_id
     if last_viewed_channel_id and channel_id == 0:
         channel_id = last_viewed_channel_id
 
-    channel = get_object_or_404(ChannelModel, id=channel_id)
+    if channel_id > 0:
+        channel = get_object_or_404(ChannelModel, id=channel_id)    
+        posts = ChannelPosts.objects.filter(post_channel=channel)
 
-    if channel and request.user in channel.users.all() and channel_id:
-        update_last_viewed_channel(request, channel_id)
+        if channel and request.user in channel.users.all() and channel_id:
+            update_last_viewed_channel(request, channel_id)
 
     form = ChannelPostForm()
-    posts = ChannelPosts.objects.filter(post_channel=channel)
 
     context = {
         'channels': channels,
-        'channel': channel,
-        'posts': posts,
+        'channel': None,
+        'posts': None,
         'form': form,
         'channel_users': None  # Include user data
     }
-    if channel:
+    if channel_id > 0:
         context['channel_users'] = channel.users.all()
+        context['channel']  = channel
+        context['posts']  = posts
 
     return render(request, 'channels/home.html', context)
 
 
 def handle_form_submission(request, channel_id):
     form = ChannelPostForm(request.POST)
-    if request.method == 'POST' and form.is_valid():
+    if form.is_valid():
         form.instance.post_channel = get_object_or_404(ChannelModel, id=channel_id)
         post = process_and_save_post(request, form, channel_id)
         broadcast_post_notification(request, post, channel_id)
