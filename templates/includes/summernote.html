@@ -1,47 +1,34 @@
-        <div class="close-modal hide-modal"></div>
+<div class="close-modal hide-modal"></div>
 
 <!-- container for summernote editor -->
-<div class="posts-form">
+<div class="summernote-form">
     <!-- pop up for emoji's -->
-    <div id="emoji-modal" class="popup">
+    <div class="emoji-modal popup">
         <ul class="emoji-header list-inline d-flex justify-content-between mx-3 my-3 flex-wrap"></ul>
         <hr>
         <ul class="emoji-body list-unstyled"></ul>
     </div>
     <!-- container for usernames list that the user can tag with @ -->
-    <div id="tag-name-modal" class="popup">
+    <div class="tag-name-modal popup">
         <ul class="channel-users d-flex flex-column ml-3 my-3">
-           
+            
         </ul>
     </div>
     <!-- summernote editor form -->
-    <form method="post">
+    <form class="sn-form" method="post">
         {% csrf_token %}
-        
+        <textarea name="post"></textarea>
         <div class="form">
 
-            {{ form.media }} {# Include Summernote media files #}
-            {{ form.as_p }}
 
         </div>
         <!-- buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
         <div class="summernote-btn-bottom">   
             <div>  
-                <button class="mx-3 mt-1" type="button" id="emoji-popup-btn"><span class="fa-regular fa-face-smile fa-lg emoji-btn" style="color: var(--ci-orange);"></span></button>
-                <button class="mx-3" type="button" id="at-symbol"><span class="fa-solid fa-at fa-lg" style="color: var(--ci-orange);"></span></button>
+                <button class="mx-3 mt-1 emoji-popup-btn" type="button" ><span class="fa-regular fa-face-smile fa-lg emoji-btn" style="color: var(--ci-orange);"></span></button>
+                <button class="mx-3 at-symbol" type="button"><span class="fa-solid fa-at fa-lg" style="color: var(--ci-orange);"></span></button>
             </div>   
-            <button id="sn-submit-btn" class="post-arrow-btn mx-3" type="submit"><span class="fa-solid fa-play fa-lg" style="color: var(--ci-orange);"></span></button>
+            <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit"><span class="fa-solid fa-play fa-lg" style="color: var(--ci-orange);"></span></button>
         </div>
     </form>
 </div>
-
-{% block postloadjs %}
-
-<script type="text/javascript">
-    let channelUsers = [
-        {% for user in channel_users %}
-            "{{ user.username }}",
-        {% endfor %}
-    ];
-</script>
-{% endblock %}
