@@ -1,3 +1,4 @@
+{% load static %}
 
 {% block content %}
 <div class="scrollable-div w-100 bg-white posts">
@@ -12,7 +13,9 @@
                 </div>
                 <div class="post-content">
                     <p>{{ single_post.post|safe }}</p>
+                    
                 </div>
+                <a class="comments-link" href="{% url 'post_comments' single_post.id %}">Comments</a>
             </li>
             {% endfor %}
         </ul>
@@ -28,10 +31,63 @@
         </a>
     </div>
 {% endif %}
-<div class="tag-name-modal">
-    <ul>
-       
-    </ul>
-</div>
+
+{% endblock %}
+
+{% block page_footer %}
+    <div class="post-summernote d-sm-flex d-lg-flex">
+            {% include 'includes/summernote.html' %}
+    </div>
+{% endblock %}
+
+{% block postloadjs %}
+
+
+    <!-- Your JavaScript code -->
+<script>
+    $(document).ready(function() {
+      // Click event for the button
+      $(".comments-link").click(function(event) {
+        // // Get CSRF token from the cookie
+        // const csrftoken = $("[name=csrfmiddlewaretoken]").val();
+        event.preventDefault();
+        const url = event.currentTarget.href;
+
+        // AJAX request
+        $.ajax({
+          type: "GET",
+          url: url,
+          success: function(response) {
+            // Update the div with the returned template
+            $("#post-comments").html(response);  
+          },
+          error: function(error) {
+            console.log("Error:", error);
+          }
+        });
+      });
+
+      summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`)
+            // get the channel id using django template literal which will be used in the js file 
+            // if the channel.id exists
+            let channel_id = {{ channel.id }};
+    
+            //class static variable so channel user can be used in posts and comments
+            SummernoteEnhancer.sharedChannelUsers = [
+        {% for user in channel_users %}
+            '{{ user.username }}',
+        {% endfor %}
+    ];
+      
+        });
+
+
+    
+
+     
+
+
+  </script>
+  
 
 {% endblock %}
