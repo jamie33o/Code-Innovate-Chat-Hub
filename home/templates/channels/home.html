@@ -21,47 +21,59 @@
             </ul>
         </div>
     </div>
-<div id="channnnel-posts" class="w-100 hide">
-    {% if channel.id %}
-        {% include 'channels/posts.html' %}
-    {% endif %}
-</div>
-
-</div>
-{% endblock %}
-
-{% block page_footer %}
-    <div class="channels-summernote d-none d-sm-flex d-lg-flex">
-        {% if channel.id %}
-            {% include 'includes/summernote.html' %}
-        {% endif %}
+    <div id="channel-posts" class="posts-container w-100 d-flex flex-column justify-content-between">
+       
     </div>
+    <div id ='post-comments' class ="comments-container d-flex flex-column justify-content-between">
+
+    </div>
+
+</div>
 {% endblock %}
+
 
 {% block postloadjs %}
 
-
-
     {% if channel.id %}
-        <script>
-            
-            {% if request.build_absolute_uri|slice:":4" == "http" %}
-                {# Development environment #}
-                let socket = new WebSocket('wss://' + window.location.host + '/ws/home/{{ channel.id }}/');
-
-            {% else %}
-                {# Production environment #}
-                let socket = new WebSocket('ws://127.0.0.1:8000/ws/home/{{ channel.id }}/');
-            {% endif %}
+        <script>     
+              
+            // get the channel id using django template literal which will be used in the js file 
+            // if the channel.id exists
             let channel_id = {{ channel.id }};
         </script>
-
         <script src="{% static 'home/js/home.js' %}"></script>
-    {% else %}
-    <script>
-        let socket = null
-    </script>
+
     {% endif %}
 
+    <!-- Your JavaScript code -->
+<script>
+  $(document).ready(function() {
+    
+    
+    // Click event for the button
+    $(".channel-link").click(function(event) {
+      // // Get CSRF token from the cookie
+      // const csrftoken = $("[name=csrfmiddlewaretoken]").val();
+      event.preventDefault();
+      const url = event.currentTarget.href;
+
+      // AJAX request
+      $.ajax({
+        type: "GET",
+        url: url,
+        success: function(response) {
+          // Update the div with the returned template
+          $("#channel-posts").html(response);
+
+        },
+        error: function(error) {
+          console.log("Error:", error);
+        }
+      });
+    });
+  });
+
+  </script>
+  
 
 {% endblock %}
