@@ -44,3 +44,26 @@ class ChannelPosts(models.Model):
         null=True,
         related_name='posts_created'
     )
+
+class PostComments(models.Model):
+    """
+    This class is for comments on each indivual post
+
+    Parameters:
+        super class: class the this class inherits from
+    """
+    created_by = models.ForeignKey(get_user_model(),
+                                   on_delete=models.SET_NULL,
+                                   null=True, related_name='%(class)s_created')
+    created_date = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=254,default='')
+    # Supports rich text, including images
+    # ForeignKey to associate posts with channel
+    post = models.TextField()
+
+    comment_post = models.ForeignKey(
+        ChannelPosts,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='comments_created'
+    )
