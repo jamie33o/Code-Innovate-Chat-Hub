@@ -1,4 +1,7 @@
+let channel_id = null;
+
 /////////////////code to add user to channel with ajax////////////////////
+// this is a button overlay that shows when user is not added to a the channel
 const addChannelButton = document.getElementById('add-channel-button');
 const overlay = document.getElementById('overlay');
 
@@ -7,83 +10,94 @@ if (addChannelButton && overlay) {
         overlay.style.display = 'block';
     });
   }
-  
-  $("#add_user_to_channel").click(function(event) {
-      event.preventDefault(); // Prevent the default navigation behavior
 
-      $.get($(this).attr("href"), function(data) {
-          // Display the response in the response-container element
-          $("#add_user_to_channel").text(data);
-          console.log(data)
-      })
-      .fail(function(jqXHR, textStatus, errorThrown) {
-          console.error('There was a problem with the AJAX request:', errorThrown);
-      });
-  });
+$("#add_user_to_channel").click(function(event) {
+    event.preventDefault(); // Prevent the default navigation behavior
 
-///////////////////// Functions to hide and show channels, posts and summernote///////////////////
-document.addEventListener('DOMContentLoaded', function () {
-    const channnelBtns = $('.back-btn');
-    const channelLinks = $('#channel-links-container');
-    const channelPosts = $('#channnnel-posts');
-    const summernote = $('.channels-summernote');
-    const tabsNav = $('#nav-bar')
-
-    if(channel_id > 0 && window.innerWidth < 575){
-        channelPosts.toggleClass('hide');
-        channelLinks.toggleClass('hide');
-        summernote.toggleClass('d-none')
-    }
-    channnelBtns.click(function () {
-        channelPosts.toggleClass('hide');
-        channelLinks.toggleClass('hide');
-        summernote.toggleClass('d-none');
-        tabsNav.toggleClass('d-none');
-
+    $.get($(this).attr("href"), function(data) {
+        // Display the response in the response-container element
+        $("#add_user_to_channel").text(data);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        console.error('There was a problem with the AJAX request:', errorThrown);
     });
 });
 
+///////////////////// Functions to hide and show channels, posts and comments///////////////////
+
+
 ///////////////////////websocket for channel posts///////////////////////////////
 
-if(socket) {
+function websocketInit(channel_id, url) {
+    const socketUrl = `wss://${window.location.host}/ws/home/${channel_id}/`
+
+    let socket = new WebSocket(socketUrl);
+
     socket.addEventListener('message', function(event) {
+        // when a new message is broadcast this websocket will receive it 
+        // and create and add the post to the list
         const data = JSON.parse(event.data);
         const currentTime = getCurrentTime();
-    
+
         if (data.post_content) {
         
-            // Create a new <li> element with the received post content
-            const newPostItem = $('<li class="post-item mx-auto">').html(`
-                <div class="post-header d-flex flex-dir-row">
-                    <h5>${data.post_creator}</h5>
-                    <p class="ml-3">${currentTime}</p>
-                </div>
-                <div class="post-content">
-                    <p>${data.post_content}</p>
-                </div>
+            const newPostItem = $('<li class="post-item mx-auto">');
+            const postHeader = $('<div class="post-header d-flex flex-dir-row">').html(`
+                <h5>${data.post_creator}</h5>
+                <p class="ml-3">${currentTime}</p>
             `);
-    
-            // Append the new <li> element to the existing <ul> element
+            const postContent = $('<div class="post-content">').html(`<p>${data.post_content}</p>`);
+            
+            newPostItem.append(postHeader, postContent);
             $('#posts-ul').append(newPostItem);
+            
         
         }
     });
-    
-    function getCurrentTime() {
-        const now = new Date();
-    
-        // Get hours, minutes, and seconds
-        let hours = now.getHours();
-        let minutes = now.getMinutes();
-    
-        // Add leading zero if needed
-        hours = (hours < 10) ? `0${hours}` : hours;
-        minutes = (minutes < 10) ? `0${minutes}` : minutes;
-    
-        // Construct the time string in 24-hour format
-        const currentTime = `${hours}:${minutes}`;
-    
-        return currentTime;
-    }
+
+    socket.addEventListener('error', function(event) {
+        console.error('WebSocket Error:', event);
+    });
+
+    socket.addEventListener('close', function(event) {
+        console.log('WebSocket Closed:', event);
+    });
+
 }
 
+function getCurrentTime() {
+    const now = new Date();
+
+    // Get hours, minutes, and seconds
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+
+    // Add leading zero if needed
+    hours = (hours < 10) ? `0${hours}` : hours;
+    minutes = (minutes < 10) ? `0${minutes}` : minutes;
+
+    // Construct the time string in 24-hour format
+    const currentTime = `${hours}:${minutes}`;
+
+    return currentTime;
+}
+//////////////////// function to load posts ///////////////////////
+
+
+  function getRequestToDjamgo(event, divToAddContent){
+    const url = event.currentTarget.href;
+
+     // AJAX request
+     $.ajax({
+        type: "GET",
+        url: url,
+        success: function(response) {
+          // Update the div with the returned template
+          $(divToAddContent).html(response);
+  
+        },
+        error: function(error) {
+          console.log("Error:", error);
+        }
+      });
+  }
