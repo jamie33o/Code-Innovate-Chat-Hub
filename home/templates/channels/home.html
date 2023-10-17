@@ -38,11 +38,12 @@
 
     <script>     
       // Use the ready function to execute code when the DOM is fully loaded
-        
+      let url = null
         // Click event for the button
         $(".channel-link").click(function(event) {
             event.preventDefault();
-            getRequestToDjamgo(event, '#channel-posts')
+            url = event.currentTarget.href
+            getRequestToDjamgo('#channel-posts', url)
             if(window.innerWidth < 575){
                 $('#channel-posts').toggleClass('d-flex');
                 $('#channel-links-container').toggleClass('hide');
@@ -56,8 +57,8 @@
 
         {% if last_viewed_channel_id %}
             if(window.innerWidth > 575){
-                let url = `{% url 'channel_posts' last_viewed_channel_id %}`
-                getRequestToDjamgo(event, '#channel-posts',url)
+                url = `{% url 'channel_posts' last_viewed_channel_id %}`
+                getRequestToDjamgo('#channel-posts', url)
                 console.log(url)
             }
         {% endif %}

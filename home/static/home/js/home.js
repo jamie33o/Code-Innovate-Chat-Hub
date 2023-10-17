@@ -124,14 +124,7 @@ function getCurrentTime() {
 //////////////////// function to load posts ///////////////////////
 
 
-function getRequestToDjamgo(event, divToAddContent, lastViewedUrl){
-    let url = null;
-    if(lastViewedUrl){
-        url = lastViewedUrl
-    }else{
-        url = event.currentTarget.href;
-    }
-
+function getRequestToDjamgo(divToAddContent, url){
     // AJAX request
     $.ajax({
         type: "GET",
