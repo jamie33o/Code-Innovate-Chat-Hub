@@ -1,16 +1,39 @@
-{% block content %}
 
+<div class="comments-header border-bottom custom-box d-flex flex-dir-row">
+    <button class="btn comments-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
+    <div class="ml-3 my-0">
+        <h4>Comments</h4>
+        <p>Comment in {{ post.post_channel.name }}</p>
+    </div>
+    
+</div>
  <!-- list for channels posts -->
  <div class="scrollable-div"> 
  <div class="scrollable-div-inner">
     <ul id="comments-ul" class="list-unstyled mx-auto">
+        <li class="post-item mx-auto">
+            <div class="post-header d-flex flex-dir-row">
+                <h5>{{ post.created_by }}</h3>
+                <p class="ml-3">{{ post.created_date|date:"H:i" }}</p>
+            </div>
+            <div class="post-content">
+                <p>{{ post.post|safe }}</p>
+            </div>
+        </li>
+        
+        {% if comments|length > 0 %}
+            <li class="border-bottom border-top py-3">
+                <p class="ml-3">{{ comments|length }} {% if comments|length > 1 %}replies {% else %} reply {% endif %}</p>
+            </li>
+        {% endif %}
+
         {% for comment in comments %}
-        <li class="comment-item mx-auto">
-            <div class="comment-header d-flex flex-dir-row">
+        <li class="post-item mx-auto">
+            <div class="post-header d-flex flex-dir-row">
                 <h5>{{ comment.created_by }}</h3>
                 <p class="ml-3">{{ comment.created_date|date:"H:i" }}</p>
             </div>
-            <div class="comment-content">
+            <div class="post-content">
                 <p>{{ comment.post|safe }}</p>
             </div>
         </li>
@@ -18,15 +41,22 @@
     </ul>
 </div>
 </div>
-<div class="post-summernote stick-to-bottom d-sm-flex d-lg-flex">
+<div class="post-summernote d-sm-flex d-lg-flex">
     {# include summernote editor if channel.id is not None #}
         {% include 'includes/summernote.html' %}
 </div>
 
-
-{% endblock %}
-
 <script>
-summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)  
 
+    $(".comments-close-btn").click(function(event) {
+        if(window.innerWidth < 575){
+            $('#channel-posts').toggleClass('d-flex');
+        }
+        $('#post-comments').removeClass('d-flex');
+
+    });
+    //scroll to bottom of the comments
+    $('#post-comments .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'slow');
+
+    summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)  
 </script>

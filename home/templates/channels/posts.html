@@ -1,6 +1,11 @@
-{% load static %}
-
-{% block content %}
+<div class="comments-header border-bottom custom-box d-flex d-sm-none d-lg-none flex-dir-row">
+    <button class="btn posts-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
+    <div class="ml-3 my-0">
+        <h4>Posts</h4>
+        <p>Posts in {{ channel.name }}</p>
+    </div>
+    
+</div>
 <div class="scrollable-div w-100 bg-white posts">
     <!-- list for channels posts -->
     <div class="scrollable-div-inner">
@@ -32,62 +37,49 @@
     </div>
 {% endif %}
 
-{% endblock %}
 
-{% block page_footer %}
-    <div class="post-summernote d-sm-flex d-lg-flex">
-            {% include 'includes/summernote.html' %}
-    </div>
-{% endblock %}
+<div class="post-summernote d-sm-flex d-lg-flex">
+        {% include 'includes/summernote.html' %}
+</div>
 
-{% block postloadjs %}
 
 
     <!-- Your JavaScript code -->
 <script>
     $(document).ready(function() {
-      // Click event for the button
-      $(".comments-link").click(function(event) {
-        // // Get CSRF token from the cookie
-        // const csrftoken = $("[name=csrfmiddlewaretoken]").val();
-        event.preventDefault();
-        const url = event.currentTarget.href;
-
-        // AJAX request
-        $.ajax({
-          type: "GET",
-          url: url,
-          success: function(response) {
-            // Update the div with the returned template
-            $("#post-comments").html(response);  
-          },
-          error: function(error) {
-            console.log("Error:", error);
-          }
-        });
-      });
-
-      summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`)
-            // get the channel id using django template literal which will be used in the js file 
-            // if the channel.id exists
-            let channel_id = {{ channel.id }};
-    
-            //class static variable so channel user can be used in posts and comments
-            SummernoteEnhancer.sharedChannelUsers = [
-        {% for user in channel_users %}
-            '{{ user.username }}',
-        {% endfor %}
-    ];
-      
+        // Click event for the button
+        $(".posts-close-btn").click(function(event) {
+            $('#channel-posts').toggleClass('d-flex');
+            $('#channel-links-container').toggleClass('hide');
+            $('#nav-bar').removeClass('d-none')
+            $('header').removeClass('d-none')
         });
 
 
-    
+        $(".comments-link").click(function(event) {
+            event.preventDefault();
+            getRequestToDjamgo(event, '#post-comments');
+            if(window.innerWidth < 575){
+                  $('#channel-posts').toggleClass('d-flex');
+                  $('.back-btn').removeClass('d-none')
+              }
+              $('#post-comments').addClass('d-flex');
+        });
 
-     
+        summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`)
+        SummernoteEnhancer.sharedChannelUsers = [
+            {% for user in channel_users %}
+                '{{ user.username }}',
+            {% endfor %}
+        ];
+        //scroll to bottom of the posts
+        $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'slow');
+
+      // get the channel id using django template literal which will be used in the js file 
+            channel_id = {{ channel.id }}; 
+        //websocketInit(channel_id, `{% url 'channel_posts' channel.id %}`)
+    });
 
 
+        
   </script>
-  
-
-{% endblock %}
