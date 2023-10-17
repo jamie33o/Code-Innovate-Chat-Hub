@@ -124,9 +124,9 @@ function getCurrentTime() {
 //////////////////// function to load posts ///////////////////////
 
 
-  function getRequestToDjamgo(event, divToAddContent, lastViewedUrl){
+function getRequestToDjamgo(event, divToAddContent, lastViewedUrl){
     let url = null;
-    if(lastViewedUrl){
+    if(lastViewedUrl != ""){
         url = lastViewedUrl
     }else{
         url = event.currentTarget.href;
@@ -145,4 +145,4 @@ function getCurrentTime() {
             console.log("Error:", error);
         }
     });
-  }
+}
