@@ -23,7 +23,7 @@ class HomeView(View):
 
         context = {
             'channels': channels,
-            'channel_id': last_viewed_channel_id,
+            'last_viewed_channel_id': last_viewed_channel_id,
         }
 
         return render(request, self.template_name, context)
@@ -56,7 +56,7 @@ class ChannelPostsView(View):
         if form.is_valid():
             form.instance.post_channel = get_object_or_404(ChannelModel, id=channel_id)
             post = self.process_and_save(request, form)
-            self.broadcast_post_notification(request, post, channel_id)
+            self.broadcast_post(request, post, channel_id)
 
             redirect_url = reverse('channel_posts', args=[channel_id])
             return redirect(redirect_url)
@@ -75,7 +75,7 @@ class ChannelPostsView(View):
         return post
 
 
-    def broadcast_post_notification(self, request, post, channel_id):
+    def broadcast_post(self, request, post, channel_id):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             f"post_channel_{channel_id}",
@@ -88,9 +88,8 @@ class ChannelPostsView(View):
         )
 
     def update_last_viewed_channel(self, request, channel_id):
-        last_viewed_url = channel_id
         user_profile = UserProfile.objects.get(user=request.user)
-        user_profile.last_viewed_url = last_viewed_url
+        user_profile.last_viewed_channel_id = channel_id
         user_profile.save()
 
 
@@ -120,7 +119,7 @@ class PostCommentsView(View):
             form.instance.comment_post = get_object_or_404(ChannelPosts, id=post_id)
 
             comment = self.process_and_save(request, form)
-            # self.broadcast_post_notification(request, comment, post_id)
+            self.broadcast_comment(request, comment, post_id)
 
             redirect_url = reverse('post_comments', args=[post_id])
             return redirect(redirect_url)
@@ -137,6 +136,17 @@ class PostCommentsView(View):
         comment.save()
 
         return comment
+    def broadcast_comment(self, request, comment, post_id):
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"comment_post{post_id}",
+            {
+                'type': 'comment_notification',
+                'message': 'New post added!',
+                'comment_content': comment.post,
+                'comment_creator': request.user.username,
+            }
+        )
 
 
 @method_decorator(login_required, name='dispatch')
