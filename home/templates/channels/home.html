@@ -56,7 +56,9 @@
 
         {% if last_viewed_channel_id %}
             if(window.innerWidth > 575){
-                getRequestToDjamgo(event, '#channel-posts',`{% url 'channel_posts' last_viewed_channel_id %}`)
+                let url = `{% url 'channel_posts' last_viewed_channel_id %}`
+                getRequestToDjamgo(event, '#channel-posts',url)
+                console.log(url)
             }
         {% endif %}
     </script>

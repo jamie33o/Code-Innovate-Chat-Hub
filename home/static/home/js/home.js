@@ -126,7 +126,7 @@ function getCurrentTime() {
 
 function getRequestToDjamgo(event, divToAddContent, lastViewedUrl){
     let url = null;
-    if(lastViewedUrl != ""){
+    if(lastViewedUrl){
         url = lastViewedUrl
     }else{
         url = event.currentTarget.href;
