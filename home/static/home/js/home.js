@@ -28,47 +28,82 @@ $("#add_user_to_channel").click(function(event) {
 
 ///////////////////////websocket for channel posts///////////////////////////////
 
-function websocketInit(channel_id, url) {
-    const socketUrl = `wss://${window.location.host}/ws/channel_posts/${channel_id}/`;
+function websocketInit(socketUrl) {
+    let socket = null;
 
-    let socket = new WebSocket(socketUrl);
+    function connect(socketUrl) {
 
-    // Open event listener
-    socket.addEventListener('open', function (event) {
-        console.log('WebSocket connection opened:', event);
-        // Additional actions when the connection is open, if needed
-    });
+        socket = new WebSocket(socketUrl);
 
-    // Message event listener
-    socket.addEventListener('message', function (event) {
-        // when a new message is broadcast, this websocket will receive it
-        // and create and add the post to the list
-        const data = JSON.parse(event.data);
-        const currentTime = getCurrentTime();
+        // Open event listener
+        socket.addEventListener('open', function (event) {
+            console.log('WebSocket connection opened:', event);
+            // Additional actions when the connection is open, if needed
+        });
 
-        if (data.post_content) {
-            const newPostItem = $('<li class="post-item mx-auto">');
-            const postHeader = $('<div class="post-header d-flex flex-dir-row">').html(`
-                <h5>${data.post_creator}</h5>
-                <p class="ml-3">${currentTime}</p>
-            `);
-            const postContent = $('<div class="post-content">').html(`<p>${data.post_content}</p>`);
+          // Message event listener
+          socket.addEventListener('message', function (event) {
+             // when a new message is broadcast, this websocket will receive it
+            // and create and add the post to the list
+            const data = JSON.parse(event.data);
+            const currentTime = getCurrentTime(); 
 
-            newPostItem.append(postHeader, postContent);
-            $('#posts-ul').append(newPostItem);
-            console.log('working');
-        }
-    });
+            if (data.type === 'post_notification') {
+                handlePostNotification(data, currentTime);
+            } else if (data.type === 'comment_notification') {
+                handleCommentNotification(data, currentTime);
+            } else {
+                console.error('Unknown notification type:', data.type);
+            }
+            
+        });
 
-    socket.addEventListener('error', function(event) {
-        console.error('WebSocket Error:', event);
-    });
+        socket.addEventListener('error', function(event) {
+            console.error('WebSocket Error:', event);
+        });
 
-    socket.addEventListener('close', function(event) {
-        console.log('WebSocket Closed:', event);
-    });
+        socket.addEventListener('close', function(event) {
+            console.log('WebSocket Closed:', event);
+            // Attempt to reconnect after a delay
+            setTimeout(() => connect(socketUrl), 1000);
+
+        });
+
+    }
+    connect(socketUrl); //initial connect
 
 }
+
+function handlePostNotification(data, currentTime){
+    if (data.post_content) {
+        const newPostItem = $('<li class="post-item mx-auto">');
+        const postHeader = $('<div class="post-header d-flex flex-dir-row">').html(`
+            <h5>${data.post_creator}</h5>
+            <p class="ml-3">${currentTime}</p>
+        `);
+        const postContent = $('<div class="post-content">').html(`<p>${data.post_content}</p>`);
+
+        newPostItem.append(postHeader, postContent);
+        $('#posts-ul').append(newPostItem);
+        console.log('post');
+    }
+}
+
+function handleCommentNotification(data, currentTime){
+    if (data.comment_content) {
+        const newPostItem = $('<li class="post-item mx-auto">');
+        const postHeader = $('<div class="post-header d-flex flex-dir-row">').html(`
+            <h5>${data.comment_creator}</h5>
+            <p class="ml-3">${currentTime}</p>
+        `);
+        const postContent = $('<div class="post-content">').html(`<p>${data.comment_content}</p>`);
+
+        newPostItem.append(postHeader, postContent);
+        $('#comments-ul').append(newPostItem);
+        console.log('comment');
+    }
+}
+
 
 function getCurrentTime() {
     const now = new Date();
@@ -89,20 +124,25 @@ function getCurrentTime() {
 //////////////////// function to load posts ///////////////////////
 
 
-  function getRequestToDjamgo(event, divToAddContent){
-    const url = event.currentTarget.href;
+  function getRequestToDjamgo(event, divToAddContent, lastViewedUrl){
+    let url = null;
+    if(lastViewedUrl){
+        url = lastViewedUrl
+    }else{
+        url = event.currentTarget.href;
+    }
 
-     // AJAX request
-     $.ajax({
+    // AJAX request
+    $.ajax({
         type: "GET",
         url: url,
         success: function(response) {
-          // Update the div with the returned template
-          $(divToAddContent).html(response);
-  
+            // Update the div with the returned template
+            $(divToAddContent).html(response);
+
         },
         error: function(error) {
-          console.log("Error:", error);
+            console.log("Error:", error);
         }
-      });
+    });
   }
