@@ -29,29 +29,34 @@ $("#add_user_to_channel").click(function(event) {
 ///////////////////////websocket for channel posts///////////////////////////////
 
 function websocketInit(channel_id, url) {
-    const socketUrl = `wss://${window.location.host}/ws/home/${channel_id}/`
+    const socketUrl = `wss://${window.location.host}/ws/channel_posts/${channel_id}/`;
 
     let socket = new WebSocket(socketUrl);
 
-    socket.addEventListener('message', function(event) {
-        // when a new message is broadcast this websocket will receive it 
+    // Open event listener
+    socket.addEventListener('open', function (event) {
+        console.log('WebSocket connection opened:', event);
+        // Additional actions when the connection is open, if needed
+    });
+
+    // Message event listener
+    socket.addEventListener('message', function (event) {
+        // when a new message is broadcast, this websocket will receive it
         // and create and add the post to the list
         const data = JSON.parse(event.data);
         const currentTime = getCurrentTime();
 
         if (data.post_content) {
-        
             const newPostItem = $('<li class="post-item mx-auto">');
             const postHeader = $('<div class="post-header d-flex flex-dir-row">').html(`
                 <h5>${data.post_creator}</h5>
                 <p class="ml-3">${currentTime}</p>
             `);
             const postContent = $('<div class="post-content">').html(`<p>${data.post_content}</p>`);
-            
+
             newPostItem.append(postHeader, postContent);
             $('#posts-ul').append(newPostItem);
-            
-        
+            console.log('working');
         }
     });
 

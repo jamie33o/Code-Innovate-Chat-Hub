@@ -56,7 +56,7 @@ class ChannelPostsView(View):
         if form.is_valid():
             form.instance.post_channel = get_object_or_404(ChannelModel, id=channel_id)
             post = self.process_and_save(request, form)
-            # self.broadcast_post_notification(request, post, channel_id)
+            self.broadcast_post_notification(request, post, channel_id)
 
             redirect_url = reverse('channel_posts', args=[channel_id])
             return redirect(redirect_url)
@@ -70,7 +70,6 @@ class ChannelPostsView(View):
         allowed_attributes = {'*': ['style', 'src', 'href']}
         post.post = bleach.clean(post.post, tags=allowed_tags, attributes=allowed_attributes)
         post.created_by = request.user
-        # post.post_channel_id = channel_id
         post.save()
 
         return post
