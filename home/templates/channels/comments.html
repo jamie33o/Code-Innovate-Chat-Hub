@@ -57,7 +57,7 @@
     });
     //scroll to bottom of the comments
     $('#post-comments .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'slow');
-    websocketInit(`ws://${window.location.host}/ws/post_comments/{{ post.id }}/`); 
+    websocketInit(`wss://${window.location.host}/ws/post_comments/{{ post.id }}/`); 
 
     summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)  
 </script>
