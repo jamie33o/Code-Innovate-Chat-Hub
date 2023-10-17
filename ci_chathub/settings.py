@@ -70,24 +70,6 @@ MIDDLEWARE = [
 ]
 
 
-# # settings for summernote editor
-# SUMMERNOTE_CONFIG = {
-#     'iframe': False,
-#     'summernote': {
-#         'toolbar': [
-#             ['style', ['bold', 'italic', 'underline']],
-#             ['para', ['ul', 'ol', 'paragraph']],
-#             ['insert', ['link', 'picture']],
-#             ['codeview',[ 'codeview']],
-#         ],
-#         'width': '100%',
-#         'height': 'auto',
-#         'attachment_require_authentication': True,
-#         "placeholder": 'Type @ to get a list of people you can tag',
-#         'safe': True, # change this back
-#     },
-# }
-
 # for channels app 
 ASGI_APPLICATION = 'ci_chathub.asgi.application'
 # Configure Redis channel layer
