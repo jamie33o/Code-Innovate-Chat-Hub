@@ -1,16 +1,113 @@
-
-
-/* //////////////////// Summernote style overides ////////////////// */
-
 /* container for summernote */
 .summernote-form {
     position: relative;
     height: fit-content; 
     width: 100%;
     z-index: 3;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;   
+}
+
+/* ////////////// emoji modal //////////////// */
+/* emoji picker pop up */
+.popup {
+    position: absolute;
+    bottom: 50px;
+    left: 100px;
+    width: 60%;
+    height: fit-content;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.347);
+    z-index: 1000;
+}
+
+/* emoji picker body */
+.emoji-body  {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px auto;
+    justify-content: center;
+}
+
+.emoji-modal, .tag-name-modal {
+    display: none;
+}
+
+/* all emojis */
+.emoji {
+    width: 20px;
+    height: auto;
+    margin: 5px;
+}
+
+.emoji:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Box shadow properties */
+    border-radius: 50%;
+    overflow:visible;
+}
+
+/* /////////////// tag user modal ///////////////// */
+/* tag users list buttons */
+.channel-users button {
+    background: none;
+    border: none;
+    width: fit-content;
+}
+/* ////////////// emoji, @ symbol and post buttons ///////////////// */
+
+/* div for the buttons at the bottom of summernote */
+.summernote-btn-bottom {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: fit-content;
+    position: absolute;
+    padding: 2px;
+    right: 0;
+    bottom: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.393);
+}
+
+.summernote-btn-bottom button {
+    background: none;
+    border: none;
+}
+
+/* emoji icon on summernote */
+.summernote-btn-bottom button .fa-lg {
+    line-height: normal;
+}
+
+.summernote-btn-bottom button .fa-lg:hover {
+    border-radius: 50%;
+    background-color: yellow;
+}
+
+/* summernote arrow btn for posting */
+.post-arrow-btn:hover {
+    box-shadow:  0 0 1px 1px var(--ci-orange);
+    background-color: white;
+    padding: 0 2px;
+}
+
+
+/* ////////////////////////// summernote CDN overites //////////////////////// */
+/* summernote modal overlay */
+div.modal-backdrop {
+    z-index: 0 !important;
+}
+
+/* pop for adding url images/video */
+div.modal.note-modal.show {
+    position: fixed !important;
+    bottom: 0 !important;
+    z-index: 1 !important;
+    margin-top: 200px;
+}
+
+/* uplaod image  in summernote editor*/
+div.note-editable.card-block p img {
+    width: 100px !important;
+    height: 100px !important;
 }
 
 /* summernote resize bar */
@@ -59,105 +156,4 @@ div.note-editing-area > textarea {
 div.note-editing-area {
     margin-bottom: 30px;
     max-height: 70vh;
-}
-
-
-/* emoji picker body */
-.emoji-body  {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px auto;
-    justify-content: center;
-}
-
-/* emoji picker pop up */
-.popup {
-    position: absolute;
-    bottom: 50px;
-    left: 100px;
-    width: 60%;
-    height: fit-content;
-    background-color: white;
-    border-radius: 30px;
-    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.347);
-    z-index: 1000;
-}
-
-.emoji-modal, .tag-name-modal {
-    display: none;
-}
-
-/* all emojis */
-.emoji {
-    width: 20px;
-    height: auto;
-    margin: 5px;
-}
-
-.emoji:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Box shadow properties */
-    border-radius: 50%;
-    overflow:visible;
-}
-
-/* div for the buttons at the bottom of summernote */
-.summernote-btn-bottom {
-    display: flex;
-    justify-content: space-between;
-    width: 98%;
-    height: fit-content;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin: 5px 1%;
-    border-top: 1px solid rgba(0, 0, 0, 0.393);
-}
-
-.summernote-btn-bottom button {
-    background: none;
-    border: none;
-}
-
-/* emoji icon on summernote */
-.summernote-btn-bottom button .fa-lg {
-    line-height: normal;
-}
-
-.summernote-btn-bottom button .fa-lg:hover {
-    border-radius: 50%;
-    background-color: yellow;
-}
-
-/* summernote arrow btn for posting */
-.post-arrow-btn:hover {
-    box-shadow:  0 0 1px 1px var(--ci-orange);
-    background-color: white;
-    padding: 0 2px;
-}
-
-/* summernote modal overlay */
-div.modal-backdrop {
-    z-index: 0 !important;
-}
-
-/* pop for adding url images/video */
-div.modal.note-modal.show {
-    position: fixed !important;
-    bottom: 0 !important;
-    z-index: 1 !important;
-    margin-top: 200px;
-}
-
-
-/* tag users list buttons */
-.channel-users button {
-    background: none;
-    border: none;
-    width: fit-content;
-}
-
-/* uplaod image  in summernote editor*/
-div.note-editable.card-block p img {
-    width: 100px !important;
-    height: 100px !important;
 }

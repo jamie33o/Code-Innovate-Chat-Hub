@@ -1,7 +1,8 @@
+<!-- overlay the user can click to close the modal -->
 <div class="close-modal hide-modal"></div>
 
 <!-- container for summernote editor -->
-<div class="summernote-form">
+<div class="summernote-form mb-2">
     <!-- pop up for emoji's -->
     <div class="emoji-modal popup">
         <ul class="emoji-header list-inline d-flex justify-content-between mx-3 my-3 flex-wrap"></ul>
@@ -18,10 +19,9 @@
     <form class="sn-form" method="post">
         {% csrf_token %}
         <textarea name="post"></textarea>
-        <div class="form">
 
+        <div class="form"></div>
 
-        </div>
         <!-- buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
         <div class="summernote-btn-bottom">   
             <div>  

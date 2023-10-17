@@ -54,7 +54,7 @@ class SummernoteEnhancer {
     }
   }
 
-  init(divToLoadIn,djangoUrl) {
+  init(divToLoadIn, djangoUrl) {
     this.divToLoadIn = divToLoadIn
     this.djangoUrl = djangoUrl
     this.$sn = $(`${this.divToLoadIn} textarea`);  

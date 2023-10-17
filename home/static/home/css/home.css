@@ -1,33 +1,33 @@
-/* //////////////////////   Posts section styles /////////////////////// */
-
-p {
-    margin-bottom: .5rem;
-}
-
-#tagnames {
-    display: none;
-}
-
+/* //////////////////////   channels styles ///////////////////////  */
 /* style for channels list */
 .channels-list { 
     border-right: 2px solid var(--ci-orange);
     width: 300px;
     padding: 50px 50px;
-}
+    z-index: 1;
 
-.hide {
-    display: flex;
 }
 
 
-.posts {
-    height: 85%;
+/* //////////////////////   Comments,Posts section styles ///////////////////////  */
+
+.posts-container {
+    height: 100%;
+    z-index: 2;
 }
-/* summer-note editor on the channels page */
-.channels-summernote {
-    padding-left: 215px;
-    margin-left: 4%;
-    padding-right: 10px;
+
+.comments-container {
+    display: none;
+    border-left: 1px solid var(--ci-orange);
+    width: 30%;
+    height: 100%;
+    z-index: 3;
+}
+
+
+/* makes the post container full size even if there are no posts */
+#posts-ul, #comments-ul {
+    height: 100vh;
 }
 
 /* Style for the post item */
@@ -67,7 +67,9 @@ p {
     height:30px;
 }
 
-/* CSS to style the overlay */
+
+
+/* ///////////////// CSS to style the add to channel overlay  ////////////////////*/
 #overlay {
     position: fixed;
     top: 0;
@@ -87,6 +89,10 @@ p {
     left: 50%;
 }
 
+
+
+/* /////////////////////// media queries ///////////////////////// */
+
 /* CSS for small screens (up to the "lg" breakpoint) */
 @media (max-width: 575px) {
     /* style for channels list */
@@ -103,12 +109,10 @@ p {
         display: none;
     }
 
-    /* summer-note editor on the channels page */
-    .channels-summernote {
-        padding-left: 0;
-        margin-left: 0;
-        padding-left: 10px;
-        padding-right: 10px;
+    .comments-container {
+        display: none;
+        border-left: none;
+        width: 100%;
     }
 
 }
