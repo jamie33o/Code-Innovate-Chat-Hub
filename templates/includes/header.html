@@ -28,35 +28,32 @@
 
     <div class="my-auto py-0 py-lg-0 ">
         <a href="{% url 'home' %}" class="nav-link main-logo-link ">
-            <h1 class="logo-font text-black my-0 text-center">{% if channel.name %}#{{ channel.name }}{% else %}<strong>Code Institute</strong> Chat Hub{% endif %}</h1>
+            <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong> Chat Hub</h1>
         </a>
     </div>
 
     <!-- settings button -->
     <div class="my-auto mr-2 px-2">
-        <ul class="list-inline list-unstyled text-center my-0">
+        <ul class="list-inline list-unstyled text-center my-0 ">
             <li class="list-inline-item dropdown">
                 <a class="text-black nav-link" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <div class="text-center">
-                        <div><i class="fas fa-cog "></i></div>
+                        <div><i class="fas fa-cog"></i></div>
                     </div>
                 </a>
                 <!-- settings drop down -->
-                <div class="dropdown-menu border-0" aria-labelledby="user-options">
-
-                    {% if request.user.is_superuser %}
-                        <a href="#" class="dropdown-item">Product Management</a>
+                <div class="dropdown-menu dropdown-menu-right p-2 custom-box" aria-labelledby="user-options">
+                    {% if request.user.is_staff %}
+                        <a href="{% url 'admin:index' %}" class="btn-ci">Add Channel</a>
                     {% endif %}
-                    <a href="#" class="dropdown-item">Privacy Policy</a>
-
-                    <a href="{% url 'account_logout' %}" class="dropdown-item">Logout</a>
-
-                    <a href="#" class="dropdown-item">Delete Account</a>
-
+                    <a href="#" class="btn-ci">Privacy Policy</a>
+                    <a href="{% url 'account_logout' %}" class="btn-ci">Logout</a>
+                    <a href="#" class="btn-ci">Delete Account</a>
                 </div>
             </li>
-
         </ul>
     </div>
+    
+    
 
 </div>  
