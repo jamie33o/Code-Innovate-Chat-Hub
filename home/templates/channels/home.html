@@ -34,9 +34,11 @@
 
 {% block postloadjs %}
 
+
     <script src="{% static 'home/js/home.js' %}"></script>
 
     <script>     
+
       // Use the ready function to execute code when the DOM is fully loaded
       let url = null
         // Click event for the button
@@ -59,9 +61,10 @@
             if(window.innerWidth > 575){
                 url = `{% url 'channel_posts' last_viewed_channel_id %}`
                 getRequestToDjamgo('#channel-posts', url)
-                console.log(url)
             }
         {% endif %}
+        SummernoteEnhancer.emojiImgs = `{% static 'tam-emoji/img' %}`
+
     </script>
 
 {% endblock %}
