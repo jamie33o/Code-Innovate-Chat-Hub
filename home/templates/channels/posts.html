@@ -6,7 +6,15 @@
         <p>Posts in {{ channel.name }}</p>
     </div>
 </div>
-
+{% if messages %}
+    <div class="notification">
+        <ul class="notification-messages">
+            {% for message in messages %}
+                <li class="message-item {{ message.tags }} d-none">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 
 <div class="scrollable-div w-100 bg-white">
     <!-- list for channels posts -->
@@ -34,10 +42,15 @@
 {% if not request.user in channel_users %}
     <!-- Button to add channel -->
     <div id="overlay">
-        <!-- add_user_to_channel.html -->
-        <a href="{% url 'add_user_to_channel' channel_id=channel.id user_id=user.id %}" id="add-channel-button" class="btn btn-primary">
-            Add to Channel
-        </a>
+        <form method="post" 
+        action="{% url 'add_user_to_channel' channel_id=channel.id user_id=user.id %}" 
+        class="vh-100 d-flex justify-content-center align-items-center" 
+        id="add-user-form">
+            {% csrf_token %}
+            <!-- Your form fields go here -->
+            <button type="submit" class="btn btn-primary">Add to Channel</button>
+        </form>
+
     </div>
 {% endif %}
 
@@ -46,12 +59,11 @@
         {% include 'includes/summernote.html' %}
 </div>
 
-
-
     <!-- Your JavaScript code -->
 <script>
+
     $(document).ready(function() {
-        // Click event for the button
+        // Click event for the close posts button
         $(".posts-close-btn").click(function(event) {
             $('#channel-posts').toggleClass('d-flex');
             $('#channel-links-container').toggleClass('hide');
@@ -59,7 +71,17 @@
             $('header').removeClass('d-none')
         });
 
+        //add user form event listener
+        $("#add-user-form").submit(function(event) {
+            event.preventDefault();
+            //get csrf token from the form
+            let csrftoken = $(this).find('input[name="csrfmiddlewaretoken"]').val();
+            let url = $(this).attr('action');
+            // function in home.js to send post request to add user
+            addUserPostRequest(url, csrftoken);
+        });
 
+        //event listener for the comments links on each post
         $(".comments-link").click(function(event) {
             event.preventDefault();
             let url = event.target.href
@@ -71,12 +93,16 @@
               $('#post-comments').addClass('d-flex');
         });
 
+       
+        // initialize summernote enhancer class
         summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`)
+        // add channel users to the static variable in SummernoteEnhancer class
         SummernoteEnhancer.sharedChannelUsers = [
             {% for user in channel_users %}
                 '{{ user.username }}',
             {% endfor %}
         ];
+
         //scroll to bottom of the posts
         $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'slow');
 

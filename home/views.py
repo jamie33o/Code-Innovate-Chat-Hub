@@ -11,6 +11,8 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.views import View
 from django.utils.decorators import method_decorator
+from django.contrib import messages
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -41,7 +43,11 @@ class ChannelPostsView(View):
             self.update_last_viewed_channel(request, channel_id)
 
         form = ChannelPostForm()
-        
+
+        # Add messages
+        messages.success(request, f'success: {request.user.username} added to channel')
+       
+        messages.error(request, f'error: Could not add {request.user.username} to channel')
 
         context = {
             'channel': channel,
@@ -162,6 +168,6 @@ class AddUserToChannelView(View):
             # Add the user to the channel
             channel.users.add(user)
 
-            return JsonResponse({'success': f'{user.username} added to channel'})
+            return JsonResponse({'status': 'success'})
         except Exception:
-            return JsonResponse({'error': f'Could not add user to channel'})
+            return JsonResponse({'status': 'error'})

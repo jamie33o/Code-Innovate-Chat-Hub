@@ -36,6 +36,60 @@ p {
      rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
 }
 
+/* /////////////// notification //////////////// */
+.notification {   
+    width: 20%; 
+    height: fit-content;
+    position: absolute;
+    width: 100%;
+    margin: 0;
+    top: 20px;
+}
+.notification-keyframe-start {
+    animation: movingTopToBottom 3s ease 1;
+    -webkit-animation: movingTopToBottom ease 3s 1;
+}
+
+@keyframes movingTopToBottom {
+    0% {
+      top: -200px;
+    }
+    100% {
+      top: 20px;
+    }
+  }
+  .notification-keyframe-finish {
+    animation: movingBottomToTop 3s ease 1;
+    -webkit-animation: movingBottomToTop ease 3s 1;
+}
+
+@keyframes movingBottomToTop {
+    0% {
+      top: 20px;
+    }
+    100% {
+      top: -200px;
+    }
+  }
+
+  .message-item {
+    margin: 0 40%;
+    list-style-type: none;
+    padding: 50px;
+    text-align: center;
+  }
+  
+.message-item.success {
+    background-color: #d4edda;
+    color: #155724;
+    
+}
+
+.message-item.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
 .close-modal {
     display: none;
     position: fixed;

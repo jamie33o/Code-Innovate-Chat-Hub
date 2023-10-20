@@ -70,6 +70,9 @@ MIDDLEWARE = [
 ]
 
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+
 # for channels app 
 ASGI_APPLICATION = 'ci_chathub.asgi.application'
 # Configure Redis channel layer

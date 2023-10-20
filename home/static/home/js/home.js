@@ -132,10 +132,48 @@ function getRequestToDjamgo(divToAddContent, url){
         success: function(response) {
             // Update the div with the returned template
             $(divToAddContent).html(response);
-
         },
         error: function(error) {
             console.log("Error:", error);
         }
     });
+}
+
+
+function addUserPostRequest(url, csrftoken){
+    // AJAX request
+    $.ajax({
+        type: "POST",
+        url: url,
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+            $('#overlay').toggleClass('d-none')
+            displayMessage(response)
+        },
+        error: function(error) {
+            console.log('error')
+
+            displayMessage(error)
+        }
+    });
+}
+
+function displayMessage(response){
+    let notification = $('.notification')
+
+       $('.messages').toggleClass('d-none')
+       notification.addClass('notification-keyframe-start')
+       $(`.notification .${response.status}`).toggleClass('d-none')
+       setTimeout(function() {
+           notification.addClass('notification-keyframe-finish')
+           
+           notification.on('animationend webkitAnimationEnd oAnimationEnd', function() {
+           $(`.notification .${response.status}`).toggleClass('d-none')
+           $('.messages').toggleClass('d-none')
+        });
+       }, 5000);
+
+       
 }
