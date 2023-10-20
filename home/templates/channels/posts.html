@@ -1,5 +1,5 @@
 {% load static %}
-<div class="comments-header border-bottom custom-box d-flex d-sm-none d-lg-none flex-dir-row">
+<div class="posts-mobile-header border-bottom custom-box d-flex d-sm-none d-lg-none flex-dir-row">
     <button class="btn posts-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     <div class="ml-3 my-0">
         <h4>Posts</h4>
@@ -37,25 +37,24 @@
         </li>
         {% endfor %}
     </ul>
+    {% if not request.user in channel_users %}
+        <!-- Button to add channel -->
+        <div id="overlay">
+            <form method="post" 
+            action="{% url 'add_user_to_channel' channel_id=channel.id user_id=user.id %}" 
+            class="vh-100 d-flex justify-content-center align-items-center" 
+            id="add-user-form">
+                {% csrf_token %}
+                <!-- Your form fields go here -->
+                <button type="submit" class="btn btn-primary">Join Channel</button>
+            </form>
+
+        </div>
+    {% endif %}
 </div>
 
-{% if not request.user in channel_users %}
-    <!-- Button to add channel -->
-    <div id="overlay">
-        <form method="post" 
-        action="{% url 'add_user_to_channel' channel_id=channel.id user_id=user.id %}" 
-        class="vh-100 d-flex justify-content-center align-items-center" 
-        id="add-user-form">
-            {% csrf_token %}
-            <!-- Your form fields go here -->
-            <button type="submit" class="btn btn-primary">Add to Channel</button>
-        </form>
 
-    </div>
-{% endif %}
-
-
-<div class="post-summernote d-sm-flex d-lg-flex">
+<div class="post-summernote d-sm-flex d-lg-flex px-3">
         {% include 'includes/summernote.html' %}
 </div>
 

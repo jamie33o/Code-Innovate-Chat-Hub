@@ -23,6 +23,9 @@
     z-index: 3;
 }
 
+.posts-mobile-header {
+    z-index:2000;
+}
 
 /* makes the post container full size even if there are no posts */
 #posts-ul, #comments-ul {
@@ -80,7 +83,7 @@
 
 /* ///////////////// CSS to style the add to channel overlay  ////////////////////*/
 #overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -88,7 +91,6 @@
     background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
     z-index: 10; /* Ensure it's above other elements */
     backdrop-filter: blur(5px); /* Apply the blur effect */
-    
 }
 
 /* CSS to style the "Add Channel" button on the overlay */
