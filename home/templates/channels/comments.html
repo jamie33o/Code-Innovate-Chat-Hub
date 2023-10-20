@@ -9,7 +9,6 @@
 </div>
  <!-- list for channels posts -->
  <div class="scrollable-div"> 
- <div class="scrollable-div-inner">
     <ul id="comments-ul" class="list-unstyled mx-auto">
         <li class="post-item mx-auto">
             <div class="post-header d-flex flex-dir-row">
@@ -40,7 +39,6 @@
         {% endfor %}
     </ul>
 </div>
-</div>
 <div class="post-summernote d-sm-flex d-lg-flex">
     {# include summernote editor if channel.id is not None #}
         {% include 'includes/summernote.html' %}
@@ -55,9 +53,7 @@
         $('#post-comments').removeClass('d-flex');
 
     });
-    //scroll to bottom of the comments
-    $('#post-comments .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'slow');
-    websocketInit(`wss://${window.location.host}/ws/post_comments/{{ post.id }}/`); 
+    //websocketInit(`wss://${window.location.host}/ws/post_comments/{{ post.id }}/`); 
 
     summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)  
 </script>
