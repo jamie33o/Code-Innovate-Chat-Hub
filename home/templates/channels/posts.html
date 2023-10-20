@@ -1,30 +1,34 @@
+{% load static %}
 <div class="comments-header border-bottom custom-box d-flex d-sm-none d-lg-none flex-dir-row">
     <button class="btn posts-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     <div class="ml-3 my-0">
         <h4>Posts</h4>
         <p>Posts in {{ channel.name }}</p>
     </div>
-    
 </div>
-<div class="scrollable-div w-100 bg-white posts">
+
+
+<div class="scrollable-div w-100 bg-white">
     <!-- list for channels posts -->
-    <div class="scrollable-div-inner">
-        <ul id="posts-ul" class="list-unstyled mx-auto">
-            {% for single_post in posts %}
-            <li class="post-item mx-auto">
-                <div class="post-header d-flex flex-dir-row">
-                    <h5>{{ single_post.created_by }}</h3>
-                    <p class="ml-3">{{ single_post.created_date|date:"H:i" }}</p>
-                </div>
-                <div class="post-content">
-                    <p>{{ single_post.post|safe }}</p>
-                    
-                </div>
-                <a class="comments-link" href="{% url 'post_comments' single_post.id %}">Comments</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
+    <ul id="posts-ul" class="list-unstyled mx-auto">
+        {% for single_post in posts %}
+        <li class="post-item mx-auto">
+            <div class="post-header d-flex flex-dir-row">
+            {% if single_post.created_by.user_profile and single_post.created_by.user_profile.profile_picture %}
+                <img src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+            {% else %}
+                <img src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+            {% endif %}                    
+                <h5>{{ single_post.created_by }}</h3>
+                <p class="ml-3">{{ single_post.created_date|date:"H:i" }}</p>
+            </div>
+            <div class="post-content">
+                <p>{{ single_post.post|safe }}</p>
+            </div>
+            <a class="comments-link" href="{% url 'post_comments' single_post.id %}">Comments</a>
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 
 {% if not request.user in channel_users %}
@@ -78,7 +82,7 @@
 
         // get the channel id using django template literal which will be used in the js file and for the websocket
         channel_id = {{ channel.id }}; 
-        websocketInit(`wss://${window.location.host}/ws/channel_posts/${channel_id}/`); 
+        //websocketInit(`wss://${window.location.host}/ws/channel_posts/${channel_id}/`); 
 
     });
 
