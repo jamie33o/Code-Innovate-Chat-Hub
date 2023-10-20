@@ -41,6 +41,7 @@ class ChannelPostsView(View):
             self.update_last_viewed_channel(request, channel_id)
 
         form = ChannelPostForm()
+        
 
         context = {
             'channel': channel,
@@ -66,9 +67,9 @@ class ChannelPostsView(View):
 
     def process_and_save(self, request, form):
         post = form.save(commit=False)
-        allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
-        allowed_attributes = {'*': ['style', 'src', 'href']}
-        post.post = bleach.clean(post.post, tags=allowed_tags, attributes=allowed_attributes)
+        # allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
+        # allowed_attributes = {'*': ['style', 'src', 'href']}
+        # post.post = bleach.clean(post.post, tags=allowed_tags, attributes=allowed_attributes)
         post.created_by = request.user
         post.save()
 
@@ -115,7 +116,6 @@ class PostCommentsView(View):
     def post(self, request, post_id, *args, **kwargs):
         form = PostCommentsForm(request.POST)
         if form.is_valid():
-
             form.instance.comment_post = get_object_or_404(ChannelPosts, id=post_id)
 
             comment = self.process_and_save(request, form)
@@ -129,9 +129,11 @@ class PostCommentsView(View):
 
     def process_and_save(self, request, form):
         comment = form.save(commit=False)
-        allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
-        allowed_attributes = {'*': ['style', 'src', 'href']}
-        comment.post = bleach.clean(comment.post, tags=allowed_tags, attributes=allowed_attributes)
+        # allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
+        # allowed_attributes = {'*': ['style', 'src', 'href','class']}
+        # allowed_styles = ['display', 'width', 'height', 'background', 'background-size']
+
+        # comment.post = bleach.clean(comment.post, tags=allowed_tags, attributes=allowed_attributes, styles=allowed_styles)
         comment.created_by = request.user
         comment.save()
 

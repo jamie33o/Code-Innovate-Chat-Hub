@@ -5,18 +5,17 @@
     width: 300px;
     padding: 50px 50px;
     z-index: 1;
-
 }
 
-
 /* //////////////////////   Comments,Posts section styles ///////////////////////  */
-
 .posts-container {
+    position: relative;
     height: 100%;
     z-index: 2;
 }
 
 .comments-container {
+    position: relative;
     display: none;
     border-left: 1px solid var(--ci-orange);
     width: 30%;
@@ -27,7 +26,9 @@
 
 /* makes the post container full size even if there are no posts */
 #posts-ul, #comments-ul {
-    height: 100vh;
+    height: fit-content;
+    min-height: 100vh;
+    padding: 20px 0;
 }
 
 /* Style for the post item */
@@ -49,6 +50,14 @@
 .post-header {
     align-items: baseline;
 }
+.post-header img {
+    width: 80px; 
+    height: 80px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+}
+
+
 
 .post-header p {
     font-size: smaller;
