@@ -23,60 +23,40 @@
     z-index: 3;
 }
 
-.posts-mobile-header {
-    z-index:2000;
+.h7 {
+    font-size: 0.8rem;
 }
 
-/* makes the post container full size even if there are no posts */
-#posts-ul, #comments-ul {
-    height: fit-content;
-    min-height: 100vh;
-    padding: 20px 0;
+.gedf-wrapper {
+    margin-top: 0.97rem;
 }
 
-/* Style for the post item */
-.post-item {
-    border: 1px solid #ddd;
-    padding: 5%;
-    margin: 5px 0;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    height: fit-content;  
-    width: 90%; 
-    max-width: 90%;
-    overflow-wrap: break-word;
+.gedf-card {
+    margin: 20px 30px;
 }
 
-
-/* Style for the post header (user name and date) */
-.post-header {
-    align-items: baseline;
-}
-.post-header img {
-    width: 80px; 
-    height: 80px; 
-    border-radius: 50%; 
-    object-fit: cover; 
-}
-
-
-
-.post-header p {
-    font-size: smaller;
-}
-
-/* Style for the post content */
-.post-content {
-    font-size: 1em;
+.post-images {
     width: 100%;
-    max-width: 700px;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+
 }
 
-/* post images */
-.post-content p img {
-    width: 30px;
-    height:30px;
+.post-images img {
+    max-width: 80%;
+    display: block;
+    margin: 30px 0 5px;
+    border-radius: 10px;
+
+}
+
+
+
+/**Reset Bootstrap*/
+.dropdown-toggle::after {
+    content: none;
+    display: none;
 }
 
 
@@ -126,4 +106,14 @@
         width: 100%;
     }
 
+}
+
+@media (min-width: 992px) {
+    .gedf-main {
+        padding-left: 4rem;
+        padding-right: 4rem;
+    }
+    .gedf-card {
+        margin-bottom: 2.77rem;
+    }
 }
