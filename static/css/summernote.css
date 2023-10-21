@@ -6,6 +6,14 @@
     z-index: 3;
 }
 
+.summernote-form img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin: 5px;
+}
+
 /* ////////////// emoji modal //////////////// */
 /* emoji picker pop up */
 .popup {
@@ -88,7 +96,19 @@
     background-color: white;
     padding: 0 2px;
 }
+/* ///////////////// summernote non editable image div //////////////// */
+.uploaded-image-container img {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    border: 2px solid var(--ci-orange);
+    object-fit: cover;
+}
 
+.faded {
+    opacity: .4;
+    border-color: rgb(120, 121, 122) !important;
+}
 
 /* ////////////////////////// summernote CDN overites //////////////////////// */
 /* summernote modal overlay */
@@ -119,7 +139,7 @@ div.note-editable.card-block p img {
 /* summernote container */
 div.note-editor.note-frame.panel.panel-default {
     background-color: white !important;
-    border-radius: 30px !important;
+    border-radius: 10px !important;
     overflow: hidden;    
 }
 /* summernote toolbar */
