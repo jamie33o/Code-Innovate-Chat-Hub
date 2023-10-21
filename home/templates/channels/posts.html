@@ -16,27 +16,70 @@
     </div>
 {% endif %}
 
-<div class="scrollable-div w-100 bg-white">
-    <!-- list for channels posts -->
-    <ul id="posts-ul" class="list-unstyled mx-auto">
+
+
+    <div class="scrollable-div w-100 bg-white">
         {% for single_post in posts %}
-        <li class="post-item mx-auto">
-            <div class="post-header d-flex flex-dir-row">
-            {% if single_post.created_by.user_profile and single_post.created_by.user_profile.profile_picture %}
-                <img src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
-            {% else %}
-                <img src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
-            {% endif %}                    
-                <h5>{{ single_post.created_by }}</h3>
-                <p class="ml-3">{{ single_post.created_date|date:"H:i" }}</p>
+        <!--- \\\\\\\Post-->
+        <div class="card gedf-card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="mr-2">
+                            {% if single_post.created_by.user_profile and single_post.created_by.user_profile.profile_picture %}
+                            <img  class="rounded-circle" width="45"  src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                        {% else %}
+                            <img  class="rounded-circle" width="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                        {% endif %}                    
+                        </div>
+                        <div class="ml-2 d-flex flex-dir-row">
+                            <div class="h5 m-0">{{ single_post.created_by }}</div>
+                            <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i" }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="dropdown">
+                            <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
+                                <div class="h6 dropdown-header">Configuration</div>
+                                <a class="dropdown-item" href="#">Save</a>
+                                <a class="dropdown-item" href="#">Hide</a>
+                                <a class="dropdown-item" href="#">Report</a>
+                            </div>
+                        </div>
+                    </div>
+                  
+                </div>
+
             </div>
-            <div class="post-content">
-                <p>{{ single_post.post|safe }}</p>
+            <div class="card-body">
+                <p class="card-text">
+                    {{ single_post.post|safe }}
+                </p>
+                {% if single_post.images %}
+                    <div class="post-images">
+                        {% for image_url in single_post.get_image_urls %}
+                        {% if image_url %}
+                            <img src= "{{ image_url }}">
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
-            <a class="comments-link" href="{% url 'post_comments' single_post.id %}">Comments</a>
-        </li>
+            <div class="card-footer">
+                <a href="#" class="card-link"><i class="fa fa-gittip"></i> Like</a>
+                <a href="{% url 'post_comments' single_post.id %}" class="card-link"><i class="fa fa-comment"></i> Comment</a>
+                <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+        <!-- Post /////-->
+    </div>
+
+
+
     {% if not request.user in channel_users %}
         <!-- Button to add channel -->
         <div id="overlay">
@@ -51,7 +94,6 @@
 
         </div>
     {% endif %}
-</div>
 
 
 <div class="post-summernote d-sm-flex d-lg-flex px-3">
@@ -86,15 +128,15 @@
             let url = event.target.href
             getRequestToDjamgo('#post-comments', url);
             if(window.innerWidth < 575){
-                  $('#channel-posts').toggleClass('d-flex');
-                  $('.back-btn').removeClass('d-none')
-              }
-              $('#post-comments').addClass('d-flex');
+                $('#channel-posts').toggleClass('d-flex');
+                $('.back-btn').removeClass('d-none')
+            }
+            $('#post-comments').addClass('d-flex');
         });
 
        
         // initialize summernote enhancer class
-        summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`)
+        summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`, )
         // add channel users to the static variable in SummernoteEnhancer class
         SummernoteEnhancer.sharedChannelUsers = [
             {% for user in channel_users %}
@@ -108,7 +150,7 @@
         // get the channel id using django template literal which will be used in the js file and for the websocket
         channel_id = {{ channel.id }}; 
         //websocketInit(`wss://${window.location.host}/ws/channel_posts/${channel_id}/`); 
-
+        
     });
 
 
