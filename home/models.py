@@ -20,6 +20,9 @@ class ChannelModel(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Image(models.Model):
+    image = models.ImageField(upload_to='images/')
 
 
 class ChannelPosts(models.Model):
@@ -34,16 +37,19 @@ class ChannelPosts(models.Model):
                                    null=True, related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
-    # Supports rich text, including images
-    # ForeignKey to associate posts with channel
-    post = models.TextField()
+    images = models.TextField(blank=True)  # Change here
 
+    post = models.TextField()
     post_channel = models.ForeignKey(
         ChannelModel,
         on_delete=models.SET_NULL,
         null=True,
         related_name='posts_created'
     )
+
+
+    def get_image_urls(self):
+        return [url.strip() for url in self.images.split(',') if url.strip()]
 
 class PostComments(models.Model):
     """
@@ -57,8 +63,8 @@ class PostComments(models.Model):
                                    null=True, related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
-    # Supports rich text, including images
-    # ForeignKey to associate posts with channel
+    image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True)
+
     post = models.TextField()
 
     comment_post = models.ForeignKey(
@@ -67,3 +73,5 @@ class PostComments(models.Model):
         null=True,
         related_name='comments_created'
     )
+
+

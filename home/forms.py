@@ -10,7 +10,7 @@ class ChannelPostForm(forms.ModelForm):
     """
     class Meta:
         model = ChannelPosts
-        fields = ['post']
+        fields = ['post', 'images']  # Include the 'images' field in the form
 
     
 

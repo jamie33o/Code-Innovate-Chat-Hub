@@ -5,13 +5,15 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from user_profile.models import UserProfile
-from .models import ChannelModel, ChannelPosts, PostComments
+from .models import ChannelModel, ChannelPosts, PostComments, Image
 from .forms import ChannelPostForm, PostCommentsForm
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 
@@ -45,15 +47,17 @@ class ChannelPostsView(View):
         form = ChannelPostForm()
 
         # Add messages
-        messages.success(request, f'success: {request.user.username} added to channel')
+        messages.success(request, f'Success: {request.user.username} added to channel')
        
-        messages.error(request, f'error: Could not add {request.user.username} to channel')
+        messages.error(request, f'Error: Could not add {request.user.username} to channel')
+        messages.error(request, f'Error: Please enter text', extra_tags='summernote-error')
 
         context = {
             'channel': channel,
             'posts': posts,
             'form': form,
             'channel_users': channel.users.all(),
+
         }
 
         return render(request, self.template_name, context)
@@ -62,9 +66,9 @@ class ChannelPostsView(View):
         form = ChannelPostForm(request.POST)
         if form.is_valid():
             form.instance.post_channel = get_object_or_404(ChannelModel, id=channel_id)
-            post = self.process_and_save(request, form)
-            self.broadcast_post(request, post, channel_id)
-
+            post = self.process_and_save(request, form)                
+            #self.broadcast_post(request, post, channel_id)
+            # Process and save images
             redirect_url = reverse('channel_posts', args=[channel_id])
             return redirect(redirect_url)
         else:
@@ -73,6 +77,9 @@ class ChannelPostsView(View):
 
     def process_and_save(self, request, form):
         post = form.save(commit=False)
+        url_list = request.POST.getlist('urls[]')
+        post.images = ",".join(url_list)
+
         # allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
         # allowed_attributes = {'*': ['style', 'src', 'href']}
         # post.post = bleach.clean(post.post, tags=allowed_tags, attributes=allowed_attributes)
@@ -171,3 +178,19 @@ class AddUserToChannelView(View):
             return JsonResponse({'status': 'success'})
         except Exception:
             return JsonResponse({'status': 'error'})
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ImageUploadView(View):
+    def post(self, request, *args, **kwargs):
+        if request.FILES.get('file'):
+            # Assuming 'file' is the name of your file input field
+            image_file = request.FILES['file']
+
+            # Create a new Image instance
+            new_image = Image.objects.create(image=image_file)
+
+            # Return the URL or other information
+            return JsonResponse({'url': new_image.image.url})
+
+        return JsonResponse({'error': 'Invalid request'}, status=400)
