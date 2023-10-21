@@ -149,31 +149,50 @@ function addUserPostRequest(url, csrftoken){
             'X-CSRFToken': csrftoken
         },
         success: function(response) {
-            $('#overlay').toggleClass('d-none')
+            $('#overlay').addClass('d-none')
             displayMessage(response)
         },
         error: function(error) {
-            console.log('error')
-
             displayMessage(error)
         }
     });
 }
 
-function displayMessage(response){
+let isAnimationInProgress = false;
+
+function displayMessage(response){     
+    // Check if the animation is already in progress
+    if (isAnimationInProgress) {
+        return;
+    } 
+
+    isAnimationInProgress = true;
     let notification = $('.notification')
+    $('.messages').removeClass('d-none')
+    $(`.notification .${response.status}`).removeClass('d-none')
+    notification.addClass('notification-keyframe-start')
+    let animationEndHandled = false;
 
-       $('.messages').toggleClass('d-none')
-       notification.addClass('notification-keyframe-start')
-       $(`.notification .${response.status}`).toggleClass('d-none')
-       setTimeout(function() {
-           notification.addClass('notification-keyframe-finish')
-           
-           notification.on('animationend webkitAnimationEnd oAnimationEnd', function() {
-           $(`.notification .${response.status}`).toggleClass('d-none')
-           $('.messages').toggleClass('d-none')
+    
+    setTimeout(function() {        
+        notification.removeClass('notification-keyframe-start')
+        notification.addClass('notification-keyframe-finish')
+
+        notification.on('animationend webkitAnimationEnd oAnimationEnd', function() {
+            if (!animationEndHandled) {
+
+            $('.messages').addClass('d-none')
+            notification.removeClass('notification-keyframe-finish')
+
+            notification.off('animationend webkitAnimationEnd oAnimationEnd', this);
+            $(`.notification .${response.status}`).addClass('d-none')         
+
+            // Reset animation state       
+            isAnimationInProgress = false;
+            animationEndHandled = true;
+
+
+            }
         });
-       }, 5000);
-
-       
+    }, 5000);
 }
