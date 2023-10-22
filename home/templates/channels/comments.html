@@ -1,4 +1,5 @@
-
+{% load static %}
+<div>
 <div class="comments-header border-bottom custom-box d-flex flex-dir-row">
     <button class="btn comments-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     <div class="ml-3 my-0">
@@ -6,44 +7,96 @@
         <p>Comment in {{ post.post_channel.name }}</p>
     </div>
     
-</div>
- <!-- list for channels posts -->
- <div class="scrollable-div"> 
-    <ul id="comments-ul" class="list-unstyled mx-auto">
-        <li class="post-item mx-auto">
-            <div class="post-header d-flex flex-dir-row">
-                <h5>{{ post.created_by }}</h3>
-                <p class="ml-3">{{ post.created_date|date:"H:i" }}</p>
-            </div>
-            <div class="post-content">
-                <p>{{ post.post|safe }}</p>
-            </div>
-        </li>
-        
-        {% if comments|length > 0 %}
-            <li class="border-bottom border-top py-3">
-                <p class="ml-3">{{ comments|length }} {% if comments|length > 1 %}replies {% else %} reply {% endif %}</p>
-            </li>
-        {% endif %}
+</div>    
 
-        {% for comment in comments %}
-        <li class="post-item mx-auto">
-            <div class="post-header d-flex flex-dir-row">
-                <h5>{{ comment.created_by }}</h3>
-                <p class="ml-3">{{ comment.created_date|date:"H:i" }}</p>
+ <!-- list for channels posts -->
+ <div class="scrollable-div" style="background-color: #e7effd;"> 
+    <div class="card gedf-card m-1">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="mr-2">
+                        {% if post.created_by.user_profile and post.created_by.user_profile.profile_picture %}
+                            <img  class="rounded-circle" width="45"  src="{{ post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                        {% else %}
+                            <img  class="rounded-circle" width="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                        {% endif %}                    
+                    </div>
+                    <div class="ml-2">
+                        <div class="h5 ml-2">{{ post.created_by }}</div>
+                        <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ post.created_date|date:"H:i" }}</div>
+                    </div>
+                </div>
             </div>
-            <div class="post-content">
-                <p>{{ comment.post|safe }}</p>
+        </div>
+        <div class="card-body">
+            <p class="card-text">
+                {{ post.post|safe }}
+            </p>
+            {% if post.images %}
+                <div class="post-images">
+                    {% for image_url in post.get_image_urls %}
+                    {% if image_url %}
+                        <img src= "{{ image_url }}">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <a href="#" class="card-link"><i class="fa fa-gittip"></i> Like</a>
+            <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+        </div>
+    </div>
+
+    {% if comments|length > 0 %}
+        <div class="border-bottom border-top py-3">
+            <p class="ml-3">{{ comments|length }} {% if comments|length > 1 %}replies {% else %} reply {% endif %}</p>
+        </div>
+    {% endif %}
+
+
+    {% for comment in comments %}
+        <div class="container my-2 py-2 text-dark m-0">
+            <div class="row d-flex ">
+                <div class="col-12">                       
+                    <div class="card w-100">
+                        <div class="card-body p-2">
+                            <div class="d-flex flex-column my-2">
+                                <div class="d-flex flex-dir-row">
+                                    {% if comment.created_by.user_profile and post.created_by.user_profile.profile_picture %}
+                                        <img  class="rounded-circle shadow-1-strong mr-2" width="45" height="45"  src="{{ comment.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                                    {% else %}
+                                        <img  class="rounded-circle shadow-1-strong mr-2" width="45" height="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                                    {% endif %}  
+                                    <div class="d-flex flex-column">
+                                        <h5 class="mb-1">{{ comment.created_by }}</h5>
+                                        <p class="small">{{ comment.created_date|date:"H:i" }}</p>
+                                    </div>
+                                </div>
+                                <div class="w-100 px-2 my-3">
+                                    <p>
+                                        {{ comment.post|safe }}
+                                    </p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center px-2">
+                                        <a href="#!" class="link-muted me-2"><i class="fas fa-thumbs-up me-1"></i>132</a>
+                                        <a href="#!" class="link-muted"><i class="fas fa-thumbs-down me-1"></i>15</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </li>
-        {% endfor %}
-    </ul>
+        </div>
+    {% endfor %}   
 </div>
-<div class="post-summernote d-sm-flex d-lg-flex p-1">
+</div>
+
+<div class="post-summernote d-sm-flex d-lg-flex px-1">
     {# include summernote editor if channel.id is not None #}
         {% include 'includes/summernote.html' %}
 </div>
-
 <script>
 
     $(".comments-close-btn").click(function(event) {
