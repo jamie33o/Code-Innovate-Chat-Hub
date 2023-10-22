@@ -132,7 +132,7 @@ class PostCommentsView(View):
             form.instance.comment_post = get_object_or_404(ChannelPosts, id=post_id)
 
             comment = self.process_and_save(request, form)
-            self.broadcast_comment(request, comment, post_id)
+            #self.broadcast_comment(request, comment, post_id)
 
             redirect_url = reverse('post_comments', args=[post_id])
             return redirect(redirect_url)

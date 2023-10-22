@@ -12,4 +12,4 @@ env.py
 db.sqlite3
 .vscode
 staticfiles/
-
+media
