@@ -1,0 +1,44 @@
+<!-- logo on large screen -->  
+<div id="topnav" class="d-flex d-sm-flex d-lg-none flex-column">
+    <div class="d-flex justify-content-center w-100">
+        <a href="{% url 'home' %}" class="nav-link logo">
+            <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong> Chat Hub</h1>
+        </a>
+    </div>
+
+    <!-- search icon  -->
+    {% if user.is_authenticated %}
+        <div class="d-flex flex-dir-row w-100">
+            <div class="w-100  d-flex justify-content-center">
+                <div class="searchbar my-2">
+                    <input class="search_input" type="text" name="" placeholder="Search...">
+                    <a href="#" class="search_icon"><i class="fas fa-search"></i></a>
+                </div>
+            </div>
+    
+          <!-- settings button -->
+            <div class="d-flex align-items-center">
+                <ul class="list-unstyled my-auto mr-2">
+                    <li class="list-inline-item dropdown">
+                        <a class="text-black" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class="settings-cog">
+                                <div><i class="fas fa-cog fa-xl"></i></div>
+                            </div>
+                        </a>
+                        <!-- settings drop down -->
+                        <div class="dropdown-menu dropdown-menu-right p-2 custom-box" aria-labelledby="user-options">
+                            {% if request.user.is_staff %}
+                                <a href="{% url 'admin:index' %}" class="btn-ci">Add Channel</a>
+                            {% endif %}
+                            <a href="#" class="btn-ci">Privacy Policy</a>
+                            <a href="{% url 'account_logout' %}" class="btn-ci">Logout</a>
+                            <a href="#" class="btn-ci">Delete Account</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    
+    {% endif %}
+
+</div>  
