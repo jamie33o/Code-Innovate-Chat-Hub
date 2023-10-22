@@ -15,7 +15,6 @@ class ChannelModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     is_private = models.BooleanField(default=True)
     name = models.CharField(max_length=254,default='')
-    description = models.TextField(blank=True, null=True)
     users = models.ManyToManyField(get_user_model(), related_name='channels')
 
     def __str__(self):
