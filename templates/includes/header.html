@@ -2,6 +2,7 @@
   <div id="topnav" class="d-flex justify-content-between pt-lg-0 ">
 
     <!-- search icon  -->
+    {% if user.is_authenticated %}
     <div class="my-auto ml-2 px-2">
         <a class="text-black nav-link d-block" href="#" id="mobile-search" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div class="text-center">
@@ -24,13 +25,15 @@
             </form>
         </div>
     </div>
+    {% endif %}
 
 
-    <div class="my-auto py-0 py-lg-0 ">
+    <div class="my-auto py-0 py-lg-0 mx-auto">
         <a href="{% url 'home' %}" class="nav-link main-logo-link ">
             <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong> Chat Hub</h1>
         </a>
     </div>
+    {% if user.is_authenticated %}
 
     <!-- settings button -->
     <div class="my-auto mr-2 px-2">
@@ -54,6 +57,7 @@
         </ul>
     </div>
     
-    
+    {% endif %}
+
 
 </div>  
