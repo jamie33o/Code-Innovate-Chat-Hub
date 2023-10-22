@@ -24,7 +24,7 @@ p {
     --main-font: 'Roboto', serif;
 
     /* Colours */
-    --background: #3f006a0f;
+    --background: #e7effd;
     --blue: #0d6efd;
     --black: #000;
     --off-white: #f6f6f6;
@@ -139,15 +139,16 @@ p {
 .scrollable-div {
     /* Enable vertical scrolling */
     overflow-y: auto;
+    background-color: transparent;
    
 }
 
-.stick-to-bottom {
+.fixed-to-bottom {
     position: fixed;
     bottom: 0;
 }
 
-.stick-to-top {
+.fixed-to-top {
     position: fixed;
     top: 0;
 }
