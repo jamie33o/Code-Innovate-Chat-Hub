@@ -1,23 +1,16 @@
    <!-- Bottom Navigation -->
 
-   {% with request.resolver_match.url_name as url_name %}
-   <nav id="tabs-nav" class="navbar navbar-expand w-100 navbar-dark bg-dark ">
-    <ul class="navbar-nav flex-fill mx-3 px-3 list-inline d-flex justify-content-between">
-        <li class="nav-item text-center">
-            <a class="nav-link {% if url_name == 'home' %} active {% endif %}" href="{% url 'home' %}">
-                <i class="fas fa-home"></i> Home
-            </a>
-        </li>
-        <li class="nav-item text-center">
-            <a class="nav-link {% if url_name == 'messages' %} active {% endif %}" href="#messages">
-                <i class="fas fa-envelope"></i> Messages
-            </a>
-        </li>
-        <li class="nav-item text-center">
-            <a class="nav-link {% if url_name == 'user_profile' %} active {% endif %}" href="{% url 'user_profile' %}">
-                <i class="fas fa-user"></i> Profile
-            </a>
-        </li>
+{% with request.resolver_match.url_name as url_name %}
+    <div class="w-100 m-0">
+        <nav>
+            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link {% if url_name == 'home' %} active {% endif %}" id="nav-home-tab"  href="{% url 'home' %}" role="tab" aria-controls="nav-home" aria-selected="true"> <i class="fas fa-home"></i>Home</a>
+                <a class="nav-item nav-link {% if url_name == 'messages' %} active {% endif %}" id="nav-profile-tab"  href="#messages"role="tab" aria-controls="nav-messages" aria-selected="false"><i class="fas fa-envelope"></i> Messages</a>
+                <a class="nav-item nav-link {% if url_name == 'user_profile' %} active {% endif %}" id="nav-contact-tab"  href="{% url 'user_profile' %}" role="nav-profile" aria-controls="nav-contact" aria-selected="false"><i class="fas fa-user"></i>Profile</a>
+            </div>
+        </nav>
+    </div>
+
         {% endwith %}
     </ul>
 </nav>
