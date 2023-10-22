@@ -50,9 +50,10 @@ class SummernoteEnhancer {
           onImageUpload: function(files) {
             self.uploadImage(files[0],self.$sn);
           }
-        }
+        },  
 
     });
+
 
     // summernote submit button
     this.snSubmitForm = $(`${this.divToLoadIn} .sn-submit-btn`)
