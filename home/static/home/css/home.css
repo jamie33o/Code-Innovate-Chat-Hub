@@ -3,8 +3,52 @@
 .channels-list { 
     border-right: 2px solid var(--ci-orange);
     width: 300px;
-    padding: 50px 50px;
-    z-index: 1;
+    background: #fcfcfc;
+}
+
+.single {
+    padding: 30px 15px;
+    margin-top: 40px;
+}
+
+.pull-right {
+    float: right;
+}
+    
+.single h3.side-title {
+    margin: 0;
+    margin-bottom: 10px;
+    padding: 0;
+    font-size: 20px;
+    color: #333;
+    text-transform: uppercase; 
+}
+    
+.single h3.side-title:after {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: #ff173c;
+    display: block;
+    margin-top: 6px; 
+}
+    
+.single ul {
+    margin-bottom: 0; 
+}
+
+.single li a {
+    color: #666;
+    font-size: 14px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #f0f0f0;
+    line-height: 40px;
+    display: block;
+    text-decoration: none; 
+}
+
+.single li:last-child a {
+    border-bottom: 0; 
 }
 
 /* //////////////////////   Comments,Posts section styles ///////////////////////  */
@@ -12,15 +56,20 @@
     position: relative;
     height: 100%;
     z-index: 2;
+    background-color: var(--background);
+
 }
 
 .comments-container {
     position: relative;
     display: none;
     border-left: 1px solid var(--ci-orange);
-    width: 30%;
+    width: 400px;
     height: 100%;
     z-index: 3;
+    background-color: var(--background);
+    resize: horizontal; /* Allow horizontal resizing */
+
 }
 
 .h7 {
@@ -51,8 +100,6 @@
 
 }
 
-
-
 /**Reset Bootstrap*/
 .dropdown-toggle::after {
     content: none;
@@ -79,7 +126,6 @@
     top: 50%;
     left: 50%;
 }
-
 
 
 /* /////////////////////// media queries ///////////////////////// */

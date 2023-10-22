@@ -9,22 +9,39 @@
 {% block content %}
 <div class="w-100 h-100 d-flex flex-dir-row">
     <!-- container for the channels list -->
-    <div id="channel-links-container" class="channels-list scrollable-div ">
-        <div class="scrollable-div-inner">
-            <ul class="list-unstyled">
-                {% for channel in channels %}
-                    <li>
-                        <a class="channel-link" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}</a>
-                        <p>{{ channel.description }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
+    <div id="channel-links-container" class="channels-list scrollable-div">
+        <div class="row mx-0">
+            <div class="col-sm-12">    
+                <!-- Category -->
+                <div class="single category">
+                    <h3 class="side-title ">Channels<button data-target=".channels" class="btn toggleLinksButton pull-right p-0"> <i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
+                    </h3>
+                    <ul class="list-unstyled channels ">
+                        {% for channel in channels %}
+                            <li>
+                                <a class="channel-link btn-ci w-100" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}<span class="pull-right"><i class="fa-solid fa-user-group"></i> {{ channel.users.count }}</span></a>
+                            </li>
+                        {% endfor %}                        
+                    </ul>
+                </div>
+                <div class="single category">
+                    <h3 class="side-title">Messages<button data-target=".messages" class="btn toggleLinksButton pull-right p-0"><i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
+                    <ul class="list-unstyled messages">
+                        {% for channel in channels %}
+                            <li>
+                                <a class="channel-link btn-ci" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}<span class="pull-right"> <i class="fa-regular fa-message"></i>13</span></a>
+                            </li>
+                        {% endfor %}                        
+                    </ul>
+                </div>
+            </div> 
         </div>
     </div>
-    <div id="channel-posts" class="posts-container w-100 d-none d-sm-flex d-lg-flex flex-column">
-       
+
+    <div id="channel-posts" class="posts-container w-100 d-none d-sm-flex d-lg-flex flex-column justify-content-between">
+        
     </div>
-    <div id='post-comments' class ="comments-container flex-column">
+    <div id='post-comments' class ="comments-container flex-column justify-content-between">
 
     </div>
 
@@ -38,7 +55,23 @@
     <script src="{% static 'home/js/home.js' %}"></script>
 
     <script>     
+ $(document).ready(function() {
 
+    // $("#post-comments").resizable({
+    //   handles: "w", // Enable resizing only from the right edge
+    //   minWidth: 100, // Set a minimum width
+    //   maxWidth: 1000 // Set a maximum width
+    // });
+   
+        // Toggle the visibility of the messages list when the button is clicked
+        $('.toggleLinksButton').click(function() {
+            var target = $(this).data('target');
+
+            $(target).toggleClass('d-none')
+            $(this).find('i').toggleClass('fa-rotate-90');
+
+        });
+    });
       // Use the ready function to execute code when the DOM is fully loaded
       let url = null
         // Click event for the button
