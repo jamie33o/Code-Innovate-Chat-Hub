@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     # apps i created
     'home',
     'user_profile',
+    # for emoji
+    'emoji',
     
 ]
 

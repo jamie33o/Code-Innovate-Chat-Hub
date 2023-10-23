@@ -23,6 +23,15 @@ class ChannelModel(models.Model):
 class Image(models.Model):
     image = models.ImageField(upload_to='images/')
 
+class EmojiModel(models.Model):
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, related_name='%(class)s_created')
+    emoji_colon_name = models.TextField()
+    count = models.PositiveIntegerField(default=1)
+
+    def increment_count(self):
+        self.count += 1
+        self.save()
+
 
 class ChannelPosts(models.Model):
     """
@@ -36,7 +45,8 @@ class ChannelPosts(models.Model):
                                    null=True, related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
-    images = models.TextField(blank=True)  # Change here
+    images = models.TextField(blank=True)  
+    emojis = models.ManyToManyField(EmojiModel)
 
     post = models.TextField()
     post_channel = models.ForeignKey(
@@ -63,6 +73,8 @@ class PostComments(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
     image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True)
+    emojis = models.ManyToManyField(EmojiModel)
+
 
     post = models.TextField()
 
@@ -72,5 +84,6 @@ class PostComments(models.Model):
         null=True,
         related_name='comments_created'
     )
+
 
 

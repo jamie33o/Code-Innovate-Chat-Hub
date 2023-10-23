@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from user_profile.models import UserProfile
-from .models import ChannelModel, ChannelPosts, PostComments, Image
+from .models import ChannelModel, ChannelPosts, PostComments, Image,EmojiModel
 from .forms import ChannelPostForm, PostCommentsForm
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -39,7 +39,9 @@ class ChannelPostsView(View):
 
     def get(self, request, channel_id, *args, **kwargs):
         channel = get_object_or_404(ChannelModel, id=channel_id)
+        
         posts = ChannelPosts.objects.filter(post_channel=channel)
+    
 
         if request.user in channel.users.all():
             self.update_last_viewed_channel(request, channel_id)
@@ -56,10 +58,8 @@ class ChannelPostsView(View):
             'channel': channel,
             'posts': posts,
             'form': form,
-            'channel_users': channel.users.all(),
-
+            'channel_users': channel.users.all()
         }
-
         return render(request, self.template_name, context)
 
     def post(self, request, channel_id, *args, **kwargs):
@@ -79,7 +79,6 @@ class ChannelPostsView(View):
         post = form.save(commit=False)
         url_list = request.POST.getlist('urls[]')
         post.images = ",".join(url_list)
-
         # allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
         # allowed_attributes = {'*': ['style', 'src', 'href']}
         # post.post = bleach.clean(post.post, tags=allowed_tags, attributes=allowed_attributes)
@@ -194,3 +193,45 @@ class ImageUploadView(View):
             return JsonResponse({'url': new_image.image.url})
 
         return JsonResponse({'error': 'Invalid request'}, status=400)
+    
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AddOrUpdateEmojiView(View):
+    def post(self, request, id, *args, **kwargs):
+        user = request.user
+        emoji_colon_name = request.POST.get('emoji_colon_name')
+
+        if 'post_emoji' in request.path:
+            # Get or create the EmojiModel
+            emoji_instance, created = EmojiModel.objects.get_or_create(
+                created_by=user,
+                emoji_colon_name=emoji_colon_name,
+            )
+
+           
+            if not created:
+                emoji_instance.increment_count()
+            else:
+                # Get the PostComment
+                channel_post = ChannelPosts.objects.get(pk=id)
+
+                # Add the emoji to the emojis field
+                channel_post.emojis.add(emoji_instance)   
+        else:
+            emoji_instance, created = EmojiModel.objects.get_or_create(
+            created_by=user,
+            emoji_colon_name=emoji_colon_name
+            )
+
+            if not created:
+                emoji_instance.increment_count()
+            else:
+                # Get the PostComment
+                post_comment = PostComments.objects.get(pk=id)
+
+                # Add the emoji to the emojis field
+                post_comment.emojis.add(emoji_instance)   
+    
+        return JsonResponse({'status': 'success'}) 
+    
+  
