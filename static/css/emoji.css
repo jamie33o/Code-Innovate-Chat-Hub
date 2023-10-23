@@ -45,7 +45,7 @@ img.emoji {
 
 
 
-.emoji-menu {
+.emoji-menu-container {
     position: absolute;
     bottom: 150px;
     z-index: 999;
@@ -132,26 +132,26 @@ img.emoji {
     opacity: 1;
 }
 
-.emoji-menu .emoji-items-wrap {
+.emoji-menu-container .emoji-items-wrap {
     position: relative;
     height: 250px;
     overflow: scroll;
     padding: 10px;
 }
 
-.emoji-menu .emoji-items {
+.emoji-menu-container .emoji-items {
     padding-right: 8px;
     outline: 0 !important;
 }
 
-.emoji-menu img {
+.emoji-menu-container img {
     width: 20px;
     height: 20px;
     vertical-align: middle;
     border: 0 none;
 }
 
-.emoji-menu .emoji-items a {
+.emoji-menu-container .emoji-items a {
     margin: -1px 0 0 -1px;
     padding: 10px;
     display: block;
@@ -160,16 +160,16 @@ img.emoji {
     border: 0;
 }
 
-.emoji-menu .emoji-items a:hover {
+.emoji-menu-container .emoji-items a:hover {
     background-color: #edf2f5;
 }
 
-.emoji-menu:after {
+.emoji-menu-container:after {
     content: ' ';
     display: block;
     clear: left;
 }
 
-.emoji-menu a .label {
+.emoji-menu-container a .label {
     display: none;
 }
