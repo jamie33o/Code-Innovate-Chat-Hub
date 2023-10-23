@@ -1,4 +1,163 @@
 let channel_id = null;
+let postId = null;
+let emojiPostUrl = null;
+let emojiPickerPosts = null;
+let url = null
+
+
+////////////////////////// functions for posts ///////////////////////////////////
+function initializeEmojiPicker() {
+    // Your existing code for emojiPickerPosts
+    emojiPickerPosts = new EmojiPicker('#for-emoji-picker', emojiPickerCallback);
+
+    $(".post-emoji-btn").click(function (event) {
+        event.preventDefault();
+        postId = $(this).data('post-id');
+        emojiPickerPosts.$panel.show();
+    });
+}
+
+// function thats called from posts template when its loaded
+function initPosts(){
+    // Click event for the close posts button
+    $(".posts-close-btn").click(function(event) {
+        $('#channel-posts').toggleClass('d-flex');
+        $('#channel-links-container').toggleClass('hide');
+        $('#nav-bar').removeClass('d-none')
+        $('header').removeClass('d-none')
+    });
+
+    $(".post-emoji-btn").click(function(event) {
+        event.preventDefault()
+        postId = $(this).data('post-id')
+        emojiPickerPosts.$panel.show()
+    })
+      
+    //event listener for the comments links on each post
+    $(".comments-link").click(function(event) {
+        event.preventDefault();
+        let url = event.target.href
+        getRequestToDjamgo('#post-comments', url);
+        if(window.innerWidth < 575){
+            $('#channel-posts').toggleClass('d-flex');
+            $('.back-btn').removeClass('d-none')
+        }
+        $('#post-comments').addClass('d-flex');
+    });
+
+    //add user form event listener
+    $("#add-user-form").submit(function(event) {
+        event.preventDefault();
+        //get csrf token from the form
+        let csrftoken = $(this).find('input[name="csrfmiddlewaretoken"]').val();
+        let url = $(this).attr('action');
+        // function in home.js to send post request to add user
+        addUserPostRequest(url, csrftoken);
+    });
+
+    
+    //scroll to bottom of the posts
+    $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'fast');
+
+    initializeEmojiPicker();
+
+}
+
+
+// add user to channel
+function addUserPostRequest(url, csrftoken){
+    // AJAX request
+    $.ajax({
+        type: "POST",
+        url: url,
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+        success: function(response) {
+            $('#overlay').addClass('d-none')
+            displayMessage(response)
+        },
+        error: function(error) {
+            displayMessage(error)
+        }
+    });
+}
+
+
+// emoji call back function when user choose emoji
+function emojiPickerCallback(emoji) {
+    newEmojiPostUrl = emojiPostUrl.replace('0', postId)
+    let emojiColonName = emoji.alt
+    
+    // Make an AJAX request
+    $.ajax({
+        url: newEmojiPostUrl,  
+        type: 'POST',
+        data: {
+            emoji_colon_name: emojiColonName,
+            
+        },
+        success: function (data) {
+            // Handle success
+            console.log('Emoji sent successfully:', data);
+        },
+        error: function (error) {
+            // Handle error
+            console.error('Error sending emoji:', error);
+        }
+    });
+   
+    $('.emoji-list').append($('<li class="list-inline-item mr-2"></li>').append(emoji));
+}
+
+
+
+// function to load posts
+function getRequestToDjamgo(divToAddContent, url){
+    // AJAX request
+    $.ajax({
+        type: "GET",
+        url: url,
+        success: function(response) {
+            // Update the div with the returned template
+            $(divToAddContent).html(response);
+        },
+        error: function(error) {
+            console.log("Error:", error);
+        }
+    });
+}
+
+///////////////////////////////  initialize channels listeners ////////////////////////////
+function initChannels(){
+
+    // Toggle the visibility of the messages list when the button is clicked
+    $('.toggleLinksButton').click(function() {
+        var target = $(this).data('target');
+
+        $(target).toggleClass('d-none')
+        $(this).find('i').toggleClass('fa-rotate-90');
+
+    });
+
+    // Use the ready function to execute code when the DOM is fully loaded
+    // Click event for the button
+    $(".channel-link").click(function(event) {
+        event.preventDefault();
+        url = event.currentTarget.href
+        getRequestToDjamgo('#channel-posts', url)
+        if(window.innerWidth < 575){
+            $('#channel-posts').toggleClass('d-flex');
+            $('#channel-links-container').toggleClass('hide');
+            $('#nav-bar').addClass('d-none')
+            $('header').addClass('d-none')
+
+        }
+        $('#post-comments').removeClass('d-flex');
+    });
+}
+
+
 
 /////////////////code to add user to channel with ajax////////////////////
 // this is a button overlay that shows when user is not added to a the channel
@@ -23,7 +182,6 @@ $("#add_user_to_channel").click(function(event) {
     });
 });
 
-///////////////////// Functions to hide and show channels, posts and comments///////////////////
 
 
 ///////////////////////websocket for channel posts///////////////////////////////
@@ -121,43 +279,10 @@ function getCurrentTime() {
 
     return currentTime;
 }
-//////////////////// function to load posts ///////////////////////
 
 
-function getRequestToDjamgo(divToAddContent, url){
-    // AJAX request
-    $.ajax({
-        type: "GET",
-        url: url,
-        success: function(response) {
-            // Update the div with the returned template
-            $(divToAddContent).html(response);
-        },
-        error: function(error) {
-            console.log("Error:", error);
-        }
-    });
-}
 
-
-function addUserPostRequest(url, csrftoken){
-    // AJAX request
-    $.ajax({
-        type: "POST",
-        url: url,
-        headers: {
-            'X-CSRFToken': csrftoken
-        },
-        success: function(response) {
-            $('#overlay').addClass('d-none')
-            displayMessage(response)
-        },
-        error: function(error) {
-            displayMessage(error)
-        }
-    });
-}
-
+/////////////////////// function for notification messages ///////////////////////////////
 let isAnimationInProgress = false;
 
 function displayMessage(response){     
