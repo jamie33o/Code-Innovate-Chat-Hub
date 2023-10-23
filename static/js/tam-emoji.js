@@ -3,7 +3,9 @@ class EmojiPicker {
         this.icons = {};
         this.reverseIcons = {};
         this.$panel = null;
+        this.emojiSource = 'static/tam-emoji/img'
         this.divClass = divClass;
+        this.curentClass = divClass.substring(1);
         this.emojiClickedCallback = emojiClickedCallback; //  callback function to send emoji to summernote.js
         // Initialize the emoji panel
         this.emojiPanel();
@@ -24,7 +26,7 @@ class EmojiPicker {
         });
 
 
-        $body.on('click', `${self.divClass} .emoji-menu-tab`, function (e) {
+        $body.on('click', `.emoji-menu${self.curentClass} .emoji-menu-tab`, function (e) {
             e.stopPropagation();
             e.preventDefault();
             let index = 0;
@@ -35,7 +37,7 @@ class EmojiPicker {
 
             curclass = curclass[0] + '-' + curclass[1];
 
-            $(`${self.divClass} .emoji-menu-tabs td`).each(function (i) {
+            $(`.emoji-menu${self.curentClass} .emoji-menu-tabs td`).each(function (i) {
                 const $a = $(this).find('a');
                 let aclass = $a.attr("class").split(' ');
 
@@ -48,12 +50,13 @@ class EmojiPicker {
                 } else {
                     $a.attr('class', 'emoji-menu-tab ' + aclass);
                 }
+
             });
             self.updateEmojisList(index);
         });
         
 
-        $(document).on('click', `${self.divClass} .emoji-items a`, function () {
+        $(document).on('click', `.emoji-menu${self.curentClass} .emoji-items a`, function () {
             const emoji = $('.label', $(this)).text();
             const $img = $(self.createdEmojiIcon(self.icons[emoji]));
 
@@ -118,7 +121,7 @@ class EmojiPicker {
     }
 
     updateEmojisList(index) {
-        const $items = $(`${this.divClass} .emoji-items`);
+        const $items = $(`.emoji-menu${this.curentClass} .emoji-items`);
         $items.html('');
 
         if (index > 0) {
@@ -156,8 +159,8 @@ class EmojiPicker {
         const row = emoji[1];
         const column = emoji[2];
         const name = emoji[3];
-        const filename = document.emojiSource + '/emoji_spritesheet_!.png';
-        const blankGifPath = document.emojiSource + '/blank.gif';
+        const filename = this.emojiSource + '/emoji_spritesheet_!.png';
+        const blankGifPath = this.emojiSource + '/blank.gif';
         const iconSize = 25;
         const xoffset = -(iconSize * column);
         const yoffset = -(iconSize * row);
@@ -188,7 +191,7 @@ class EmojiPicker {
     }
 
     emojiPanel() {
-        this.$panel = $('<div class="emoji-menu">\n' +
+        this.$panel = $(`<div class="emoji-menu${this.curentClass} emoji-menu-container">\n` +
             '    <div class="emoji-items-wrap1">\n' +
             '        <table class="emoji-menu-tabs">\n' +
             '            <tbody>\n' +
