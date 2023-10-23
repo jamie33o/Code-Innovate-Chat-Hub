@@ -1,4 +1,5 @@
 {% load static %}
+{% load emoji_tags %}
 <div class="posts-mobile-header border-bottom custom-box d-flex d-sm-none d-lg-none flex-dir-row">
     <button class="btn posts-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     <div class="ml-3 my-0">
@@ -17,7 +18,7 @@
 {% endif %}
 
 
-<div class="scrollable-div ">
+<div id="for-emoji-picker" class="scrollable-div">
    
     {% for single_post in posts %}
     <!--- \\\\\\\Post-->
@@ -66,11 +67,27 @@
                 </div>
             {% endif %}
         </div>
-        <div class="card-footer">
-            <a href="#" class="card-link"><i class="fa fa-gittip"></i> Like</a>
-            <a href="{% url 'post_comments' single_post.id %}" class="card-link comments-link"><i class="fa fa-comment"></i> Comment</a>
-            <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <div class="card-link">
+                <ul class="list-inline m-0 p-0 emoji-list">
+                    <a data-post-id="{{ single_post.id }}" href="#" class="post-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" style="color: #f58a32;"></i><i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i></a>
+
+                    <!-- Loop through your emojis and generate list items -->
+                    {% for emoji in single_post.emojis.all %}
+                        <li class="list-inline-item mr-2">
+                            {{ emoji.emoji_colon_name|emoji_replace }}
+                            {% if emoji.count > 1 %}
+                                <span>{{ emoji.count }}</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        
+                <a href="{% url 'post_comments' single_post.id %}" class="card-link comments-link"><i class="fa fa-comment"></i> Comment</a>
+                <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
         </div>
+        
     </div>
     {% endfor %}
     <!-- Post /////-->
@@ -101,39 +118,11 @@
 <script>
 
     $(document).ready(function() {
-        // Click event for the close posts button
-        $(".posts-close-btn").click(function(event) {
-            $('#channel-posts').toggleClass('d-flex');
-            $('#channel-links-container').toggleClass('hide');
-            $('#nav-bar').removeClass('d-none')
-            $('header').removeClass('d-none')
-        });
-
-        //add user form event listener
-        $("#add-user-form").submit(function(event) {
-            event.preventDefault();
-            //get csrf token from the form
-            let csrftoken = $(this).find('input[name="csrfmiddlewaretoken"]').val();
-            let url = $(this).attr('action');
-            // function in home.js to send post request to add user
-            addUserPostRequest(url, csrftoken);
-        });
-
-        //event listener for the comments links on each post
-        $(".comments-link").click(function(event) {
-            event.preventDefault();
-            let url = event.target.href
-            getRequestToDjamgo('#post-comments', url);
-            if(window.innerWidth < 575){
-                $('#channel-posts').toggleClass('d-flex');
-                $('.back-btn').removeClass('d-none')
-            }
-            $('#post-comments').addClass('d-flex');
-        });
-
+        initPosts()
+        emojiPostUrl = `{% url 'post_emoji' 0 %}`;
        
         // initialize summernote enhancer class
-        summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`, )
+        summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`)
         // add channel users to the static variable in SummernoteEnhancer class
         SummernoteEnhancer.sharedChannelUsers = [
             {% for user in channel_users %}
@@ -141,8 +130,6 @@
             {% endfor %}
         ];
 
-        //scroll to bottom of the posts
-        $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'slow');
 
         // get the channel id using django template literal which will be used in the js file and for the websocket
         channel_id = {{ channel.id }}; 
@@ -150,6 +137,5 @@
         
     });
 
-
         
-  </script>
+</script>
