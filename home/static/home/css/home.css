@@ -108,7 +108,18 @@
 }
 
 
-
+.smiley-plus-icon::before {
+    color: var(--ci-orange); 
+    position: relative; 
+    top: -.5em; 
+    left: -.5em;
+    background-color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: none;
+    margin: none;
+}
 /* ///////////////// CSS to style the add to channel overlay  ////////////////////*/
 #overlay {
     position: absolute;
