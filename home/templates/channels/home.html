@@ -50,54 +50,18 @@
 
 
 {% block postloadjs %}
-
-
     <script src="{% static 'home/js/home.js' %}"></script>
-
     <script>     
- $(document).ready(function() {
-
-    // $("#post-comments").resizable({
-    //   handles: "w", // Enable resizing only from the right edge
-    //   minWidth: 100, // Set a minimum width
-    //   maxWidth: 1000 // Set a maximum width
-    // });
-   
-        // Toggle the visibility of the messages list when the button is clicked
-        $('.toggleLinksButton').click(function() {
-            var target = $(this).data('target');
-
-            $(target).toggleClass('d-none')
-            $(this).find('i').toggleClass('fa-rotate-90');
-
-        });
-    });
-      // Use the ready function to execute code when the DOM is fully loaded
-      let url = null
-        // Click event for the button
-        $(".channel-link").click(function(event) {
-            event.preventDefault();
-            url = event.currentTarget.href
-            getRequestToDjamgo('#channel-posts', url)
-            if(window.innerWidth < 575){
-                $('#channel-posts').toggleClass('d-flex');
-                $('#channel-links-container').toggleClass('hide');
-                $('#nav-bar').addClass('d-none')
-                $('header').addClass('d-none')
-
-            }
-            $('#post-comments').removeClass('d-flex');
-
-        });
-
+    $(document).ready(function() {
+        initChannels()
+        
         {% if last_viewed_channel_id %}
             if(window.innerWidth > 575){
                 url = `{% url 'channel_posts' last_viewed_channel_id %}`
                 getRequestToDjamgo('#channel-posts', url)
             }
         {% endif %}
-        SummernoteEnhancer.emojiImgs = `{% static 'tam-emoji/img' %}`
-
+    });
     </script>
 
 {% endblock %}
