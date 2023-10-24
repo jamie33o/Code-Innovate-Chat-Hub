@@ -1,20 +1,15 @@
 let channel_id = null;
 let postId = null;
 let emojiPostUrl = null;
-let emojiPickerPosts = null;
 let url = null
-
+let emojiPickerPosts = null
 
 ////////////////////////// functions for posts ///////////////////////////////////
 function initializeEmojiPicker() {
     // Your existing code for emojiPickerPosts
-    emojiPickerPosts = new EmojiPicker('#for-emoji-picker', emojiPickerCallback);
+     emojiPickerPosts = new EmojiPicker('#for-emoji-picker', emojiPickerCallback);
 
-    $(".post-emoji-btn").click(function (event) {
-        event.preventDefault();
-        postId = $(this).data('post-id');
-        emojiPickerPosts.$panel.show();
-    });
+
 }
 
 // function thats called from posts template when its loaded
@@ -27,6 +22,7 @@ function initPosts(){
         $('header').removeClass('d-none')
     });
 
+
     $(".post-emoji-btn").click(function(event) {
         event.preventDefault()
         postId = $(this).data('post-id')
@@ -37,7 +33,8 @@ function initPosts(){
     $(".comments-link").click(function(event) {
         event.preventDefault();
         let url = event.target.href
-        getRequestToDjamgo('#post-comments', url);
+        getRequestToDjamgo('#post-comments', url)
+
         if(window.innerWidth < 575){
             $('#channel-posts').toggleClass('d-flex');
             $('.back-btn').removeClass('d-none')
@@ -86,7 +83,7 @@ function addUserPostRequest(url, csrftoken){
 
 // emoji call back function when user choose emoji
 function emojiPickerCallback(emoji) {
-    newEmojiPostUrl = emojiPostUrl.replace('0', postId)
+    let newEmojiPostUrl = emojiPostUrl.replace('0', postId)
     let emojiColonName = emoji.alt
     
     // Make an AJAX request

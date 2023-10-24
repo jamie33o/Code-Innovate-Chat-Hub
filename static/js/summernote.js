@@ -1,6 +1,7 @@
 class SummernoteEnhancer {
 
   static sharedChannelUsers= [];
+  static emojiImgs = null;
   static imgUrl = null;
 
   constructor() {
@@ -95,9 +96,7 @@ class SummernoteEnhancer {
     $(`${this.divToLoadIn} .hide-modal`).click(() => {
       $(`${this.divToLoadIn} .tag-name-modal`).hide();
       $(`${this.divToLoadIn} .hide-modal`).hide();
-      emojiPicker.$panel.hide();
     });
-    
     let emojiPicker = new EmojiPicker(this.divToLoadIn, function(emoji){
         self.$sn.summernote('editor.insertNode', emoji);
         $(`${self.divToLoadIn} .hide-modal`).hide()

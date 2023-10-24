@@ -54,7 +54,8 @@ class EmojiPicker {
             });
             self.updateEmojisList(index);
         });
-        
+        $(document).off('click', `.emoji-menu${self.curentClass} .emoji-items a`)
+
 
         $(document).on('click', `.emoji-menu${self.curentClass} .emoji-items a`, function () {
             const emoji = $('.label', $(this)).text();
@@ -65,6 +66,7 @@ class EmojiPicker {
                     e.returnValue = false;
                 }, false);
             }
+            
             if (self.emojiClickedCallback) {
                 self.emojiClickedCallback($img[0]);
             }

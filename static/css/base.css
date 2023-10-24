@@ -295,7 +295,7 @@ nav > div a.nav-item.nav-link:focus
 
 .logo {
     color: var(--white) !important;
-    width:130%;
+    width: 130%;
 }
 
 .logo:hover {
