@@ -86,25 +86,8 @@ function emojiPickerCallback(emoji) {
     let newEmojiPostUrl = emojiPostUrl.replace('0', postId)
     let emojiColonName = emoji.alt
     
-    // Make an AJAX request
-    $.ajax({
-        url: newEmojiPostUrl,  
-        type: 'POST',
-        data: {
-            emoji_colon_name: emojiColonName,
-            
-        },
-        success: function (data) {
-            // Handle success
-            console.log('Emoji sent successfully:', data);
-        },
-        error: function (error) {
-            // Handle error
-            console.error('Error sending emoji:', error);
-        }
-    });
+    postRequestToDjamgo(newEmojiPostUrl, emojiColonName, postId,emoji)
    
-    $('.emoji-list').append($('<li class="list-inline-item mr-2"></li>').append(emoji));
 }
 
 
@@ -125,6 +108,95 @@ function getRequestToDjamgo(divToAddContent, url){
     });
 }
 
+// function for adding and removing emoji on posts
+function postRequestToDjamgo(url, emojiColonName, args, emoji){
+    var id = url.match(/\d+/g);
+    let spanElement = $(args).find('span');
+    let currentNumber = null
+    $.ajax({
+        url: url,  
+        type: 'POST',
+        data: {
+            emoji_colon_name: emojiColonName,
+        },
+        success: function (response) {
+            // Handle success
+            switch (response.status) {
+                case "added":
+
+                    let emojiUlClass = `.emoji-list${args}`
+                    let em = $(emoji).prop('outerHTML');
+
+                    let newLi = $(`
+                        <li class="list-inline-item mr-2">
+                            <button class="added-emoji-btn btn" data-post-url="${url}" 
+                                    data-post-emoji-list=".emoji-list${id}"  
+                                    data-target="#emojiModal${id}" 
+                                    data-emoji-code="${emojiColonName}">
+                                    ${em}
+                                <span></span>
+                            </button>
+                            <!-- Small Box Modal -->
+                            <div class="emoji-user-count-modal d-none" id="emojiModal${id}">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="emojiModalLabel">${em}</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>You reacted with ${emojiColonName}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    `);
+                    
+                    $(emojiUlClass).append(newLi);
+
+                    
+                  break;
+                case "decremented":                   
+                     currentNumber = parseInt(spanElement.html(), 10);
+
+                    if (!isNaN(currentNumber)) {
+                    // Check if currentNumber is a valid number
+
+                    // Subtract 1 from the current number
+                    let newNumber = currentNumber - 1;
+                    if(newNumber > 1){
+                    // Update the HTML content of the span element with the new number
+                    spanElement.html(newNumber);
+                    }else{
+                        spanElement.html('');
+
+                    }
+                    }
+                  break;
+                case "incremented":
+                     currentNumber = parseInt(spanElement.html(), 10);
+                    if (!isNaN(currentNumber)) {
+                    // add 1 to the current number
+                    let newNumber = currentNumber + 1;
+                    // Update the HTML content of the span element with the new number
+                    spanElement.html(newNumber);
+                    }else{
+                        spanElement.html(2);
+                    }
+                   
+                  break;
+                  case "removed":
+                    $(args).parent().remove()
+                }           
+
+
+        },
+        error: function (error) {
+            // Handle error
+            // displayMessage({`status`: 'error'})
+        }
+    });
+}
 ///////////////////////////////  initialize channels listeners ////////////////////////////
 function initChannels(){
 
