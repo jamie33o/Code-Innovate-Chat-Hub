@@ -24,14 +24,11 @@ class Image(models.Model):
     image = models.ImageField(upload_to='images/')
 
 class EmojiModel(models.Model):
-    created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, related_name='%(class)s_created')
-    emoji_colon_name = models.TextField()
-    count = models.PositiveIntegerField(default=1)
+    emoji_colon_name = models.TextField(unique=False)
+    users_who_incremented = models.ManyToManyField(get_user_model(), related_name='%(class)s_incremented', blank=True)
 
-    def increment_count(self):
-        self.count += 1
-        self.save()
-
+    def get_incremented_users(self):
+        return self.users_who_incremented.all()
 
 class ChannelPosts(models.Model):
     """
