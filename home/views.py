@@ -202,35 +202,47 @@ class AddOrUpdateEmojiView(View):
         emoji_colon_name = request.POST.get('emoji_colon_name')
 
         if 'post_emoji' in request.path:
-            # Get or create the EmojiModel
-            emoji_instance, created = EmojiModel.objects.get_or_create(
-                created_by=user,
+
+            # Get the ChannelPosts
+            channel_post = ChannelPosts.objects.get(pk=id)
+
+                        # If it exists, increment the count and add the user
+            post_emoji_instance, created = channel_post.emojis.get_or_create(
                 emoji_colon_name=emoji_colon_name,
+                defaults={'emoji_colon_name': emoji_colon_name}
             )
 
-           
-            if not created:
-                emoji_instance.increment_count()
-            else:
-                # Get the PostComment
-                channel_post = ChannelPosts.objects.get(pk=id)
+            if created:
+                # If a new instance is created, add the user
+                post_emoji_instance.users_who_incremented.add(request.user)
+                return JsonResponse({'status': 'added'})
 
-                # Add the emoji to the emojis field
-                channel_post.emojis.add(emoji_instance)   
+            # Check if the EmojiModel exists in channel_post
+            else:
+                if request.user in post_emoji_instance.users_who_incremented.all():
+                    post_emoji_instance.users_who_incremented.remove(request.user)
+                    # Check if there are no more users and remove the instance if true
+                    if post_emoji_instance.users_who_incremented.count() == 0:
+                        channel_post.emojis.remove(post_emoji_instance)                                                                                                                                                                                                                                                         
+                        return JsonResponse({'status': 'removed'})
+                    return JsonResponse({'status': 'decremented'})
+                else:
+                    # If it exists, increment the count and add the user
+                    post_emoji_instance.users_who_incremented.add(request.user)
+                    return JsonResponse({'status': 'incremented'})
+                
         else:
             emoji_instance, created = EmojiModel.objects.get_or_create(
             created_by=user,
             emoji_colon_name=emoji_colon_name
             )
 
-            if not created:
-                emoji_instance.increment_count()
-            else:
-                # Get the PostComment
-                post_comment = PostComments.objects.get(pk=id)
+           
+            # Get the PostComment
+            post_comment = PostComments.objects.get(pk=id)
 
-                # Add the emoji to the emojis field
-                post_comment.emojis.add(emoji_instance)   
+            # Add the emoji to the emojis field
+            post_comment.emojis.add(emoji_instance)   
     
         return JsonResponse({'status': 'success'}) 
     
