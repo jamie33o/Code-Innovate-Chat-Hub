@@ -28,30 +28,11 @@
     z-index: 1000;
 }
 
-/* emoji picker body */
-.emoji-body  {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px auto;
-    justify-content: center;
-}
 
 .emoji-modal, .tag-name-modal {
     display: none;
 }
 
-/* all emojis */
-.emoji {
-    width: 20px;
-    height: auto;
-    margin: 5px;
-}
-
-.emoji:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Box shadow properties */
-    border-radius: 50%;
-    overflow:visible;
-}
 
 /* /////////////// tag user modal ///////////////// */
 /* tag users list buttons */
