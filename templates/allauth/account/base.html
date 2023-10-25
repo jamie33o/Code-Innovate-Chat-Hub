@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="allauth-account-container d-flex justify-content-center pt-3">
-        <div class="overlay"></div>
-            <div class="m-3 p-3">
-                {% block inner_content %}
-                {% endblock %}     
-            </div>
-    </div>
+    <div class="all-auth-container h-100 w-100">
+		<div class="d-flex justify-content-center h-100">
+			<div class="user_card">
+				<div class="d-flex justify-content-center">
+					<div class="brand_logo_container">
+						<img src="https://coursereport-s3-production.global.ssl.fastly.net/uploads/school/logo/222/original/code-20institute-20600-20logo.png" class="brand_logo" alt="Logo">
+					</div>
+				</div>
+                <div class="overlay"></div>
+                <div class="m-3 p-3">
+                    {% block inner_content %}
+                    {% endblock %}     
+                </div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

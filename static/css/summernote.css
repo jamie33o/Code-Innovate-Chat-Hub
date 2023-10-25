@@ -128,11 +128,6 @@ div.panel-heading.note-toolbar {
     
 }
 
-/* label over summernote */
-label {
-    display: none;
-}
-
 .note-editing-area .note-editable, .note-placeholder {
     padding: 2px 10px !important;
     min-height: 25px !important;
