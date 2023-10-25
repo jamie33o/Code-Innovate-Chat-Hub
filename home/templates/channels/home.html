@@ -21,13 +21,13 @@
                             <li>
                                 <a class="channel-link btn-ci w-100" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}
                                     <span class="pull-right">
-                                        {% with channel.userchannelstatus_set.all as user_statuses %}
-                                        {% with user_status=user_statuses|first %}
-                                            {% if user_status and channel.latest_post.created_date > user_status.last_visit %}
-                                                <span class="unread-indicator"><i class="fa-regular fa-message" style="color: #db0000;"><p>New</p></i></span>
+                                        {% for key, value in user_statuses.items %}
+                                            {% if key == channel.id %}
+                                                {% if channel.latest_post.created_date > value %}
+                                                    <span class="unread-indicator"><i class="fa-regular fa-message" style="color: #db0000;"><p>New</p></i></span>
+                                                {% endif %}
                                             {% endif %}
-                                        {% endwith %}
-                                    {% endwith %}
+                                        {% endfor %}
                                         <i class="fa-solid fa-user-group"></i> {{ channel.users.count }}
                                     </span>
                                 </a>
