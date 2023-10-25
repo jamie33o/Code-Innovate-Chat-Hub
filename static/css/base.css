@@ -25,6 +25,7 @@ p {
 
     /* Colours */
     --background: #e7effd;
+    --all-auth-bg: #a9cdf1;
     --blue: #0d6efd;
     --black: #000;
     --off-white: #f6f6f6;
@@ -231,10 +232,55 @@ h1 {
 /* //////////////////// allauth templates //////////////////// */
 
 /* for sign up/sign-in/log-out */
-.allauth-account-container {
+.all-auth-container {
     width: 100vw;
     height:100vh;
+    background-color: var(--all-auth-bg);
 }
+
+.user_card {
+    height: fit-content;
+    width: 350px;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-top: 20px;
+    background: #f39c12;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 5px;
+
+}
+.user_card label {
+    display: none;
+}
+#div_id_remember label {
+    display: flex;
+}
+
+.brand_logo_container {
+    position: absolute;
+    height: 130px;
+    width: 130px;
+    top: -65px;
+    border-radius: 50%;
+    background: white;
+    padding: 10px;
+    text-align: center;
+}
+.brand_logo {
+    height: 110px;
+    width: 110px;
+    border-radius: 50%;
+}
+.form_container {
+    margin-top: 100px;
+}
+
 
 /* /////////////////////// main navigation home, messages, profile//////////////////////// */
 
