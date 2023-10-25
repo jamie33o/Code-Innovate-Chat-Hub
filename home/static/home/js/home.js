@@ -197,7 +197,7 @@ function postRequestToDjamgo(url, emojiColonName, args, emoji){
         }
     });
 }
-///////////////////////////////  initialize channels listeners ////////////////////////////
+///////////////////////////////  initialize channels list listeners ////////////////////////////
 function initChannels(){
 
     // Toggle the visibility of the messages list when the button is clicked
@@ -213,6 +213,7 @@ function initChannels(){
     // Click event for the button
     $(".channel-link").click(function(event) {
         event.preventDefault();
+        $(this).find('.unread-indicator').remove()
         url = event.currentTarget.href
         getRequestToDjamgo('#channel-posts', url)
         if(window.innerWidth < 575){

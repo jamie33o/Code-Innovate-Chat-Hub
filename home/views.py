@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from user_profile.models import UserProfile
-from .models import ChannelModel, ChannelPosts, PostComments, Image,EmojiModel
+from .models import ChannelModel, ChannelPosts, PostComments, Image,EmojiModel, UserChannelStatus
 from .forms import ChannelPostForm, PostCommentsForm
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -13,6 +13,8 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+
 
 
 
@@ -24,10 +26,23 @@ class HomeView(View):
     def get(self, request, *args, **kwargs):
         channels = ChannelModel.objects.all()
         last_viewed_channel_id = request.user.userprofile.last_viewed_channel_id
+          # Create an empty dictionary to store user_status for each channel
+        user_statuses = {}
+
+        # Iterate over channels to get user_status for each
+        for channel in channels:
+            if request.user in channel.users.all():
+                user_status, created = UserChannelStatus.objects.get_or_create(
+                    user=request.user,
+                    channel=channel
+                )
+                user_statuses[channel.id] = user_status
 
         context = {
             'channels': channels,
             'last_viewed_channel_id': last_viewed_channel_id,
+            'user_statuses': user_statuses,  
+
         }
 
         return render(request, self.template_name, context)
@@ -48,6 +63,14 @@ class ChannelPostsView(View):
 
         form = ChannelPostForm()
 
+        # Update the user's last visit status for the channel
+        user_status, created = UserChannelStatus.objects.get_or_create(
+            user=request.user,
+            channel=channel
+        )
+        user_status.last_visit = timezone.now()
+        user_status.save()
+
         # Add messages
         messages.success(request, f'Success: {request.user.username} added to channel')
        
@@ -59,6 +82,7 @@ class ChannelPostsView(View):
             'posts': posts,
             'form': form,
             'channel_users': channel.users.all()
+
         }
         return render(request, self.template_name, context)
 

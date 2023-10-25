@@ -19,6 +19,14 @@ class ChannelModel(models.Model):
 
     def __str__(self):
         return self.name
+    @property
+    def latest_post(self):
+        return self.posts_created.latest('created_date')
+    
+class UserChannelStatus(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    channel = models.ForeignKey(ChannelModel, on_delete=models.CASCADE)
+    last_visit = models.DateTimeField(auto_now=True)
     
 class Image(models.Model):
     image = models.ImageField(upload_to='images/')
@@ -53,6 +61,7 @@ class ChannelPosts(models.Model):
         related_name='posts_created'
     )
 
+   
 
     def get_image_urls(self):
         return [url.strip() for url in self.images.split(',') if url.strip()]
