@@ -19,7 +19,18 @@
                     <ul class="list-unstyled channels ">
                         {% for channel in channels %}
                             <li>
-                                <a class="channel-link btn-ci w-100" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}<span class="pull-right"><i class="fa-solid fa-user-group"></i> {{ channel.users.count }}</span></a>
+                                <a class="channel-link btn-ci w-100" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}
+                                    <span class="pull-right">
+                                        {% with channel.userchannelstatus_set.all as user_statuses %}
+                                        {% with user_status=user_statuses|first %}
+                                            {% if user_status and channel.latest_post.created_date > user_status.last_visit %}
+                                                <span class="unread-indicator"><i class="fa-regular fa-message" style="color: #db0000;"><p>New</p></i></span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                        <i class="fa-solid fa-user-group"></i> {{ channel.users.count }}
+                                    </span>
+                                </a>
                             </li>
                         {% endfor %}                        
                     </ul>
