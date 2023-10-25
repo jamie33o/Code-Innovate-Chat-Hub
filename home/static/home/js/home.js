@@ -3,6 +3,9 @@ let postId = null;
 let emojiPostUrl = null;
 let url = null
 let emojiPickerPosts = null
+let olderPosts = null
+let scrolledToTop = false;
+let tenthPost = null
 
 ////////////////////////// functions for posts ///////////////////////////////////
 function initializeEmojiPicker() {
@@ -14,6 +17,9 @@ function initializeEmojiPicker() {
 
 // function thats called from posts template when its loaded
 function initPosts(){
+    scrolledToTop = false;
+    tenthPost = null
+
     // Click event for the close posts button
     $(".posts-close-btn").click(function(event) {
         $('#channel-posts').toggleClass('d-flex');
@@ -21,7 +27,28 @@ function initPosts(){
         $('#nav-bar').removeClass('d-none')
         $('header').removeClass('d-none')
     });
+    $('#for-emoji-picker').scroll(function() {
+        
+        if ($(this).scrollTop() === 0 && !scrolledToTop && olderPosts) {
+            scrolledToTop = true;
 
+            console.log($(this).scrollTop())
+            $.ajax({
+                type: "GET",
+                url: olderPosts,
+                success: function(response) {
+                    // Update the div with the returned template
+                    $('#for-emoji-picker').prepend(response)
+                    initPosts()
+                    scrolledToTop = false;
+
+                },
+                error: function(error) {
+                    console.log("Error:", error);
+                }
+            });
+        }    
+    });
 
     $(".post-emoji-btn").click(function(event) {
         event.preventDefault()
@@ -52,11 +79,23 @@ function initPosts(){
         addUserPostRequest(url, csrftoken);
     });
 
+    //get the post count
+    let postCount = $('.scrollable-div .card').length;
+    // if post count can be divided by 10 then oldpostcount is ten if not oldpost count is the remainder
+    let oldPostCount = postCount % 10 === 0 ? 10 : postCount % 10;
+    //get the post at a older posts count index
+    postAtIndex = $('.scrollable-div .card').eq(oldPostCount - 1); 
     
-    //scroll to bottom of the posts
-    $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'fast');
+    // scroll to 1post at index above if there are more 10 else scroll to bottom
+    if (postCount > 10) {
+        // Scroll to the 10th post
+        $('#channel-posts .scrollable-div').animate({ scrollTop: postAtIndex.offset().top }, 'fast');
+    } else {
+        $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'fast');
+    }
 
     initializeEmojiPicker();
+
 
 }
 
@@ -107,6 +146,7 @@ function getRequestToDjamgo(divToAddContent, url){
         }
     });
 }
+
 
 // function for adding and removing emoji on posts
 function postRequestToDjamgo(url, emojiColonName, args, emoji){

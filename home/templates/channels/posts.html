@@ -151,6 +151,12 @@
 <script>
 
     $(document).ready(function() {
+
+        {% if next_page_number %}
+        olderPosts = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
+           
+        {% endif %}
+
         $(document).on({
             click: function(event) {
                 event.preventDefault();

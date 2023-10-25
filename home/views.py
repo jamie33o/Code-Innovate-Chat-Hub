@@ -14,6 +14,8 @@ from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 
 
@@ -36,7 +38,7 @@ class HomeView(View):
                     user=request.user,
                     channel=channel
                 )
-                user_statuses[channel.id] = user_status
+                user_statuses[channel.id] = user_status.last_visit
 
         context = {
             'channels': channels,
@@ -51,12 +53,24 @@ class HomeView(View):
 @method_decorator(login_required, name='dispatch')
 class ChannelPostsView(View):
     template_name = 'channels/posts.html'
+    paginated_template ='channels/paginated-posts.html'
+    posts_per_page = 10
 
     def get(self, request, channel_id, *args, **kwargs):
         channel = get_object_or_404(ChannelModel, id=channel_id)
         
         posts = ChannelPosts.objects.filter(post_channel=channel)
-    
+        # Pagination
+        paginator = Paginator(posts, self.posts_per_page)
+        page = request.GET.get('page')
+
+        try:
+            paginated_posts = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_posts = paginator.page(1)
+        except EmptyPage:
+            paginated_posts = paginator.page(paginator.num_pages)
+
 
         if request.user in channel.users.all():
             self.update_last_viewed_channel(request, channel_id)
@@ -68,6 +82,7 @@ class ChannelPostsView(View):
             user=request.user,
             channel=channel
         )
+
         user_status.last_visit = timezone.now()
         user_status.save()
 
@@ -77,13 +92,20 @@ class ChannelPostsView(View):
         messages.error(request, f'Error: Could not add {request.user.username} to channel')
         messages.error(request, f'Error: Please enter text', extra_tags='summernote-error')
 
+
+        next_page_number = paginated_posts.next_page_number() if paginated_posts.has_next() else None
+
         context = {
             'channel': channel,
-            'posts': posts,
+            'posts': paginated_posts,
             'form': form,
-            'channel_users': channel.users.all()
-
+            'channel_users': channel.users.all(),
+            'next_page_number': next_page_number,
         }
+
+        if page:
+            return render(request, self.paginated_template, context)
+
         return render(request, self.template_name, context)
 
     def post(self, request, channel_id, *args, **kwargs):
