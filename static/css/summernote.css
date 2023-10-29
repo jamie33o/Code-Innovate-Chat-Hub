@@ -91,6 +91,27 @@
     border-color: rgb(120, 121, 122) !important;
 }
 
+.sn-img {
+    position: relative; 
+    display: inline-block;
+}
+
+.delete-img-icon {
+    z-index: 5; 
+    top: 0; 
+    right: 0; 
+    background-color: var(--dark-grey); 
+    border-radius:50%;
+    padding: 5px !important;
+    color: white;
+    border: 1px solid red;
+}
+.delete-img-icon:hover {
+    background-color: white; 
+    color: var(--dark-grey);
+}
+
+
 /* ////////////////////////// summernote CDN overites //////////////////////// */
 /* summernote modal overlay */
 div.modal-backdrop {
