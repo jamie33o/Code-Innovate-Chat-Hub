@@ -82,6 +82,43 @@
     resize: horizontal; /* Allow horizontal resizing */
 }
 
+.comments-link {
+    display: flex;
+    flex-direction: row;
+    width: 200px;
+    padding: 5px; /* Adjust padding as needed */
+    border-radius: 5px; /* Add border-radius for rounded corners */
+    transition: background-color 0.3s ease-in-out; /* Add a smooth transition effect */
+    justify-content: center;
+}
+
+.comments-link:hover {
+    background-color: #f0f0f0; /* Change the background color on hover */
+    border: 1px solid #ccc; /* Add a border for the "View in Comments" link */
+
+}
+.comment-date {
+    display: flex;
+
+}
+.view-comments {
+    display: none;
+
+}
+.comments-link:hover .comment-date {
+    display: none;
+}
+
+.comments-link:hover .view-comments {
+    display: flex; /* or inline, or any other appropriate display value */
+}
+
+.profile-pics {
+    display: flex;
+    gap: -10px; /* Adjust the negative gap to control the overlap amount */
+}
+
+/* posts card */
 .h7 {
     font-size: 0.8rem;
 }
@@ -130,6 +167,7 @@
     margin: none;
 }
 
+/* added emoji users model */
 .emoji-user-count-modal {
     position: absolute;
     bottom: 50px;
@@ -138,7 +176,10 @@
     justify-content: center;
     
 }
-
+.modal-header {
+    display: flex;
+    justify-content: center;
+}
 .added-emoji-btn .emoji {
     width: 25px;
     height: 25px;
@@ -211,3 +252,9 @@
         margin-bottom: 2.77rem;
     }
 }
+
+
+
+
+
+
