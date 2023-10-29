@@ -5,7 +5,7 @@ class EmojiPicker {
         this.$panel = null;
         this.emojiSource = 'static/tam-emoji/img'
         this.divClass = divClass;
-        this.curentClass = divClass.substring(1);
+        this.curentClass = divClass.substring(1,3);
         this.emojiClickedCallback = emojiClickedCallback; //  callback function to send emoji to summernote.js
         // Initialize the emoji panel
         this.emojiPanel();
