@@ -1,11 +1,10 @@
 from django.urls import path
-from .views import (ChannelsView, 
-                    PostsView, 
-                    CommentsView, 
-                    AddUserToChannelView, 
-                    ImageUploadView,
-                    AddOrUpdateEmojiView,
-                    )
+from group_chat.views.channels_view import ChannelsView, AddUserToChannelView
+from group_chat.views.comments_view import CommentsView
+from group_chat.views.posts_view import PostsView
+from group_chat.views.util_views import ImageUploadView, AddOrUpdateEmojiView
+
+
 
 urlpatterns = [
     path('', ChannelsView.as_view(), name='channels'),
