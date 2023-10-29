@@ -44,7 +44,6 @@ class HomeView(View):
             'channels': channels,
             'last_viewed_channel_id': last_viewed_channel_id,
             'user_statuses': user_statuses,  
-
         }
 
         return render(request, self.template_name, context)
@@ -59,10 +58,11 @@ class ChannelPostsView(View):
     def get(self, request, channel_id, *args, **kwargs):
         channel = get_object_or_404(ChannelModel, id=channel_id)
         
-        posts = ChannelPosts.objects.filter(post_channel=channel)
+        posts = ChannelPosts.objects.filter(post_channel=channel).order_by('created_date')
         # Pagination
         paginator = Paginator(posts, self.posts_per_page)
         page = request.GET.get('page')
+
 
         try:
             paginated_posts = paginator.page(page)
@@ -71,6 +71,24 @@ class ChannelPostsView(View):
         except EmptyPage:
             paginated_posts = paginator.page(paginator.num_pages)
 
+
+          # Create a list to store information about users who commented for each post
+        post_comments_users = {}
+
+        for post in posts:
+           # Get the comments for the current post
+            comments = post.comments_created.all()
+
+            # Extract user IDs of users who have commented on the post
+            commented_users_ids = comments.values_list('created_by', flat=True)
+
+            # Retrieve additional information about the users
+            commented_users_info = get_user_model().objects.filter(id__in=commented_users_ids)
+            # Create a dictionary with user information for each post
+            post_comments_users[post.id] = {
+                'post': paginated_posts,
+                'commented_users': commented_users_info,
+            }
 
         if request.user in channel.users.all():
             self.update_last_viewed_channel(request, channel_id)
@@ -85,6 +103,7 @@ class ChannelPostsView(View):
 
         user_status.last_visit = timezone.now()
         user_status.save()
+
 
         # Add messages
         messages.success(request, f'Success: {request.user.username} added to channel')
@@ -101,6 +120,7 @@ class ChannelPostsView(View):
             'form': form,
             'channel_users': channel.users.all(),
             'next_page_number': next_page_number,
+            'post_comments_users': post_comments_users
         }
 
         if page:
@@ -108,17 +128,34 @@ class ChannelPostsView(View):
 
         return render(request, self.template_name, context)
 
-    def post(self, request, channel_id, *args, **kwargs):
-        form = ChannelPostForm(request.POST)
+    def post(self, request, channel_id, post_id=None, *args, **kwargs):
+
+         # If post_id is None, it's a new post; otherwise, it's an edit
+        if post_id == None:
+            form = ChannelPostForm(request.POST)
+        else:
+            post = get_object_or_404(ChannelPosts, id=post_id)
+            form = ChannelPostForm(request.POST, instance=post)
+            
+
         if form.is_valid():
             form.instance.post_channel = get_object_or_404(ChannelModel, id=channel_id)
             post = self.process_and_save(request, form)                
             #self.broadcast_post(request, post, channel_id)
             # Process and save images
-            redirect_url = reverse('channel_posts', args=[channel_id])
-            return redirect(redirect_url)
+            if post_id is None:
+                redirect_url = reverse('channel_posts', args=[channel_id])
+
+                return redirect(redirect_url)
+            else:
+                response_data = {
+                    'status': 'success',
+                    'post': post.post,
+                    'images': post.images,
+                }
+
+                return JsonResponse(response_data)
         else:
-            print(form.errors)
             return render(request, self.template_name, {'form': form})
 
     def process_and_save(self, request, form):
@@ -283,7 +320,6 @@ class AddOrUpdateEmojiView(View):
             emoji_colon_name=emoji_colon_name
             )
 
-           
             # Get the PostComment
             post_comment = PostComments.objects.get(pk=id)
 
