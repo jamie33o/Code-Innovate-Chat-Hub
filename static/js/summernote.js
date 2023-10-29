@@ -58,19 +58,19 @@ class SummernoteEnhancer {
     this.snForm = $(`${this.divToLoadIn} .sn-form`)
     // submit btn listener
     this.snSubmitForm.click((event) => {
-            event.preventDefault();
-            // Check if the content is empty or meets your criteria
-            let $summernoteContent = self.$sn.summernote('code');
-            let tempDiv = $('<div>');
-            tempDiv.html($summernoteContent);
-            
-            let plainText = tempDiv.text().trim();
-            if (!plainText) {
-              displayMessage({'status': 'summernote-error'})
-            }else{
-              this.submitForm(self.djangoUrl);
-            }
-        });
+      event.preventDefault();
+      // Check if the content is empty or meets your criteria
+      let $summernoteContent = self.$sn.summernote('code');
+      let tempDiv = $('<div>');
+      tempDiv.html($summernoteContent);
+      
+      let plainText = tempDiv.text().trim();
+      if (!plainText) {
+        displayMessage({'status': 'summernote-error'})
+      }else{
+        this.submitForm(self.djangoUrl);
+      }
+  });
 
     this.divsection = $(this.divToLoadIn)
 
@@ -102,7 +102,7 @@ class SummernoteEnhancer {
         $(`${self.divToLoadIn} .hide-modal`).hide()
     });
 
-    // Add this code to bind the click event of your existing button
+    // Add this code to bind the click event of existing button
     $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function () {      
       $(`${self.divToLoadIn} .hide-modal`).show()
 
@@ -116,7 +116,6 @@ class SummernoteEnhancer {
     let nameSuggestions = SummernoteEnhancer.sharedChannelUsers;
     let $snText = $('<p>').html(this.$sn.summernote('code')).text();
     
-
     if($snText.includes('@')){
       let atIndex = $snText.lastIndexOf("@");
       // Check if "@" was the last character entered and the character before it is not a letter or symbol
@@ -141,8 +140,8 @@ class SummernoteEnhancer {
           text: '@ ' + name
         });
         suggestion.on("click", (event) => {
-          // Replace the typed text with the selected name
           event.preventDefault()
+          // Replace the typed text with the selected name
 
           this.$sn.summernote(`editor.insertNode`, suggestion[0]);
 
@@ -161,26 +160,87 @@ class SummernoteEnhancer {
     const self = this;
     // Serialize the form data
     let formData = this.snForm.serialize();
+    // Loop through each URL in uploadImageUrls
     $.each(self.uploadImageUrls, function(index, url) {
-      formData += `&urls[]=${encodeURIComponent(url)}`;
-  });
-    // Preserve the reference to the class instance
+      // Check if the URL is not already present in the form data
+      if (formData.indexOf(encodeURIComponent(url)) === -1) {
+          // Append the URL to the form data
+          formData += `&urls[]=${encodeURIComponent(url)}`;
+      }
+    });
     // Send the form data to Django
     $.ajax({
-        url: djangoUrl,  // Replace with your Django view URL
+        url: djangoUrl, 
         type: 'POST',
         data: formData,
         success: function(response) {
-            // Handle success
-            self.divsection.html(response)
+          if(response.status){
+            let postBody = $('<div class="card-body">' +
+            '<p class="card-text">' +
+                response.post +
+            '</p>' +
+            '<div class="post-images">' +
+            '</div>' +
+            '</div>');
+            let imagesArray = response.images.split(',');
+
+            displayMessage(response);
+            if(imagesArray.length >= 1){
+                imagesArray.forEach(function(imageUrl) {
+                postBody.find('.post-images').append(`<img src="${imageUrl}" alt="Post Image">`);
+              });
+            }else{
+
+              postBody.find('.post-images').append(`<img src="${response.images}" alt="Post Image">`)
+            }
+            self.divsection.html(postBody)
+          }else{
+              self.divsection.html(response)
+          }
         },
         error: function(error) {
             // Handle errors
             console.log(error);
         }
     });
+    self.uploadImageUrls = []
 
   }
+  addToSummernoteeditorField(content){
+    this.$sn.summernote('code', content);
+  }
+
+  addimageToSummernote(src){
+    this.uploadImageUrls.push(src)
+    let self = this
+    
+    // Append the image and icon to the specified container
+    $(`${this.divToLoadIn} div.note-editing-area`).append(`
+      <div class="sn-img">
+        <i class="fa-solid fa-x position-absolute delete-img-icon"></i>
+        <img src="${src}"  alt="Uploaded Image">
+      </div>
+    `);    
+
+    $('.delete-img-icon').on('click', function() {
+      // Get the URL of the image
+      let url = $(this).parent().find('img').attr('src');
+  
+      // Iterate over each element in the array
+      self.uploadImageUrls.forEach(function(uploadedImg, index) {
+          if (uploadedImg === url) {
+              // Remove the element at the corresponding index
+              self.uploadImageUrls.splice(index, 1);
+          }
+      });
+  
+      // Remove the parent element
+      $(this).parent().remove();
+  });
+  
+    
+  }
+
 
   uploadImage(file, editor, welEditable) {
       // Create a FormData object to send the file to the server
@@ -197,8 +257,7 @@ class SummernoteEnhancer {
         contentType: false,
         processData: false,
         success: function(response) {
-         
-          $('#channel-posts div.note-editing-area').append('<img src="' + response.url + '" alt="Uploaded Image">');
+         self.addimageToSummernote(response.url)
           self.uploadImageUrls.push(response.url)
          
           self.$sn.summernote('focus');
@@ -215,5 +274,6 @@ class SummernoteEnhancer {
 
 const summernoteEnhancerPosts = new SummernoteEnhancer();
 const summernoteEnhancerComments = new SummernoteEnhancer();
+const summernoteEnhancerEditPost = new SummernoteEnhancer();
 
 
