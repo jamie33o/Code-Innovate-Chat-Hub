@@ -23,7 +23,7 @@
    
     {% for single_post in posts %}
     <!--- \\\\\\\Post-->
-    <div class="card gedf-card">
+    <div class="card gedf-card" data-post-id = '{{ single_post.id }}' data-post-url = "{% url 'channel_posts' channel.id %}">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-between align-items-center">
@@ -45,19 +45,19 @@
                             <i class="fa fa-ellipsis-h"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
-                            <div class="h6 dropdown-header btn-ci">Configuration</div>
-                            <a class="dropdown-item btn-ci" href="#">Save</a>
-                            <a class="dropdown-item btn-ci" href="#">Hide</a>
-                            <a class="dropdown-item btn-ci" href="#">Report</a>
+                            <button class="dropdown-item btn-ci">Delete</button>
+                            <button class="dropdown-item btn-ci">Save</button>
+                            <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
+                            <button class="dropdown-item btn-ci">Report</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <p class="card-text">
+            <div class="card-text">
                 {{ single_post.post|safe }}
-            </p>
+            </div>
             {% if single_post.images %}
                 <div class="post-images">
                     {% for image_url in single_post.get_image_urls %}
@@ -116,9 +116,32 @@
                     {% endfor %}
                 </ul>
             </div>
-        
-                <a href="{% url 'post_comments' single_post.id %}" class="card-link comments-link"><i class="fa fa-comment"></i> Comment</a>
-                <a href="#" class="card-link"><i class="fa fa-mail-forward"></i> Share</a>
+            <a href="{% url 'post_comments' single_post.id %}" class="card-link comments-link">
+
+                <ul class="profile-pics">
+                    {% for post_id, data in post_comments_users.items %}
+                        {% if post_id == single_post.id %}
+                            {% for user in data.commented_users %}
+                                <li class="list-inline-item">
+                                    {% if user.userprofile %}
+                                        {% if user.userprofile.profile_picture %}
+                                            <img class="rounded-circle" width="20" src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
+                                        {% else %}
+                                            <img class="rounded-circle" width="20" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                                        {% endif %}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% if single_post.latest_comment %}
+                    <span class="comment-date">{{ single_post.latest_comment.created_date }}</span>
+                    <span class="view-comments">View Comments</span>
+                {% else %}
+                    <span class="view-comments d-flex">Reply</span>
+                {% endif %}
+            </a>
         </div>
         
     </div>
@@ -157,26 +180,9 @@
            
         {% endif %}
 
-        $(document).on({
-            click: function(event) {
-                event.preventDefault();
-                let emojiCode = $(this).data('emoji-code')
-                let url = $(this).data('post-url');
-                postRequestToDjamgo(url, emojiCode, this);
-            },
-            mouseenter: function() {
-                $(this).css('cursor', 'pointer');
-                let emojiId = $(this).data('target');
-                $(emojiId).removeClass('d-none');
-            },
-            mouseleave: function() {
-                $(this).css('cursor', 'pointer');
-                let emojiId = $(this).data('target');
-                $(emojiId).addClass('d-none');
-            }
-        }, '.added-emoji-btn');
        
-
+       
+      
     
 
         initPosts()
@@ -191,6 +197,42 @@
             {% endfor %}
         ];
 
+        htmlStructure = `
+            <!-- Overlay the user can click to close the modal -->
+            <div class="close-modal hide-modal"></div>
+
+            <!-- Container for summernote editor -->
+            <div class="summernote-form mb-2">
+                <!-- Container for usernames list that the user can tag with @ -->
+                <div class="tag-name-modal popup">
+                    <ul class="channel-users d-flex flex-column ml-3 my-3"></ul>
+                </div>
+
+                <!-- Summernote editor form -->
+                <form class="sn-form" method="post">
+                    {% csrf_token %}
+                    <textarea name="post"></textarea>
+
+                    <!-- Buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
+                    <div class="summernote-btn-bottom">   
+                        <div>  
+                            <button class="mx-3 mt-1 emoji-popup-btn" type="button">
+                                <span class="fa-regular fa-face-smile fa-lg emoji-btn" style="color: var(--ci-orange);"></span>
+                            </button>
+                            <button class="mx-3 at-symbol" type="button">
+                                <span class="fa-solid fa-at fa-lg" style="color: var(--ci-orange);"></span>
+                            </button>
+                        </div>   
+                        <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit">
+                            <span class="fa-solid fa-play fa-lg" style="color: var(--ci-orange);"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+
+       
 
         // get the channel id using django template literal which will be used in the js file and for the websocket
         channel_id = {{ channel.id }}; 
