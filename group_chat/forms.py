@@ -1,7 +1,7 @@
 from django import forms
-from .models import ChannelPosts, PostComments
+from .models import PostsModel, CommentsModel
 
-class ChannelPostForm(forms.ModelForm):
+class PostsForm(forms.ModelForm):
     """
     This class is for the summernote editor form
 
@@ -9,12 +9,12 @@ class ChannelPostForm(forms.ModelForm):
         super class: class that this class inherits from
     """
     class Meta:
-        model = ChannelPosts
+        model = PostsModel
         fields = ['post', 'images']  # Include the 'images' field in the form
 
     
 
-class PostCommentsForm(forms.ModelForm):
+class CommentsForm(forms.ModelForm):
     """
     This class is for the summernote editor form
 
@@ -22,8 +22,8 @@ class PostCommentsForm(forms.ModelForm):
         super class: class that this class inherits from
     """
     class Meta:
-        model = PostComments
-        fields = ['post']
+        model = CommentsModel
+        fields =  ['post', 'images']
 
     
 

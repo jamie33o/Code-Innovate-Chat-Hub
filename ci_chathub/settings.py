@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     # for live messaging
     'channels',
     # apps i created
-    'home',
+    'group_chat',
     'user_profile',
     # for emoji
     'emoji',

@@ -24,13 +24,13 @@ class ChannelModel(models.Model):
     def latest_post(self):
         return self.posts_created.latest('created_date')
     
-class UserChannelStatus(models.Model):
+class ChannelLastViewedModel(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     channel = models.ForeignKey(ChannelModel, on_delete=models.CASCADE)
     last_visit = models.DateTimeField(auto_now=True)
 
     
-class Image(models.Model):
+class ImageModel(models.Model):
     image = models.ImageField(upload_to='images/')
 
 class EmojiModel(models.Model):
@@ -40,7 +40,7 @@ class EmojiModel(models.Model):
     def get_incremented_users(self):
         return self.users_who_incremented.all()
 
-class ChannelPosts(models.Model):
+class PostsModel(models.Model):
     """
     This class is for each indivual post in a chanel
 
@@ -72,7 +72,7 @@ class ChannelPosts(models.Model):
     
 
 
-class PostComments(models.Model):
+class CommentsModel(models.Model):
     """
     This class is for comments on each indivual post
 
@@ -84,14 +84,14 @@ class PostComments(models.Model):
                                    null=True, related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
-    image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True)
+    images = models.ForeignKey(ImageModel, on_delete=models.SET_NULL, null=True, blank=True)
     emojis = models.ManyToManyField(EmojiModel)
 
 
     post = models.TextField()
 
     comment_post = models.ForeignKey(
-        ChannelPosts,
+        PostsModel,
         on_delete=models.SET_NULL,
         null=True,
         related_name='comments_created'

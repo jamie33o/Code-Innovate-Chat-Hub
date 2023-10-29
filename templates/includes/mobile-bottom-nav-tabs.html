@@ -4,7 +4,7 @@
     <div class="w-100 m-0">
         <nav>
             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                <a class="nav-item nav-link {% if url_name == 'home' %} active {% endif %}" id="nav-home-tab"  href="{% url 'home' %}" role="tab" aria-controls="nav-home" aria-selected="true"> <i class="fas fa-home"></i>Home</a>
+                <a class="nav-item nav-link {% if url_name == 'channels' %} active {% endif %}" id="nav-home-tab"  href="{% url 'channels' %}" role="tab" aria-controls="nav-home" aria-selected="true"> <i class="fas fa-home"></i>Home</a>
                 <a class="nav-item nav-link {% if url_name == 'messages' %} active {% endif %}" id="nav-profile-tab"  href="#messages"role="tab" aria-controls="nav-messages" aria-selected="false"><i class="fas fa-envelope"></i> Messages</a>
                 <a class="nav-item nav-link {% if url_name == 'user_profile' %} active {% endif %}" id="nav-contact-tab"  href="{% url 'user_profile' %}" role="nav-profile" aria-controls="nav-contact" aria-selected="false"><i class="fas fa-user"></i>Profile</a>
             </div>

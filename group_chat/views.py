@@ -5,8 +5,8 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from user_profile.models import UserProfile
-from .models import ChannelModel, ChannelPosts, PostComments, Image,EmojiModel, UserChannelStatus
-from .forms import ChannelPostForm, PostCommentsForm
+from .models import ChannelModel, PostsModel, CommentsModel, ImageModel,EmojiModel, ChannelLastViewedModel
+from .forms import PostsForm, CommentsForm
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.views import View
@@ -22,7 +22,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 @method_decorator(login_required, name='dispatch')
-class HomeView(View):
+class ChannelsView(View):
     template_name = 'channels/home.html'
 
     def get(self, request, *args, **kwargs):
@@ -34,7 +34,7 @@ class HomeView(View):
         # Iterate over channels to get user_status for each
         for channel in channels:
             if request.user in channel.users.all():
-                user_status, created = UserChannelStatus.objects.get_or_create(
+                user_status, created = ChannelLastViewedModel.objects.get_or_create(
                     user=request.user,
                     channel=channel
                 )
@@ -50,7 +50,7 @@ class HomeView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class ChannelPostsView(View):
+class PostsView(View):
     template_name = 'channels/posts.html'
     paginated_template ='channels/paginated-posts.html'
     posts_per_page = 10
@@ -58,7 +58,7 @@ class ChannelPostsView(View):
     def get(self, request, channel_id, *args, **kwargs):
         channel = get_object_or_404(ChannelModel, id=channel_id)
         
-        posts = ChannelPosts.objects.filter(post_channel=channel).order_by('created_date')
+        posts = PostsModel.objects.filter(post_channel=channel).order_by('created_date')
         # Pagination
         paginator = Paginator(posts, self.posts_per_page)
         page = request.GET.get('page')
@@ -93,10 +93,10 @@ class ChannelPostsView(View):
         if request.user in channel.users.all():
             self.update_last_viewed_channel(request, channel_id)
 
-        form = ChannelPostForm()
+        form = PostsForm()
 
         # Update the user's last visit status for the channel
-        user_status, created = UserChannelStatus.objects.get_or_create(
+        user_status, created = ChannelLastViewedModel.objects.get_or_create(
             user=request.user,
             channel=channel
         )
@@ -132,10 +132,10 @@ class ChannelPostsView(View):
 
          # If post_id is None, it's a new post; otherwise, it's an edit
         if post_id == None:
-            form = ChannelPostForm(request.POST)
+            form = PostsForm(request.POST)
         else:
-            post = get_object_or_404(ChannelPosts, id=post_id)
-            form = ChannelPostForm(request.POST, instance=post)
+            post = get_object_or_404(PostsModel, id=post_id)
+            form = PostsForm(request.POST, instance=post)
             
 
         if form.is_valid():
@@ -191,14 +191,14 @@ class ChannelPostsView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class PostCommentsView(View):
+class CommentsView(View):
     template_name = 'channels/comments.html'
 
     def get(self, request, post_id, *args, **kwargs):
-        post = get_object_or_404(ChannelPosts, id=post_id)
-        comments = PostComments.objects.filter(comment_post=post)
+        post = get_object_or_404(PostsModel, id=post_id)
+        comments = CommentsModel.objects.filter(comment_post=post)
 
-        form = PostCommentsForm()
+        form = CommentsForm()
 
         context = {
             'post': post,
@@ -209,9 +209,9 @@ class PostCommentsView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, post_id, *args, **kwargs):
-        form = PostCommentsForm(request.POST)
+        form = CommentsForm(request.POST)
         if form.is_valid():
-            form.instance.comment_post = get_object_or_404(ChannelPosts, id=post_id)
+            form.instance.comment_post = get_object_or_404(PostsModel, id=post_id)
 
             comment = self.process_and_save(request, form)
             #self.broadcast_comment(request, comment, post_id)
@@ -270,7 +270,7 @@ class ImageUploadView(View):
             image_file = request.FILES['file']
 
             # Create a new Image instance
-            new_image = Image.objects.create(image=image_file)
+            new_image = ImageModel.objects.create(image=image_file)
 
             # Return the URL or other information
             return JsonResponse({'url': new_image.image.url})
@@ -286,8 +286,8 @@ class AddOrUpdateEmojiView(View):
 
         if 'post_emoji' in request.path:
 
-            # Get the ChannelPosts
-            channel_post = ChannelPosts.objects.get(pk=id)
+            # Get the PostsModel
+            channel_post = PostsModel.objects.get(pk=id)
 
                         # If it exists, increment the count and add the user
             post_emoji_instance, created = channel_post.emojis.get_or_create(
@@ -321,7 +321,7 @@ class AddOrUpdateEmojiView(View):
             )
 
             # Get the PostComment
-            post_comment = PostComments.objects.get(pk=id)
+            post_comment = CommentsModel.objects.get(pk=id)
 
             # Add the emoji to the emojis field
             post_comment.emojis.add(emoji_instance)   

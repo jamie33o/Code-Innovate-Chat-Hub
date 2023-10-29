@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 class ChannelsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'home'
+    name = 'group_chat'
 
 
     def ready(self):
-        import home.signals
+        import group_chat.signals
