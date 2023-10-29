@@ -6,6 +6,7 @@ let emojiPickerPosts = null
 let olderPosts = null
 let scrolledToTop = false;
 let tenthPost = null
+let htmlStructure = null
 
 ////////////////////////// functions for posts ///////////////////////////////////
 function initializeEmojiPicker() {
@@ -20,6 +21,7 @@ function initPosts(){
     scrolledToTop = false;
     tenthPost = null
 
+
     // Click event for the close posts button
     $(".posts-close-btn").click(function(event) {
         $('#channel-posts').toggleClass('d-flex');
@@ -27,12 +29,11 @@ function initPosts(){
         $('#nav-bar').removeClass('d-none')
         $('header').removeClass('d-none')
     });
+
     $('#for-emoji-picker').scroll(function() {
-        
-        if ($(this).scrollTop() === 0 && !scrolledToTop && olderPosts) {
+        if ($(this).scrollTop() === 0 && !scrolledToTop && olderPosts != null) {
             scrolledToTop = true;
 
-            console.log($(this).scrollTop())
             $.ajax({
                 type: "GET",
                 url: olderPosts,
@@ -55,11 +56,11 @@ function initPosts(){
         postId = $(this).data('post-id')
         emojiPickerPosts.$panel.show()
     })
-      
+   
     //event listener for the comments links on each post
     $(".comments-link").click(function(event) {
         event.preventDefault();
-        let url = event.target.href
+        let url = $(this).attr('href');  // Use $(this) to access the clicked element
         getRequestToDjamgo('#post-comments', url)
 
         if(window.innerWidth < 575){
@@ -68,6 +69,8 @@ function initPosts(){
         }
         $('#post-comments').addClass('d-flex');
     });
+
+    
 
     //add user form event listener
     $("#add-user-form").submit(function(event) {
@@ -93,6 +96,58 @@ function initPosts(){
     } else {
         $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'fast');
     }
+
+
+
+    $(document).on({
+        click: function(event) {
+            event.preventDefault();
+            let emojiCode = $(this).data('emoji-code')
+            let url = $(this).data('post-url');
+            postRequestToDjamgo(url, emojiCode, this);
+        },
+        mouseenter: function() {
+            $(this).css('cursor', 'pointer');
+            let emojiId = $(this).data('target');
+            $(emojiId).removeClass('d-none');
+        },
+        mouseleave: function() {
+            $(this).css('cursor', 'pointer');
+            let emojiId = $(this).data('target');
+            $(emojiId).addClass('d-none');
+        }
+    }, '.added-emoji-btn');
+
+
+
+
+    $(".edit-btn").click(function() {
+        // Find the closest ancestor with the class 'card-body'
+        var card = $(this).closest('.card');
+        let cardText = card.find('.card-text').html();
+        let cardImages = card.find('.post-images').html()
+        card.addClass('edit-post')
+        let postId = card.data("post-id")
+        let editPostUrl = card.data('post-url')
+
+            // Create the HTML structure
+
+        // Append the HTML structure to the body
+        $('.edit-post .card-body').html(htmlStructure);
+        editPostUrl += postId + '/'
+        summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl)
+        summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
+        if(cardImages){
+            $(cardImages).each(function () {
+            var src = $(this).attr('src');
+            if(src != undefined){
+                summernoteEnhancerEditPost.addimageToSummernote(src)
+
+            }
+            }); 
+        }
+
+    });
 
     initializeEmojiPicker();
 
