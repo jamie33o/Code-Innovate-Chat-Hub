@@ -61,7 +61,7 @@ function initPosts(){
     $(".comments-link").click(function(event) {
         event.preventDefault();
         let url = $(this).attr('href');  // Use $(this) to access the clicked element
-        getRequestToDjamgo('#post-comments', url)
+        getRequestToDjango('#post-comments', url)
 
         if(window.innerWidth < 575){
             $('#channel-posts').toggleClass('d-flex');
@@ -104,7 +104,7 @@ function initPosts(){
             event.preventDefault();
             let emojiCode = $(this).data('emoji-code')
             let url = $(this).data('post-url');
-            postRequestToDjamgo(url, emojiCode, this);
+            postRequestToDjango(url, emojiCode, this);
         },
         mouseenter: function() {
             $(this).css('cursor', 'pointer');
@@ -131,18 +131,17 @@ function initPosts(){
         let editPostUrl = card.data('post-url')
 
             // Create the HTML structure
-
+        $('.edit-post .card-body').html(htmlStructure)
         // Append the HTML structure to the body
-        $('.edit-post .card-body').html(htmlStructure);
         editPostUrl += postId + '/'
         summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl)
         summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
         if(cardImages){
+            console.log('home.js')
             $(cardImages).each(function () {
             var src = $(this).attr('src');
             if(src != undefined){
                 summernoteEnhancerEditPost.addimageToSummernote(src)
-
             }
             }); 
         }
@@ -180,14 +179,14 @@ function emojiPickerCallback(emoji) {
     let newEmojiPostUrl = emojiPostUrl.replace('0', postId)
     let emojiColonName = emoji.alt
     
-    postRequestToDjamgo(newEmojiPostUrl, emojiColonName, postId,emoji)
+    postRequestToDjango(newEmojiPostUrl, emojiColonName, postId,emoji)
    
 }
 
 
 
 // function to load posts
-function getRequestToDjamgo(divToAddContent, url){
+function getRequestToDjango(divToAddContent, url){
     // AJAX request
     $.ajax({
         type: "GET",
@@ -195,6 +194,7 @@ function getRequestToDjamgo(divToAddContent, url){
         success: function(response) {
             // Update the div with the returned template
             $(divToAddContent).html(response);
+
         },
         error: function(error) {
             console.log("Error:", error);
@@ -204,7 +204,7 @@ function getRequestToDjamgo(divToAddContent, url){
 
 
 // function for adding and removing emoji on posts
-function postRequestToDjamgo(url, emojiColonName, args, emoji){
+function postRequestToDjango(url, emojiColonName, args, emoji){
     var id = url.match(/\d+/g);
     let spanElement = $(args).find('span');
     let currentNumber = null
@@ -310,7 +310,7 @@ function initChannels(){
         event.preventDefault();
         $(this).find('.unread-indicator').remove()
         url = event.currentTarget.href
-        getRequestToDjamgo('#channel-posts', url)
+        getRequestToDjango('#channel-posts', url)
         if(window.innerWidth < 575){
             $('#channel-posts').toggleClass('d-flex');
             $('#channel-links-container').toggleClass('hide');

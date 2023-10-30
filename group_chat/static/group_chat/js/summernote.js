@@ -160,14 +160,19 @@ class SummernoteEnhancer {
     const self = this;
     // Serialize the form data
     let formData = this.snForm.serialize();
-    // Loop through each URL in uploadImageUrls
-    $.each(self.uploadImageUrls, function(index, url) {
-      // Check if the URL is not already present in the form data
-      if (formData.indexOf(encodeURIComponent(url)) === -1) {
-          // Append the URL to the form data
-          formData += `&urls[]=${encodeURIComponent(url)}`;
-      }
-    });
+    console.log(self.uploadImageUrls)
+    if(self.uploadImageUrls.length > 0 ){ // Loop through each URL in uploadImageUrls
+
+      $.each(self.uploadImageUrls, function(index, url) {
+          // Check if the URL is not already present in the form data
+          if (formData.indexOf(encodeURIComponent(url)) === -1) {
+              // Append the URL to the form data
+              formData += `&urls[]=${encodeURIComponent(url)}`;
+          }
+      });
+    }
+
+   
     // Send the form data to Django
     $.ajax({
         url: djangoUrl, 
@@ -182,18 +187,23 @@ class SummernoteEnhancer {
             '<div class="post-images">' +
             '</div>' +
             '</div>');
-            let imagesArray = response.images.split(',');
+            if(response.images){
 
-            displayMessage(response);
-            if(imagesArray.length >= 1){
-                imagesArray.forEach(function(imageUrl) {
-                postBody.find('.post-images').append(`<img src="${imageUrl}" alt="Post Image">`);
-              });
-            }else{
+              let imagesArray = response.images.split(',');
 
-              postBody.find('.post-images').append(`<img src="${response.images}" alt="Post Image">`)
+              if(imagesArray.length >= 1){
+                  imagesArray.forEach(function(imageUrl) {
+                  postBody.find('.post-images').append(`<img src="${imageUrl}" alt="Post Image">`);
+                });
+              }else if(imagesArray.length > 0){
+
+                postBody.find('.post-images').append(`<img src="${response.images}" alt="Post Image">`)
+              }
+
             }
             self.divsection.html(postBody)
+            displayMessage(response);
+
           }else{
               self.divsection.html(response)
           }

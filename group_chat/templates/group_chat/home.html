@@ -2,8 +2,9 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
-
+    <link rel="stylesheet" href="{% static 'group_chat/css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'group_chat/css/summernote.css' %}"> 
+    <link href="{% static 'group_chat/css/emoji.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -61,18 +62,31 @@
 
 
 {% block postloadjs %}
-    <script src="{% static 'home/js/home.js' %}"></script>
+    <script src="{% static 'group_chat/js/home.js' %}"></script>
+    <script src="{% static 'group_chat/js/config.js' %}"></script>
+    <script src="{% static 'group_chat/js/tam-emoji.js' %}"></script>
+    <script src="{% static 'group_chat/js/summernote.js' %}"></script>
+
     <script>     
+
     $(document).ready(function() {
+
         initChannels()
         
         {% if last_viewed_channel_id %}
             if(window.innerWidth > 575){
-                url = `{% url 'channel_posts' last_viewed_channel_id %}`
-                getRequestToDjamgo('#channel-posts', url)
+                let url = `{% url 'channel_posts' last_viewed_channel_id %}`
+                getRequestToDjango('#channel-posts', url)
+
             }
         {% endif %}
+
+        //url for emojis spritesheet
+        
+        EmojiPicker.emojiSource = "{% static 'group_chat/tam-emoji/img' %}";
+
     });
+
     </script>
 
 {% endblock %}

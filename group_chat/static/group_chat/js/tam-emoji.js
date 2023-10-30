@@ -1,9 +1,10 @@
 class EmojiPicker {
+    static emojiSource = null;
+
     constructor(divClass, emojiClickedCallback) {
         this.icons = {};
         this.reverseIcons = {};
         this.$panel = null;
-        this.emojiSource = 'static/tam-emoji/img'
         this.divClass = divClass;
         this.curentClass = divClass.substring(1,3);
         this.emojiClickedCallback = emojiClickedCallback; //  callback function to send emoji to summernote.js
@@ -161,8 +162,8 @@ class EmojiPicker {
         const row = emoji[1];
         const column = emoji[2];
         const name = emoji[3];
-        const filename = this.emojiSource + '/emoji_spritesheet_!.png';
-        const blankGifPath = this.emojiSource + '/blank.gif';
+        const filename = EmojiPicker.emojiSource + '/emoji_spritesheet_!.png';
+        const blankGifPath = EmojiPicker.emojiSource + '/blank.gif';
         const iconSize = 25;
         const xoffset = -(iconSize * column);
         const yoffset = -(iconSize * row);

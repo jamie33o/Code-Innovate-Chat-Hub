@@ -18,8 +18,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @method_decorator(login_required, name='dispatch')
 class PostsView(View):
-    template_name = 'channels/posts.html'
-    paginated_template ='channels/paginated-posts.html'
+    template_name = 'group_chat/posts.html'
+    paginated_template ='group_chat/paginated-posts.html'
     posts_per_page = 10
 
     def get(self, request, channel_id, *args, **kwargs):
@@ -118,9 +118,11 @@ class PostsView(View):
                 response_data = {
                     'status': 'success',
                     'post': post.post,
-                    'images': post.images,
+                    'images': None,
                 }
 
+                if post.images:
+                    response_data['images'] = post.images
                 return JsonResponse(response_data)
         else:
             return render(request, self.template_name, {'form': form})
