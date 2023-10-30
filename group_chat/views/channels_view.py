@@ -9,7 +9,7 @@ from django.http import JsonResponse
 
 @method_decorator(login_required, name='dispatch')
 class ChannelsView(View):
-    template_name = 'channels/home.html'
+    template_name = 'group_chat/home.html'
 
     def get(self, request, *args, **kwargs):
         channels = ChannelModel.objects.all()

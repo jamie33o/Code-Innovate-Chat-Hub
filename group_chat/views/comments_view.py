@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 @method_decorator(login_required, name='dispatch')
 class CommentsView(View):
-    template_name = 'channels/comments.html'
+    template_name = 'group_chat/comments.html'
 
     def get(self, request, post_id, *args, **kwargs):
         post = get_object_or_404(PostsModel, id=post_id)
