@@ -54,7 +54,7 @@ class PostsModel(models.Model):
                                    null=True, related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
-    images = models.TextField(blank=True)  
+    images = models.TextField(blank=True, default="")
     emojis = models.ManyToManyField(EmojiModel)
 
     post = models.TextField()
@@ -86,8 +86,8 @@ class CommentsModel(models.Model):
                                    null=True, related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
-    images = models.ForeignKey(ImageModel, on_delete=models.SET_NULL, null=True, blank=True)
     emojis = models.ManyToManyField(EmojiModel)
+    images = models.TextField(blank=True, default="")
 
 
     post = models.TextField()
@@ -99,5 +99,13 @@ class CommentsModel(models.Model):
         related_name='comments_created'
     )
 
+
+class SavedPost(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    post = models.ForeignKey(PostsModel, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'post']
     
 

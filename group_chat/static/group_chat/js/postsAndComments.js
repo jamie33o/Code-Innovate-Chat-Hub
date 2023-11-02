@@ -134,11 +134,29 @@ function initPosts(){
         postBeingDeleted = $(this).closest('.card');
       });
 
-      $(document).on('click', '#delete-btn', function(event) {
+    $(document).on('click', '#delete-btn', function(event) {
         event.preventDefault()
         let csrfToken = $(this).closest('form').find('input[name="csrfmiddlewaretoken"]').val();
         postBeingDeleted.remove();
         deleteObject(deletePostUrl, csrfToken)
+    })
+
+    $(document).on('click', '.save-post-btn', function(event) {
+        event.preventDefault()
+        let savePostUrl = $(this).data('save-post-url');
+
+        $.ajax({
+            type: 'POST',
+            url: savePostUrl,    
+            success: function(response) {
+                // Handle success, e.g., redirect to success_url or update UI
+                displayMessage(response)
+            },
+            error: function(error) {
+                // Handle error, e.g., display an error message
+                displayMessage(error)
+            }
+        });   
     })
 
     $(".edit-btn").click(function() {

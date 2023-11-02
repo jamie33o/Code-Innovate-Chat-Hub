@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from group_chat.models import PostsModel, CommentsModel, ImageModel,EmojiModel
+from group_chat.models import PostsModel, CommentsModel, ImageModel,EmojiModel, SavedPost
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -23,8 +23,7 @@ class ImageUploadView(View):
             # Return the URL or other information
             return JsonResponse({'url': new_image.image.url})
 
-        return JsonResponse({'error': 'Invalid request'}, status=400)
-        
+        return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'})        
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AddOrUpdateEmojiView(View):
@@ -73,8 +72,7 @@ class AddOrUpdateEmojiView(View):
             # Add the emoji to the emojis field
             post_comment.emojis.add(emoji_instance)   
     
-        return JsonResponse({'status': 'success'}) 
-
+        return JsonResponse({'status': 'success', 'message': 'Emoji added'})
 
 
 class GenericObjectDeleteView(DeleteView):
@@ -97,10 +95,25 @@ class GenericObjectDeleteView(DeleteView):
         # Delete the object
         obj.delete()
         # Override the delete method to return a JSON response
-        response_data = {'status': 'success'}
-        return JsonResponse(response_data)
-
+        return JsonResponse({'status': 'success', 'message': 'Post deleted'})
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_name'] = self.kwargs['model']
         return context
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class SavePostView(View):
+    def post(self, request, post_id):
+        post = get_object_or_404(PostsModel, id=post_id)  
+
+        # Check if the post is already saved by the user
+        if SavedPost.objects.filter(user=request.user, post=post).exists():
+            return JsonResponse({'status': 'Error', 'message': 'Post already saved'})
+
+        # Save the post for the user
+        saved_post = SavedPost(user=request.user, post=post)
+        saved_post.save()
+
+        return JsonResponse({'status': 'Success', 'message': 'Post saved'})
