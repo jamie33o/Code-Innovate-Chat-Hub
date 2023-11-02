@@ -105,8 +105,22 @@ class SummernoteEnhancer {
     // Add this code to bind the click event of existing button
     $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function () {      
       $(`${self.divToLoadIn} .hide-modal`).show()
-
       emojiPicker.$panel.show();
+    });
+
+    $(document).on('click', '.delete-img-icon', function() {
+      // Get the URL of the image
+      let url = $(this).parent().find('img').attr('src');
+ 
+      // Iterate over each element in the array
+      self.uploadImageUrls.forEach(function(uploadedImg, index) {
+         if (uploadedImg === url) {
+             // Remove the element at the corresponding index
+             self.uploadImageUrls.splice(index, 1);
+         }
+      })
+        // Remove the parent element
+      $(this).parent().remove();
     });
 
   }
@@ -222,8 +236,6 @@ class SummernoteEnhancer {
 
   addimageToSummernote(src){
     this.uploadImageUrls.push(src)
-    let self = this
-    
     // Append the image and icon to the specified container
     $(`${this.divToLoadIn} div.note-editing-area`).append(`
       <div class="sn-img">
@@ -231,23 +243,6 @@ class SummernoteEnhancer {
         <img src="${src}"  alt="Uploaded Image">
       </div>
     `);    
-
-    $('.delete-img-icon').on('click', function() {
-      // Get the URL of the image
-      let url = $(this).parent().find('img').attr('src');
-  
-      // Iterate over each element in the array
-      self.uploadImageUrls.forEach(function(uploadedImg, index) {
-          if (uploadedImg === url) {
-              // Remove the element at the corresponding index
-              self.uploadImageUrls.splice(index, 1);
-          }
-      });
-  
-      // Remove the parent element
-      $(this).parent().remove();
-  });
-  
     
   }
 
@@ -267,10 +262,7 @@ class SummernoteEnhancer {
         contentType: false,
         processData: false,
         success: function(response) {
-         self.addimageToSummernote(response.url)
-          self.uploadImageUrls.push(response.url)
-         
-          self.$sn.summernote('focus');
+          self.addimageToSummernote(response.url)         
 
         },
         error: function(error) {
