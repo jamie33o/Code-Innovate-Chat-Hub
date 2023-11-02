@@ -3,7 +3,8 @@ from group_chat.models import PostsModel, CommentsModel, ImageModel,EmojiModel
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
+from django.shortcuts import get_object_or_404
+import os
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ImageUploadView(View):
@@ -19,7 +20,7 @@ class ImageUploadView(View):
             return JsonResponse({'url': new_image.image.url})
 
         return JsonResponse({'error': 'Invalid request'}, status=400)
-    
+        
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AddOrUpdateEmojiView(View):
@@ -56,7 +57,6 @@ class AddOrUpdateEmojiView(View):
                     # If it exists, increment the count and add the user
                     post_emoji_instance.users_who_incremented.add(request.user)
                     return JsonResponse({'status': 'incremented'})
-                
         else:
             emoji_instance, created = EmojiModel.objects.get_or_create(
             created_by=user,
@@ -70,5 +70,3 @@ class AddOrUpdateEmojiView(View):
             post_comment.emojis.add(emoji_instance)   
     
         return JsonResponse({'status': 'success'}) 
-    
-  
