@@ -1,7 +1,6 @@
 from django.urls import path
 from group_chat.views.channels_view import ChannelsView, AddUserToChannelView
-from group_chat.views.comments_view import CommentsView
-from group_chat.views.posts_view import PostsView
+from group_chat.views.posts_comments_view import PostsView, CommentsView
 from group_chat.views.util_views import ImageUploadView, AddOrUpdateEmojiView
 
 
