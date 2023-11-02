@@ -8,15 +8,6 @@
         <p>Posts in {{ channel.name }}</p>
     </div>
 </div>
-{% if messages %}
-    <div class="notification">
-        <ul class="notification-messages">
-            {% for message in messages %}
-                <li class="message-item {{ message.tags }} d-none">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
 
 
 <div id="for-emoji-picker" class="scrollable-div">
@@ -44,10 +35,12 @@
                             <i class="fa fa-ellipsis-h"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
-                            <button class="dropdown-item btn-ci delete-post-btn" data-toggle="modal" data-target="#delete_modal" data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
-                            <button class="dropdown-item btn-ci">Save</button>
+                            <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
+                            {% if single_post.created_by == user %}
                             <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
-                            <button class="dropdown-item btn-ci">Report</button>
+                            <button class="dropdown-item btn-ci delete-post-btn" data-toggle="modal" data-target="#delete_modal" data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
+                            {% endif %}
+
                         </div>
                     </div>
                 </div>

@@ -133,13 +133,13 @@ p {
     padding: 20px;
 }
   
-.message-item.success {
+.message-item.Success {
     background-color: #d4edda;
     color: #155724;
     
 }
 
-.message-item.error {
+.message-item.Error {
     background-color: #f8d7da;
     color: #721c24;
 }

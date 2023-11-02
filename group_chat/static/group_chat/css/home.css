@@ -95,16 +95,15 @@
 .comments-link:hover {
     background-color: #f0f0f0; /* Change the background color on hover */
     border: 1px solid #ccc; /* Add a border for the "View in Comments" link */
-
 }
+
 .comment-date {
     display: flex;
-
 }
 .view-comments {
     display: none;
-
 }
+
 .comments-link:hover .comment-date {
     display: none;
 }

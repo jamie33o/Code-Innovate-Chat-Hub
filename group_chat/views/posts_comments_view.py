@@ -82,11 +82,6 @@ class PostsView(BaseChatView):
         user_status.last_visit = timezone.now()
         user_status.save()
 
-        # Add messages
-        messages.success(request, f'Success: {request.user.username} added to channel')
-        messages.error(request, f'Error: Could not add {request.user.username} to channel')
-        messages.error(request, f'Error: Please enter text', extra_tags='summernote-error')
-
         next_page_number = paginated_posts.next_page_number() if paginated_posts.has_next() else None
 
         context = {

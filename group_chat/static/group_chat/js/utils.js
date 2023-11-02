@@ -6,11 +6,17 @@ function displayMessage(response){
     if (isAnimationInProgress) {
         return;
     } 
+    let messageLi = `
+    <div class="notification">
+        <ul class="notification-messages">
+        <li class="message-item ${response.status}"><h3>${response.status}</h3><p>${response.message}</p></li>
+        </ul>
+    </div>
+    `;
+    $('body').prepend(messageLi)
 
     isAnimationInProgress = true;
     let notification = $('.notification')
-    $('.messages').removeClass('d-none')
-    $(`.notification .${response.status}`).removeClass('d-none')
     notification.addClass('notification-keyframe-start')
     let animationEndHandled = false;
 
@@ -22,11 +28,10 @@ function displayMessage(response){
         notification.on('animationend webkitAnimationEnd oAnimationEnd', function() {
             if (!animationEndHandled) {
 
-            $('.messages').addClass('d-none')
             notification.removeClass('notification-keyframe-finish')
 
             notification.off('animationend webkitAnimationEnd oAnimationEnd', this);
-            $(`.notification .${response.status}`).addClass('d-none')         
+            $(`.notification`).remove()        
 
             // Reset animation state       
             isAnimationInProgress = false;
@@ -259,4 +264,6 @@ function deleteObject(deletePostUrl, csrfToken){
         }
     });
 }
+
+
 
