@@ -1,5 +1,6 @@
 {% load static %}
 {% load emoji_tags %}
+
 <div class="posts-mobile-header border-bottom custom-box d-flex d-sm-none d-lg-none flex-dir-row">
     <button class="btn posts-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     <div class="ml-3 my-0">
@@ -19,8 +20,6 @@
 
 
 <div id="for-emoji-picker" class="scrollable-div">
-
-   
     {% for single_post in posts %}
     <!--- \\\\\\\Post-->
     <div class="card gedf-card" data-post-id = '{{ single_post.id }}' data-post-url = "{% url 'channel_posts' channel.id %}">
@@ -45,7 +44,7 @@
                             <i class="fa fa-ellipsis-h"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
-                            <button class="dropdown-item btn-ci">Delete</button>
+                            <button class="dropdown-item btn-ci delete-post-btn" data-toggle="modal" data-target="#delete_modal" data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
                             <button class="dropdown-item btn-ci">Save</button>
                             <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
                             <button class="dropdown-item btn-ci">Report</button>
@@ -165,6 +164,23 @@
         </div>
     {% endif %}
 
+    <div class="modal fade delete_modal mt-5" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="delete model" aria-hidden="true">
+      <div class="modal-dialog modal-div" role="document">
+        <div class="modal-content mt-5">
+          <div class="modal-body">
+                <h5 class="modal-title text-center" id="exampleModalLabel">Are you sure you want to delete this post?</h5>
+            <form>
+                {% csrf_token %}
+                <div class="input-group text-center d-flex justify-content-between">
+                    <button type="button" class="btn-oval" data-dismiss="modal" aria-label="Close">No</button>
+                    <button id="delete-btn" class="btn btn-oval" data-dismiss="modal" type="button">Yes</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 <div class="post-summernote d-sm-flex d-lg-flex px-3 ">
         {% include 'includes/summernote.html' %}
@@ -227,9 +243,7 @@
             </div>
         `;
 
-
        
-
         // get the channel id using django template literal which will be used in the js file and for the websocket
         channel_id = {{ channel.id }}; 
         //websocketInit(`wss://${window.location.host}/ws/channel_posts/${channel_id}/`); 

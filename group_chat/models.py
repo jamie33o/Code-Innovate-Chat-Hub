@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 class ChannelModel(models.Model):
     """
@@ -23,6 +24,7 @@ class ChannelModel(models.Model):
     @property
     def latest_post(self):
         return self.posts_created.latest('created_date')
+    
     
 class ChannelLastViewedModel(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

@@ -243,5 +243,20 @@ function postRequestToDjango(url, emojiColonName, args, emoji){
     });
 }
 
+function deleteObject(deletePostUrl, csrfToken){
+    $.ajax({
+        type: 'DELETE',
+        url: deletePostUrl,
+        headers: {'X-CSRFToken': csrfToken},  // Use a function to get the CSRF token
 
+        success: function(response) {
+            // Handle success, e.g., redirect to success_url or update UI
+            displayMessage(response)
+        },
+        error: function(error) {
+            // Handle error, e.g., display an error message
+            displayMessage(error)
+        }
+    });
+}
 

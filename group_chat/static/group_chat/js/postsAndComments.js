@@ -7,6 +7,8 @@ let olderPosts = null
 let scrolledToTop = false;
 let tenthPost = null
 let htmlStructure = null
+let deletePostUrl = null
+let postBeingDeleted = null
 
 ////////////////////////// functions for posts ///////////////////////////////////
 function initializeEmojiPicker() {
@@ -127,13 +129,17 @@ function initPosts(){
 
     $(document).on('click', '.delete-post-btn', function() {
         // Get the URL of the image
-        let postId = $(this).closest('.card').data('post-id');
-        console.log(postId)
-        postRequestToDjango()
-       
-          // Remove the parent element
-        $(this).closest('.card').remove();
+        deletePostUrl = $(this).data('delete-post-url')
+        // Make AJAX delete request
+        postBeingDeleted = $(this).closest('.card');
       });
+
+      $(document).on('click', '#delete-btn', function(event) {
+        event.preventDefault()
+        let csrfToken = $(this).closest('form').find('input[name="csrfmiddlewaretoken"]').val();
+        postBeingDeleted.remove();
+        deleteObject(deletePostUrl, csrfToken)
+    })
 
     $(".edit-btn").click(function() {
         // Find the closest ancestor with the class 'card-body'

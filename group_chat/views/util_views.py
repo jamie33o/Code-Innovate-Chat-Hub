@@ -4,7 +4,11 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
-import os
+from django.views.generic import DeleteView
+from django.shortcuts import get_object_or_404
+from django.apps import apps
+
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ImageUploadView(View):
@@ -70,3 +74,33 @@ class AddOrUpdateEmojiView(View):
             post_comment.emojis.add(emoji_instance)   
     
         return JsonResponse({'status': 'success'}) 
+
+
+
+class GenericObjectDeleteView(DeleteView):
+
+    def get_object(self, queryset=None):
+        # Get the model class based on the URL parameter
+        model_name = self.kwargs['model']
+        model = apps.get_model(app_label='group_chat', model_name=model_name)
+
+        # Get the object to be deleted
+        obj_pk = self.kwargs['pk']
+        obj = get_object_or_404(model, pk=obj_pk)
+
+        return obj
+    
+    def delete(self, request, *args, **kwargs):
+        # Get the object to be deleted
+        obj = self.get_object()
+
+        # Delete the object
+        obj.delete()
+        # Override the delete method to return a JSON response
+        response_data = {'status': 'success'}
+        return JsonResponse(response_data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_name'] = self.kwargs['model']
+        return context

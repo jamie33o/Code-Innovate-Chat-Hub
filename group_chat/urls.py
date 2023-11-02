@@ -1,7 +1,9 @@
 from django.urls import path
-from group_chat.views.channels_view import ChannelsView, AddUserToChannelView
-from group_chat.views.posts_comments_view import PostsView, CommentsView
-from group_chat.views.util_views import ImageUploadView, AddOrUpdateEmojiView
+from .views.channels_view import ChannelsView, AddUserToChannelView
+from .views.posts_comments_view import PostsView, CommentsView
+from .views.util_views import ImageUploadView, AddOrUpdateEmojiView
+from .views.util_views import GenericObjectDeleteView
+
 
 
 
@@ -14,5 +16,5 @@ urlpatterns = [
     path('upload-image/', ImageUploadView.as_view(), name='image_upload'),
     path('post_emoji/<int:id>/', AddOrUpdateEmojiView.as_view(), name='post_emoji'),
     path('comment_emoji/<int:id>', AddOrUpdateEmojiView.as_view(), name='comment_emoji'),
-
+    path('delete/<str:model>/<int:pk>/', GenericObjectDeleteView.as_view(), name='delete_object'),
 ]

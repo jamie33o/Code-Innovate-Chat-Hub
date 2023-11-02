@@ -214,6 +214,52 @@
 }
 
 
+.modal-close{
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #ffffff !important;
+    border: 2px solid #000 !important;
+    border-radius: 47px;
+    padding: 0px 5px !important;
+    color: #000;
+    font-weight: bolder;
+    font-size: 16px;
+    opacity: 1;
+    line-height: 1.4;
+}
+
+/* delete modal */
+
+.delete_modal .modal-title {
+    color:#4b5986;
+    padding: 50px;
+}
+
+.input-field, .input-field:focus{
+    background: transparent;
+    border: 2px solid #4b5986;
+    color: #fff !important;
+}
+
+.btn-oval{
+    background: linear-gradient(#889ad6, #626f9a, #3d486d);
+    color: #fff;
+    border-radius: 20px;
+    padding: 0.5em 2em;
+    font-size: 18px;
+    border: 2px solid #4b5986;
+    transition: all .3s ease-in-out;
+}
+
+.btn-oval:hover,.btn-oval:focus{
+    background: linear-gradient(#889ad6, #626f9a);
+    color: #fff;
+    border-color: #626f9a !important;
+    transition: all .3s ease-in-out;
+}
+
+
 /* /////////////////////// media queries ///////////////////////// */
 
 /* CSS for small screens (up to the "lg" breakpoint) */
