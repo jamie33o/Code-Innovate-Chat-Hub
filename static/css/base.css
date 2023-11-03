@@ -134,15 +134,14 @@ p {
     padding: 20px;
 }
   
-.message-item.Success {
-    background-color: #d4edda;
-    color: #155724;
-    
+.success {
+    background-color: #78d38d7d;
+    color: #e7effd;
+    font-weight: 500;
 }
 
-.message-item.Error {
-    background-color: #f8d7da;
-    color: #721c24;
+.error {
+    background-color: #d1657080;
 }
 
 .notification-keyframe-start {

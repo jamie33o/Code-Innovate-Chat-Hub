@@ -1,7 +1,7 @@
 /////////////////////// function for notification messages ///////////////////////////////
 let isAnimationInProgress = false;
 
-function displayMessage(response){     
+function displayMessage(response, divClass){     
     // Check if the animation is already in progress
     if (isAnimationInProgress) {
         return;
@@ -13,7 +13,7 @@ function displayMessage(response){
         </ul>
     </div>
     `;
-    $('body').prepend(messageLi)
+    $(divClass).append(messageLi)
 
     isAnimationInProgress = true;
     let notification = $('.notification')
@@ -256,11 +256,11 @@ function deleteObject(deletePostUrl, csrfToken){
 
         success: function(response) {
             // Handle success, e.g., redirect to success_url or update UI
-            displayMessage(response)
+            displayMessage(response, '#channel-posts')
         },
         error: function(error) {
             // Handle error, e.g., display an error message
-            displayMessage(error)
+            displayMessage(error, '#channel-posts')
         }
     });
 }
