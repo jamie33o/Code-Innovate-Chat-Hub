@@ -417,7 +417,7 @@ nav > div a.nav-item.nav-link:focus
 
 /* ///////////////////// media queries ////////////////////// */
 /* CSS for small screens (up to the "lg" breakpoint) */
-@media (max-width: var(--medium-break-point)) {
+@media (max-width: 991.98px) {
     ::-webkit-scrollbar-thumb {
         display: none;
 
@@ -454,7 +454,7 @@ nav > div a.nav-item.nav-link:focus
 }
 
 /* CSS for small screens (up to the "sm" breakpoint) */
-@media (max-width: var(--small-break-point)) {
+@media (max-width: 575.98px) {
  
     .nav-link {
         padding: 5px 5px;
