@@ -9,11 +9,13 @@ let tenthPost = null
 let htmlStructure = null
 let deletePostUrl = null
 let postBeingDeleted = null
+const SM_BRAKE_POINT = 575.98;
+const LG_BRAKE_POINT = 991.98;
 
 ////////////////////////// functions for posts ///////////////////////////////////
 function initializeEmojiPicker() {
     // Your existing code for emojiPickerPosts
-     emojiPickerPosts = new EmojiPicker('#for-emoji-picker', emojiPickerCallback);
+     emojiPickerPosts = new EmojiPicker('#posts-list', emojiPickerCallback);
 }
 
 // emoji call back function when user clicks emoji
@@ -30,16 +32,7 @@ function initPosts(){
     scrolledToTop = false;
     tenthPost = null
 
-
-    // Click event for the close posts button
-    $(".posts-close-btn").click(function(event) {
-        $('#channel-posts').toggleClass('d-flex');
-        $('#channel-links-container').toggleClass('hide');
-        $('#nav-bar').removeClass('d-none')
-        $('header').removeClass('d-none')
-    });
-
-    $('#for-emoji-picker').scroll(function() {
+    $('#posts-list').scroll(function() {
         if ($(this).scrollTop() === 0 && !scrolledToTop && olderPosts != null) {
             scrolledToTop = true;
 
@@ -48,7 +41,7 @@ function initPosts(){
                 url: olderPosts,
                 success: function(response) {
                     // Update the div with the returned template
-                    $('#for-emoji-picker').prepend(response)
+                    $('#posts-list').prepend(response)
                     initPosts()
                     scrolledToTop = false;
 
@@ -72,14 +65,32 @@ function initPosts(){
         let url = $(this).attr('href');  // Use $(this) to access the clicked element
         getRequestToDjango('#post-comments', url)
 
-        if(window.innerWidth < 575){
+        if(window.innerWidth < SM_BRAKE_POINT) {
             $('#channel-posts').toggleClass('d-flex');
-            $('.back-btn').removeClass('d-none')
+        }else if(window.innerWidth < LG_BRAKE_POINT){
+            $('#channel-posts').toggleClass('d-sm-flex');
         }
         $('#post-comments').addClass('d-flex');
     });
 
-    
+    // button for hiding the comments list
+    $(document).on('click', '.comments-close-btn', function() {
+        if(window.innerWidth < SM_BRAKE_POINT) {
+            $('#channel-posts').toggleClass('d-flex');
+        }else if(window.innerWidth < LG_BRAKE_POINT){
+            $('#channel-posts').toggleClass('d-sm-flex');
+        }
+        $('#post-comments').removeClass('d-flex');
+
+    });
+
+     // Click event for the close posts button
+    $(".posts-close-btn").click(function(event) {
+        $('#channel-posts').toggleClass('d-flex');
+        $('#channel-links-container').toggleClass('hide');
+        $('#nav-bar').removeClass('d-none')
+        $('header').removeClass('d-none')
+    });
 
     //add user form event listener
     $("#add-user-form").submit(function(event) {

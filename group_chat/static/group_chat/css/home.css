@@ -2,7 +2,7 @@
 /* style for channels list */
 .channels-list { 
     border-right: 2px solid var(--ci-orange);
-    width: 300px;
+    min-width: 300px;
     background: #fcfcfc;
 }
 
@@ -75,7 +75,7 @@
     position: relative;
     display: none;
     border-left: 1px solid var(--ci-orange);
-    width: 400px;
+    width: 600px;
     height: 100%;
     z-index: 3;
     background-color: var(--background);
@@ -262,7 +262,7 @@
 /* /////////////////////// media queries ///////////////////////// */
 
 /* CSS for small screens (up to the "lg" breakpoint) */
-@media (max-width: 575px) {
+@media (max-width: var(--small-break-point)) {
     /* style for channels list */
     .channels-list { 
         margin: 0 auto;
@@ -277,24 +277,26 @@
         display: none;
     }
 
-    .comments-container {
-        display: none;
-        border-left: none;
-        width: 100%;
-    }
+    
     .channels-list {
         padding: 0 0;
        }
 
 }
 
-@media (min-width: 992px) {
+@media (max-width: var(--medium-break-point)) {
     .gedf-main {
         padding-left: 4rem;
         padding-right: 4rem;
     }
     .gedf-card {
         margin-bottom: 2.77rem;
+    }
+
+    .comments-container {
+        
+        border-left: none;
+        width: 130%;
     }
 }
 

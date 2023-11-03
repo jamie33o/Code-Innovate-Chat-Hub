@@ -37,7 +37,9 @@ p {
     --smal-box-shadow: 1px -1px 7px 0 #00000061;
     --border: 1px solid #00000030;
 
-    --small-break-point: 576px;
+    --small-break-point: 575.98px;
+    --medium-break-point: 991.98px;
+
 }
 
 .custom-box {
@@ -80,12 +82,11 @@ p {
     z-index: 2;
 }
 
-/* makes divs scrollable */
 .scrollable-div {
     /* Enable vertical scrolling */
     overflow-y: auto;
     background-color: transparent;
-   
+
 }
 
 .fixed-to-bottom {
@@ -416,7 +417,7 @@ nav > div a.nav-item.nav-link:focus
 
 /* ///////////////////// media queries ////////////////////// */
 /* CSS for small screens (up to the "lg" breakpoint) */
-@media (max-width: 992px) {
+@media (max-width: var(--medium-break-point)) {
     ::-webkit-scrollbar-thumb {
         display: none;
 
@@ -453,7 +454,7 @@ nav > div a.nav-item.nav-link:focus
 }
 
 /* CSS for small screens (up to the "sm" breakpoint) */
-@media (max-width: 422px) {
+@media (max-width: var(--small-break-point)) {
  
     .nav-link {
         padding: 5px 5px;

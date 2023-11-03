@@ -1,17 +1,15 @@
 {% load static %}
 {% load emoji_tags %}
-<div>
 <div class="comments-header border-bottom custom-box d-flex flex-dir-row">
     <button class="btn comments-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     <div class="ml-3 my-0">
         <h4>Comments</h4>
         <p>Comment in {{ post.post_channel.name }}</p>
     </div>
-    
 </div>    
 
  <!-- list for channels posts -->
- <div class="scrollable-div" style="background-color: #e7effd;"> 
+ <div class="scrollable-div h-100" style="background-color: #e7effd;"> 
     <div class="card gedf-card m-1">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
@@ -136,22 +134,13 @@
             </div>
         </div>
     {% endfor %}   
-</div>
-</div>
 
-<div class="post-summernote d-sm-flex d-lg-flex px-1">
-    {# include summernote editor if channel.id is not None #}
+    <div class="p-1">
         {% include 'includes/summernote.html' %}
+    </div>
 </div>
 <script>
 
-    $(".comments-close-btn").click(function(event) {
-        if(window.innerWidth < 575){
-            $('#channel-posts').toggleClass('d-flex');
-        }
-        $('#post-comments').removeClass('d-flex');
-
-    });
     //websocketInit(`wss://${window.location.host}/ws/post_comments/{{ post.id }}/`); 
 
     summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)  

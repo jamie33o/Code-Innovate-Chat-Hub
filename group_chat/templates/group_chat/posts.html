@@ -10,7 +10,7 @@
 </div>
 
 
-<div id="for-emoji-picker" class="scrollable-div">
+<div id="posts-list" class="scrollable-div">
     {% for single_post in posts %}
     <!--- \\\\\\\Post-->
     <div class="card gedf-card" data-post-id = '{{ single_post.id }}' data-post-url = "{% url 'channel_posts' channel.id %}">
