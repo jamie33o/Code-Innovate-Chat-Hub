@@ -112,6 +112,13 @@
 }
 
 
+/* /////////////////  cancel-editing button ////////////////// */
+
+.cancel-edit:hover {
+    background-color: var(--ci-orange);
+    padding: 0 5px;
+}
+
 /* ////////////////////////// summernote CDN overites //////////////////////// */
 /* summernote modal overlay */
 div.modal-backdrop {

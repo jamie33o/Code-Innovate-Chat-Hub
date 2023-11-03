@@ -173,20 +173,29 @@ function initPosts(){
     $(".edit-btn").click(function() {
         // Find the closest ancestor with the class 'card-body'
         var card = $(this).closest('.card');
+        let carbody = card.find('.card-body').html()
         let cardText = card.find('.card-text').html();
         let cardImages = card.find('.post-images').html()
         card.addClass('edit-post')
         let postId = card.data("post-id")
         let editPostUrl = card.data('post-url')
 
-            // Create the HTML structure
+        // Create the HTML structure
         $('.edit-post .card-body').html(htmlStructure)
         // Append the HTML structure to the body
         editPostUrl += postId + '/'
         summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl)
         summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
+
+
+        $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button style=" border-radius: 20px; border: 1px solid black;" class="cancel-edit px-1">cancel</button>');
+
+        $('.cancel-edit').on('click', function(event){
+            event.preventDefault()
+            $('.edit-post .card-body').html(carbody)
+        })
+
         if(cardImages){
-            console.log('home.js')
             $(cardImages).each(function () {
             var src = $(this).attr('src');
             if(src != undefined){
