@@ -1,30 +1,29 @@
 let channel_id = null;
-let postId = null;
-let emojiPostUrl = null;
-let url = null
-let emojiPickerPosts = null
-let olderPosts = null
+// let postId = null;
+// let comment_id = null;
+let emojiUrl = null;
+let url = null;
+let emojiPickerPosts = new EmojiPicker();
+let olderPosts = null;
 let scrolledToTop = false;
-let tenthPost = null
-let htmlStructure = null
-let deletePostUrl = null
-let postBeingDeleted = null
+let tenthPost = null;
+let htmlStructure = null;
+let deletePostUrl = null;
+let postBeingDeleted = null;
 const SM_BRAKE_POINT = 575.98;
 const LG_BRAKE_POINT = 991.98;
+let deleteModelBody = null;
+let sizeFactor = 1;
+let csrfToken = null;
+
 
 ////////////////////////// functions for posts ///////////////////////////////////
-function initializeEmojiPicker() {
-    // Your existing code for emojiPickerPosts
-     emojiPickerPosts = new EmojiPicker('#posts-list', emojiPickerCallback);
-}
+
 
 // emoji call back function when user clicks emoji
 function emojiPickerCallback(emoji) {
-    let newEmojiPostUrl = emojiPostUrl.replace('0', postId)
     let emojiColonName = emoji.alt
-    
-    postRequestToDjango(newEmojiPostUrl, emojiColonName, postId,emoji)
-   
+    postRequestToDjango(emojiUrl, emojiColonName, null, emoji)    
 }
 
 // function thats called from posts template when its loaded
@@ -52,12 +51,13 @@ function initPosts(){
             });
         }    
     });
-
-    $(".post-emoji-btn").click(function(event) {
+    $(document).on('click', '.card-emoji-btn', function(event) {
         event.preventDefault()
-        postId = $(this).data('post-id')
-        emojiPickerPosts.$panel.show()
+        emojiUrl = $(this).data('emoji-url')
+        emojiPickerPosts.addListener(emojiPickerCallback)   
+        emojiPickerPosts.$panel.show() 
     })
+    
    
     //event listener for the comments links on each post
     $(".comments-link").click(function(event) {
@@ -83,6 +83,38 @@ function initPosts(){
         $('#post-comments').removeClass('d-flex');
 
     });
+
+    $(document).on('click', '.post-images img', function(e) {
+        let header =
+            `<div class="buttons">
+                <button type="button" class ="zoom-in">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button type="button" class ="zoom-out">
+                    <i class="fa-solid fa-minus"></i>            
+                </button>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" 
+                aria-label="Close"><span aria-hidden="true">×</span>
+            </button>
+            `;
+        let img = $(e.currentTarget).clone()
+        showModal(header, img)
+        resizeImage(.5, $('#modal').find('img')[0]); // Increase size by 20%
+
+        
+    })
+
+       // Event listener for the plus button
+       $(document).on('click', '.zoom-in', function() {
+        resizeImage(1.2, $('#modal').find('img')[0]); // Increase size by 20%
+      });
+  
+      // Event listener for the minus button
+      $(document).on('click', '.zoom-out', function() {
+        resizeImage(0.8,$('#modal').find('img')[0]); // Decrease size by 20%
+      });
+
 
      // Click event for the close posts button
     $(".posts-close-btn").click(function(event) {
@@ -123,7 +155,7 @@ function initPosts(){
         click: function(event) {
             event.preventDefault();
             let emojiCode = $(this).data('emoji-code')
-            let url = $(this).data('post-url');
+            let url = $(this).data('emoji-url');
             postRequestToDjango(url, emojiCode, this);
         },
         mouseenter: function() {
@@ -143,10 +175,40 @@ function initPosts(){
         deletePostUrl = $(this).data('delete-post-url')
         // Make AJAX delete request
         postBeingDeleted = $(this).closest('.card');
+
+        let header =
+            `<h5 class="modal-title text-center">
+            Are you sure you want to delete this post?
+            </h5>`;
+        
+                // Clone postBeingDeleted
+        const clonedPost = postBeingDeleted.clone();
+        clonedPost.find('.dropdown-menu').removeClass('show')
+
+        // Create an overlay div
+        const overlay = $('<div id="cover"></div>');
+
+        // Set its CSS properties
+        overlay.css({
+            'position': 'absolute',
+            'top': '0',
+            'left': '0',
+            'width': '100%',
+            'height': '100%',
+            'z-index': '3', 
+        });
+
+        // Append the overlay to the body
+        clonedPost.append(overlay);
+        let body = $(deleteModelBody).prepend(clonedPost)
+                
+        showModal(header, body)
+
       });
 
     $(document).on('click', '#delete-btn', function(event) {
         event.preventDefault()
+        
         let csrfToken = $(this).closest('form').find('input[name="csrfmiddlewaretoken"]').val();
         postBeingDeleted.remove();
         deleteObject(deletePostUrl, csrfToken)
@@ -169,8 +231,8 @@ function initPosts(){
             }
         });   
     })
+    $(document).on('click', '.edit-btn', function(event) {
 
-    $(".edit-btn").click(function() {
         // Find the closest ancestor with the class 'card-body'
         var card = $(this).closest('.card');
         let carbody = card.find('.card-body').html()
@@ -180,11 +242,9 @@ function initPosts(){
         let postId = card.data("post-id")
         let editPostUrl = card.data('post-url')
 
-        // Create the HTML structure
-        $('.edit-post .card-body').html(htmlStructure)
         // Append the HTML structure to the body
         editPostUrl += postId + '/'
-        summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl)
+        summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl, csrfToken)
         summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
 
 
@@ -206,7 +266,44 @@ function initPosts(){
 
     });
 
-    initializeEmojiPicker();
+}
+
+ // Function to resize the image
+ function resizeImage(factor, imgElement) {
+    // Update the size factor
+    
+    sizeFactor *= factor;
+
+    // Apply the new size to the image
+    $(imgElement).css('width', 100 * sizeFactor + '%');
+    console.log(imgElement)
+
+  }
 
 
+  function showModal(header, body) {
+    // Check if the modal already exists
+    let modal = $('#modal');
+    if (modal.length === 0) {
+        // If not, create the modal element
+        modal = $(`
+            <div class="modal fade modal" id="modal" tabindex="-1" role="dialog" aria-labelledby="model" aria-hidden="true">
+                <div class="modal-dialog modal-div " role="document">
+                    <div class="modal-content mt-5 ">
+                        <div class="modal-header"></div>
+                        <div class="modal-body scrollable-div"></div>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        // Append the modal to the body
+        $('body').append(modal);
+    }
+
+    // Find the modal-header and modal-body elements within the modal
+    modal.find('.modal-header').html(header);
+    modal.find('.modal-body').html(body);
+
+    modal.modal('show');
 }
