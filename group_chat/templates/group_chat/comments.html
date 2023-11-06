@@ -44,13 +44,13 @@
         </div>
         <div class="card-footer d-flex justify-content-between align-items-center">
             <div id="post-emoji" class="card-link">
-                <ul class="list-inline m-0 p-0 emoji-list{{ single_post.id }}">
-                    <a data-post-id="{{ single_post.id }}" href="" class="post-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" style="color: #f58a32;"></i><i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i></a>
+                <ul class="list-inline m-0 p-0 emoji-list{{ post.id }}">
+                    <a data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=post.id %}" href="" class="card-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" style="color: #f58a32;"></i><i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i></a>
                 
                     <!-- Loop through your emojis and generate list items -->
                     {% for emoji in post.emojis.all %}
                     <li class="list-inline-item mr-2">
-                        <button class="added-emoji-btn btn" data-post-url="{% url 'post_emoji' post.id %}" data-post-emoji-list=".emoji-list{{ single_post.id }}" data-target="#emojiModal{{ emoji.id }}" data-emoji-code="{{ emoji.emoji_colon_name }}">
+                        <button class="added-emoji-btn btn" data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=post.id %}" data-post-emoji-list=".emoji-list{{ single_post.id }}" data-target="#emojiModal{{ emoji.id }}" data-emoji-code="{{ emoji.emoji_colon_name }}">
                         {{ emoji.emoji_colon_name|emoji_replace }}
                         <span>
                             {% if emoji.users_who_incremented.all|length > 1 %}
@@ -99,15 +99,15 @@
         </div>
     {% endif %}
 
-
+    <div class="comments-list">
     {% for comment in comments %}
         <div class="container my-2 py-2 text-dark m-0">
             <div class="row d-flex ">
                 <div class="col-12">                       
-                    <div class="card w-100">
-                        <div class="card-body p-2">
+                    <div class="card w-100" data-post-id = '{{ comment.id }}' data-post-url="{% url 'post_comments' post.id %}">
+                        <div class="card-header p-2">
                             <div class="d-flex flex-column my-2">
-                                <div class="d-flex flex-dir-row">
+                                <div class="d-flex flex-dir-row justify-content-between">
                                     {% if comment.created_by.user_profile and post.created_by.user_profile.profile_picture %}
                                         <img  class="rounded-circle shadow-1-strong mr-2" width="45" height="45"  src="{{ comment.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
                                     {% else %}
@@ -117,15 +117,87 @@
                                         <h5 class="mb-1">{{ comment.created_by }}</h5>
                                         <p class="small">{{ comment.created_date|date:"H:i" }}</p>
                                     </div>
+                                    {% if comment.created_by == user %}
+                                    <div class="dropdown">
+                                        <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-ellipsis-h"></i>
+                                        </button>
+                                        
+                                        <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
+                                            <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
+                                            <button class="dropdown-item btn-ci delete-post-btn"  data-delete-post-url="{% url 'delete_object' model='CommentsModel' pk=comment.id %}">Delete</button>                
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                <div class="w-100 px-2 my-3">
-                                    <p>
+                                <div class="card-body">
+                                    <div class="card-text">
                                         {{ comment.post|safe }}
-                                    </p>
+                                    </div>
+                                    {% if comment.images %}
+                                        <div class="post-images">
+                                            {% for image_url in comment.get_image_urls %}
+                                            {% if image_url %}
+                                                <img src= "{{ image_url }}">
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center px-2">
-                                        <a href="#!" class="link-muted me-2"><i class="fas fa-thumbs-up me-1"></i>132</a>
-                                        <a href="#!" class="link-muted"><i class="fas fa-thumbs-down me-1"></i>15</a>
+                                    <a data-emoji-url="{% url 'emoji' model='CommentsModel' instance_id=comment.id %}"  
+                                    href="" class="card-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" 
+                                    style="color: #f58a32;"></i><i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i></a>
+
+                                    <ul class="list-inline m-0 p-0 emoji-list{{ comment.id }}">
+
+                                    <!-- Loop through your emojis and generate list items -->
+                                    {% for emoji in comment.emojis.all %}
+                                        <li class="list-inline-item mr-2">
+                                            <button class="added-emoji-btn btn" 
+                                                    data-emoji-url="{% url 'emoji' model='CommentsModel' instance_id=comment.id %}" 
+                                                    data-post-emoji-list=".emoji-list{{ comment.id }}" 
+                                                    data-target="#emojiModal{{ emoji.id }}" 
+                                                    data-emoji-code="{{ emoji.emoji_colon_name }}">
+                                                    
+                                            {{ emoji.emoji_colon_name|emoji_replace }}
+                                                <span>
+                                                    {% if emoji.users_who_incremented.all|length > 1 %}
+                                                        {{ emoji.users_who_incremented.all|length }}
+                                                    {% endif %}
+                                                </span>
+                                            </button>
+                                            <!-- Small Box Modal -->
+                                            <div class="emoji-user-count-modal d-none" id="emojiModal{{ emoji.id }}">
+                                                <div class="modal-dialog modal-sm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="emojiModalLabel">{{ emoji.emoji_colon_name|emoji_replace }}</h5>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p> {% for emoji_creators in emoji.users_who_incremented.all %}
+                                                                    {{ emoji_creators }}
+                                                                {% if emoji.users_who_incremented.all|length == 2 and forloop.counter == 1 %}
+                                                                    and 
+                                                                {% elif emoji.users_who_incremented.all|length > 2 %}
+                                                                    {% if forloop.counter < emoji.users_who_incremented.all|length|add:"-1" %}
+                                                                        ,
+                                                                    {% else %}
+                                                                        and
+                                                                    {% endif %}
+                                                                {% endif %}                                        
+                                                                
+                                                                {% endfor %}
+                                                                reacted with  {{ emoji.emoji_colon_name }}</p>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                    {% endfor %}
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -133,15 +205,15 @@
                 </div>
             </div>
         </div>
-    {% endfor %}   
-
-    <div class="p-1">
-        {% include 'includes/summernote.html' %}
-    </div>
+    {% endfor %} 
+</div>
+  
 </div>
 <script>
 
     //websocketInit(`wss://${window.location.host}/ws/post_comments/{{ post.id }}/`); 
+    csrfToken = "{{ csrf_token }}"
 
-    summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)  
+    summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`, '{{ csrf_token }}')  
+
 </script>
