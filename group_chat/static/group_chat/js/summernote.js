@@ -17,12 +17,52 @@ class SummernoteEnhancer {
 
 
 
-  init(divToLoadIn, djangoUrl) {
+  init(divToLoadIn, djangoUrl, csrf_token) {
     let self = this;
     this.divToLoadIn = divToLoadIn
     this.djangoUrl = djangoUrl
-    this.$sn = $(`${this.divToLoadIn} textarea`);  
+    let emojiPicker = new EmojiPicker()
 
+
+
+    let htmlStructure = `
+      <!-- Container for summernote editor -->
+      <div class="summernote-form mb-2 px-2">
+          <!-- Container for usernames list that the user can tag with @ -->
+          <div class="tag-name-modal popup">
+              <ul class="channel-users d-flex flex-column ml-3 my-3"></ul>
+          </div>
+
+          <!-- Summernote editor form -->
+          <form class="sn-form" method="post">
+              
+              <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+
+              <textarea name="post"></textarea>
+
+              <!-- Buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
+              <div class="summernote-btn-bottom">   
+                  <div>  
+                      <button class="mx-3 mt-1 emoji-popup-btn" type="button">
+                          <span class="fa-regular fa-face-smile fa-lg emoji-btn" style="color: var(--ci-orange);"></span>
+                      </button>
+                      <button class="mx-3 at-symbol" type="button">
+                          <span class="fa-solid fa-at fa-lg" style="color: var(--ci-orange);"></span>
+                      </button>
+                  </div>
+                  <div class="cancel-submit">   
+
+                      <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit">
+                          <span class="fa-solid fa-play fa-lg" style="color: var(--ci-orange);"></span>
+                      </button>
+                  </div>
+              </div>
+          </form>
+      </div>
+  `;
+    $(divToLoadIn).append($(htmlStructure))
+
+    this.$sn = $(`${this.divToLoadIn} textarea`);  
 
 
     this.$sn.summernote({
@@ -97,14 +137,15 @@ class SummernoteEnhancer {
       $(`${this.divToLoadIn} .tag-name-modal`).hide();
       $(`${this.divToLoadIn} .hide-modal`).hide();
     });
-    let emojiPicker = new EmojiPicker(this.divToLoadIn, function(emoji){
-        self.$sn.summernote('editor.insertNode', emoji);
-        $(`${self.divToLoadIn} .hide-modal`).hide()
-    });
+
 
     // Add this code to bind the click event of existing button
     $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function () {      
       $(`${self.divToLoadIn} .hide-modal`).show()
+      emojiPicker.addListener(function(emoji){
+        self.$sn.summernote('editor.insertNode', emoji);
+        $(`${self.divToLoadIn} .hide-modal`).hide()
+    });
       emojiPicker.$panel.show();
     });
 
