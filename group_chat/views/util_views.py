@@ -1,12 +1,11 @@
 from django.http import JsonResponse
-from group_chat.models import PostsModel, CommentsModel, ImageModel,EmojiModel, SavedPost
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.views.generic import DeleteView
-from django.shortcuts import get_object_or_404
 from django.apps import apps
+from group_chat.models import PostsModel, ImageModel, SavedPost
 
 
 
@@ -24,55 +23,49 @@ class ImageUploadView(View):
             return JsonResponse({'url': new_image.image.url})
 
         return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'})        
+    
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AddOrUpdateEmojiView(View):
-    def post(self, request, id, *args, **kwargs):
-        user = request.user
-        emoji_colon_name = request.POST.get('emoji_colon_name')
+    def post(self, request, instance_id, *args, **kwargs):
+        try:
+            user = request.user
+            emoji_colon_name = request.POST.get('emoji_colon_name')
 
-        if 'post_emoji' in request.path:
+            # Get the model class based on the URL parameter
+            model_name = self.kwargs['model']
+            model = apps.get_model(app_label='group_chat', model_name=model_name)
 
-            # Get the PostsModel
-            channel_post = PostsModel.objects.get(pk=id)
+            obj = get_object_or_404(model, pk=instance_id)
 
-                        # If it exists, increment the count and add the user
-            post_emoji_instance, created = channel_post.emojis.get_or_create(
+            # If it exists, increment the count and add the user
+            instance, created = obj.emojis.get_or_create(
                 emoji_colon_name=emoji_colon_name,
                 defaults={'emoji_colon_name': emoji_colon_name}
             )
 
             if created:
                 # If a new instance is created, add the user
-                post_emoji_instance.users_who_incremented.add(request.user)
+                instance.users_who_incremented.add(request.user)
                 return JsonResponse({'status': 'added'})
 
             # Check if the EmojiModel exists in channel_post
             else:
-                if request.user in post_emoji_instance.users_who_incremented.all():
-                    post_emoji_instance.users_who_incremented.remove(request.user)
+                if request.user in instance.users_who_incremented.all():
+                    instance.users_who_incremented.remove(request.user)
                     # Check if there are no more users and remove the instance if true
-                    if post_emoji_instance.users_who_incremented.count() == 0:
-                        channel_post.emojis.remove(post_emoji_instance)                                                                                                                                                                                                                                                         
+                    if instance.users_who_incremented.count() == 0:
+                        obj.emojis.remove(instance)
                         return JsonResponse({'status': 'removed'})
                     return JsonResponse({'status': 'decremented'})
                 else:
                     # If it exists, increment the count and add the user
-                    post_emoji_instance.users_who_incremented.add(request.user)
+                    instance.users_who_incremented.add(request.user)
                     return JsonResponse({'status': 'incremented'})
-        else:
-            emoji_instance, created = EmojiModel.objects.get_or_create(
-            created_by=user,
-            emoji_colon_name=emoji_colon_name
-            )
+        except Exception as e:
+            # Handle exceptions (e.g., model not found, database error)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-            # Get the PostComment
-            post_comment = CommentsModel.objects.get(pk=id)
-
-            # Add the emoji to the emojis field
-            post_comment.emojis.add(emoji_instance)   
-    
-        return JsonResponse({'status': 'success', 'message': 'Emoji added'})
 
 
 class GenericObjectDeleteView(DeleteView):
