@@ -99,6 +99,10 @@ class CommentsModel(models.Model):
         related_name='comments_created'
     )
 
+    def get_image_urls(self):
+        return [url.strip() for url in self.images.split(',') if url.strip()]
+    
+
 
 class SavedPost(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
