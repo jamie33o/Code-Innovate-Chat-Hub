@@ -11,7 +11,6 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.views import View
 from django.utils.decorators import method_decorator
-from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -176,18 +175,36 @@ class CommentsView(BaseChatView):
 
         return render(request, self.template_name, context)
 
-    def post(self, request, post_id, *args, **kwargs):
-        form = CommentsForm(request.POST)
+    def post(self, request, post_id, comment_id=None, *args, **kwargs):
+
+        if comment_id == None:
+            form = CommentsForm(request.POST)
+        else:
+            post = get_object_or_404(CommentsModel, id=comment_id)
+            form = CommentsForm(request.POST, instance=post)
+
         if form.is_valid():
             form.instance.comment_post = get_object_or_404(PostsModel, id=post_id)
 
             comment = self.process_and_save(request, form)
             #self.broadcast_comment(request, comment.post,comment_post, post_id)
+            if comment_id is None:
+                redirect_url = reverse('post_comments', args=[post_id])
+                return redirect(redirect_url)
+            else:
+                response_data = {
+                    'status': 'success',
+                    'post': comment.post,
+                    'images': None,
+                }
 
-            redirect_url = reverse('post_comments', args=[post_id])
-            return redirect(redirect_url)
+                if comment.images:
+                    response_data['images'] = comment.images
+                return JsonResponse(response_data)
+
         else:
             print(form.errors)
             # return response with error message
 
-   
+
+           
