@@ -1,19 +1,18 @@
 class EmojiPicker {
     static emojiSource = null;
 
-    constructor(divClass, emojiClickedCallback) {
+    constructor() {
         this.icons = {};
         this.reverseIcons = {};
         this.$panel = null;
-        this.divClass = divClass;
-        this.curentClass = divClass.substring(1,3);
-        this.emojiClickedCallback = emojiClickedCallback; //  callback function to send emoji to summernote.js
+        this.emojiClickedCallback = null; //  callback function to send emoji to summernote.js
         // Initialize the emoji panel
         this.emojiPanel();
         this.addListener();
     }
 
-    addListener() {
+    addListener(emojiClickedCallback) {
+        this.emojiClickedCallback = emojiClickedCallback
         const KEY_ESC = 27;
         const KEY_TAB = 9;
 
@@ -27,7 +26,7 @@ class EmojiPicker {
         });
 
 
-        $body.on('click', `.emoji-menu${self.curentClass} .emoji-menu-tab`, function (e) {
+        $body.on('click', `.emoji-menu .emoji-menu-tab`, function (e) {
             e.stopPropagation();
             e.preventDefault();
             let index = 0;
@@ -37,8 +36,8 @@ class EmojiPicker {
             if (curclass.length === 3) return;
 
             curclass = curclass[0] + '-' + curclass[1];
-
-            $(`.emoji-menu${self.curentClass} .emoji-menu-tabs td`).each(function (i) {
+            
+            $(`.emoji-menu .emoji-menu-tabs td`).each(function (i) {
                 const $a = $(this).find('a');
                 let aclass = $a.attr("class").split(' ');
 
@@ -47,7 +46,9 @@ class EmojiPicker {
 
                 if (curclass === aclass) {
                     $a.attr('class', 'emoji-menu-tab ' + aclass + '-selected');
+                    if(i<6)
                     index = i;
+
                 } else {
                     $a.attr('class', 'emoji-menu-tab ' + aclass);
                 }
@@ -55,10 +56,13 @@ class EmojiPicker {
             });
             self.updateEmojisList(index);
         });
-        $(document).off('click', `.emoji-menu${self.curentClass} .emoji-items a`)
+        $(document).off('click', `.emoji-menu .emoji-items a`)
+        
+        $(document).on('click', `.close-modal`, function () {
+            self.$panel.hide()
+        })
 
-
-        $(document).on('click', `.emoji-menu${self.curentClass} .emoji-items a`, function () {
+        $(document).on('click', `.emoji-menu .emoji-items a`, function () {
             const emoji = $('.label', $(this)).text();
             const $img = $(self.createdEmojiIcon(self.icons[emoji]));
 
@@ -124,7 +128,7 @@ class EmojiPicker {
     }
 
     updateEmojisList(index) {
-        const $items = $(`.emoji-menu${this.curentClass} .emoji-items`);
+        const $items = $(`.emoji-menu .emoji-items`);
         $items.html('');
 
         if (index > 0) {
@@ -194,7 +198,8 @@ class EmojiPicker {
     }
 
     emojiPanel() {
-        this.$panel = $(`<div class="emoji-menu${this.curentClass} emoji-menu-container">\n` +
+        if(this.$panel == null){
+        this.$panel = $(`<div class="emoji-menu emoji-menu-container">\n` +
             '    <div class="emoji-items-wrap1">\n' +
             '        <table class="emoji-menu-tabs">\n' +
             '            <tbody>\n' +
@@ -212,10 +217,12 @@ class EmojiPicker {
             '            <div class="emoji-items"></div>\n' +
             '        </div>\n' +
             '    </div>\n' +
-            '</div>').hide();
-        this.$panel.appendTo(this.divClass);
+            '</div>'+
+            '<div class="close-modal hide-modal"></div>').hide();
+        this.$panel.appendTo('body');
         this.loadEmojis();
         this.updateEmojisList(0);
+        }
     }
 
     destroy() {
