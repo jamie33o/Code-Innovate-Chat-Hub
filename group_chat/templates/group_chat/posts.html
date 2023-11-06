@@ -38,7 +38,7 @@
                             <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
                             {% if single_post.created_by == user %}
                             <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
-                            <button class="dropdown-item btn-ci delete-post-btn" data-toggle="modal" data-target="#delete_modal" data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
+                            <button class="dropdown-item btn-ci delete-post-btn"  data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
                             {% endif %}
 
                         </div>
@@ -63,12 +63,19 @@
         <div class="card-footer d-flex justify-content-between align-items-center">
             <div id="post-emoji" class="card-link">
                 <ul class="list-inline m-0 p-0 emoji-list{{ single_post.id }}">
-                    <a data-post-id="{{ single_post.id }}" href="" class="post-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" style="color: #f58a32;"></i><i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i></a>
-                
+                    <a data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}" href="" 
+                        class="card-emoji-btn card-link">
+                        <i class="fa-regular fa-face-smile fa-lg" 
+                        style="color: #f58a32;"></i>
+                        <i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i>
+                    </a>
                     <!-- Loop through your emojis and generate list items -->
                     {% for emoji in single_post.emojis.all %}
                     <li class="list-inline-item mr-2">
-                        <button class="added-emoji-btn btn" data-post-url="{% url 'post_emoji' single_post.id %}" data-post-emoji-list=".emoji-list{{ single_post.id }}" data-target="#emojiModal{{ emoji.id }}" data-emoji-code="{{ emoji.emoji_colon_name }}">
+                        <button class="added-emoji-btn btn" 
+                                data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}"  
+                                data-target="#emojiModal{{ emoji.id }}" 
+                                data-emoji-code="{{ emoji.emoji_colon_name }}">
                         {{ emoji.emoji_colon_name|emoji_replace }}
                         <span>
                             {% if emoji.users_who_incremented.all|length > 1 %}
@@ -76,6 +83,7 @@
                             {% endif %}
                         </span>
                         </button>
+                        
                         <!-- Small Box Modal -->
                         <div class="emoji-user-count-modal d-none" id="emojiModal{{ emoji.id }}">
                             <div class="modal-dialog modal-sm">
@@ -157,33 +165,11 @@
         </div>
     {% endif %}
 
-    <div class="modal fade delete_modal mt-5" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="delete model" aria-hidden="true">
-      <div class="modal-dialog modal-div" role="document">
-        <div class="modal-content mt-5">
-          <div class="modal-body">
-                <h5 class="modal-title text-center" id="exampleModalLabel">Are you sure you want to delete this post?</h5>
-            <form>
-                {% csrf_token %}
-                <div class="input-group text-center d-flex justify-content-between">
-                    <button type="button" class="btn-oval" data-dismiss="modal" aria-label="Close">No</button>
-                    <button id="delete-btn" class="btn btn-oval" data-dismiss="modal" type="button">Yes</button>
-                </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-<div class="post-summernote d-sm-flex d-lg-flex px-3 ">
-        {% include 'includes/summernote.html' %}
-</div>
-
     <!-- Your JavaScript code -->
 <script>
-
+       
     $(document).ready(function() {
-
+       
         {% if next_page_number %}
         olderPosts = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
            
@@ -191,10 +177,9 @@
 
 
         initPosts()
-        emojiPostUrl = `{% url 'post_emoji' 0 %}`;
-       
+        csrfToken = "{{ csrf_token }}"
         // initialize summernote enhancer class
-        summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`)
+        summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`, '{{ csrf_token }}')
         // add channel users to the static variable in SummernoteEnhancer class
         SummernoteEnhancer.sharedChannelUsers = [
             {% for user in channel_users %}
@@ -202,43 +187,16 @@
             {% endfor %}
         ];
 
-        htmlStructure = `
-            <!-- Overlay the user can click to close the modal -->
-            <div class="close-modal hide-modal"></div>
+        
 
-            <!-- Container for summernote editor -->
-            <div class="summernote-form mb-2">
-                <!-- Container for usernames list that the user can tag with @ -->
-                <div class="tag-name-modal popup">
-                    <ul class="channel-users d-flex flex-column ml-3 my-3"></ul>
+        deleteModelBody = `
+            <form>
+                {% csrf_token %}
+                <div class="input-group text-center d-flex justify-content-between">
+                    <button type="button" class="btn-oval" data-dismiss="modal" aria-label="Close">No</button>
+                    <button id="delete-btn" class="btn btn-oval" data-dismiss="modal" type="button">Yes</button>
                 </div>
-
-                <!-- Summernote editor form -->
-                <form class="sn-form" method="post">
-                    {% csrf_token %}
-                    <textarea name="post"></textarea>
-
-                    <!-- Buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
-                    <div class="summernote-btn-bottom">   
-                        <div>  
-                            <button class="mx-3 mt-1 emoji-popup-btn" type="button">
-                                <span class="fa-regular fa-face-smile fa-lg emoji-btn" style="color: var(--ci-orange);"></span>
-                            </button>
-                            <button class="mx-3 at-symbol" type="button">
-                                <span class="fa-solid fa-at fa-lg" style="color: var(--ci-orange);"></span>
-                            </button>
-                        </div>
-                        <div class="cancel-submit">   
-
-                            <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit">
-                                <span class="fa-solid fa-play fa-lg" style="color: var(--ci-orange);"></span>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        `;
-
+            </form>`;
        
         // get the channel id using django template literal which will be used in the js file and for the websocket
         channel_id = {{ channel.id }}; 
