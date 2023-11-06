@@ -48,8 +48,9 @@ img.emoji {
 .emoji-menu-container {
     position: absolute;
     bottom: 150px;
+    left: 35%;
     z-index: 999;
-    width: 225px;
+    width: 30%;
     height: 300px;
     overflow: hidden;
     border: 1px #dfdfdf solid;
