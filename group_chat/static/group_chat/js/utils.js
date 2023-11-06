@@ -160,8 +160,8 @@ function getRequestToDjango(divToAddContent, url){
 
 // function for adding and removing emoji on posts
 function postRequestToDjango(url, emojiColonName, args, emoji){
-    var id = url.match(/\d+/g);
-    let spanElement = $(args).find('span');
+    let id = url.match(/\d+/g);
+    let spanElement = $(emoji).find('span');
     let currentNumber = null
     $.ajax({
         url: url,  
@@ -174,13 +174,12 @@ function postRequestToDjango(url, emojiColonName, args, emoji){
             switch (response.status) {
                 case "added":
 
-                    let emojiUlClass = `.emoji-list${args}`
+                    let emojiUlClass = `.emoji-list${id}`
                     let em = $(emoji).prop('outerHTML');
 
                     let newLi = $(`
                         <li class="list-inline-item mr-2">
-                            <button class="added-emoji-btn btn" data-post-url="${url}" 
-                                    data-post-emoji-list=".emoji-list${id}"  
+                            <button class="added-emoji-btn btn" data-emoji-url="${url}" 
                                     data-target="#emojiModal${id}" 
                                     data-emoji-code="${emojiColonName}">
                                     ${em}
@@ -203,8 +202,6 @@ function postRequestToDjango(url, emojiColonName, args, emoji){
                     `);
                     
                     $(emojiUlClass).append(newLi);
-
-                    
                   break;
                 case "decremented":                   
                      currentNumber = parseInt(spanElement.html(), 10);
@@ -238,7 +235,6 @@ function postRequestToDjango(url, emojiColonName, args, emoji){
                   case "removed":
                     $(args).parent().remove()
                 }           
-
 
         },
         error: function (error) {
