@@ -107,9 +107,9 @@ class SummernoteEnhancer {
 
 
     // Add this code to bind the click event of existing button
-    $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function () {      
+    $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function (event) {      
       $(`${self.divToLoadIn} .hide-modal`).show()
-        emojiPicker.addListener(function(emoji){
+        emojiPicker.addListener(event, function(emoji){
         self.$sn.summernote('editor.insertNode', emoji);
         $(`${self.divToLoadIn} .hide-modal`).hide()
       });
@@ -247,7 +247,7 @@ class SummernoteEnhancer {
       </div>
     `);    
   }
-  
+
   // Handle mouse move to adjust the editor's height
   resizeEditor() {
       const fullScreen = 400

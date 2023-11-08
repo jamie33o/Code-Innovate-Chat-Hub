@@ -3,7 +3,7 @@ let channel_id = null;
 // let comment_id = null;
 let emojiUrl = null;
 let url = null;
-let emojiPickerPosts = new EmojiPicker();
+let emojiPicker = new EmojiPicker();
 let olderPosts = null;
 let scrolledToTop = false;
 let tenthPost = null;
@@ -51,14 +51,15 @@ function initPosts(){
             });
         }    
     });
+
     $(document).on('click', '.card-emoji-btn', function(event) {
         event.preventDefault()
         emojiUrl = $(this).data('emoji-url')
-        emojiPickerPosts.addListener(emojiPickerCallback)   
-        emojiPickerPosts.$panel.show() 
+        emojiPicker.addListener(event, emojiPickerCallback) 
+         
+        emojiPicker.$panel.show() 
     })
     
-   
     //event listener for the comments links on each post
     $(".comments-link").click(function(event) {
         event.preventDefault();
@@ -81,7 +82,6 @@ function initPosts(){
             $('#channel-posts').toggleClass('d-sm-flex');
         }
         $('#post-comments').removeClass('d-flex');
-
     });
 
     $(document).on('click', '.post-images img', function(e) {
@@ -101,19 +101,17 @@ function initPosts(){
         let img = $(e.currentTarget).clone()
         showModal(header, img)
         resizeImage(.5, $('#modal').find('img')[0]); // Increase size by 20%
-
-        
     })
 
-       // Event listener for the plus button
-       $(document).on('click', '.zoom-in', function() {
-        resizeImage(1.2, $('#modal').find('img')[0]); // Increase size by 20%
-      });
-  
-      // Event listener for the minus button
-      $(document).on('click', '.zoom-out', function() {
-        resizeImage(0.8,$('#modal').find('img')[0]); // Decrease size by 20%
-      });
+    // Event listener for the plus button
+    $(document).on('click', '.zoom-in', function() {
+    resizeImage(1.2, $('#modal').find('img')[0]); // Increase size by 20%
+    });
+
+    // Event listener for the minus button
+    $(document).on('click', '.zoom-out', function() {
+    resizeImage(0.8, $('#modal').find('img')[0]); // Decrease size by 20%
+    });
 
 
      // Click event for the close posts button
@@ -148,8 +146,6 @@ function initPosts(){
     } else {
         $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'fast');
     }
-
-
 
     $(document).on({
         click: function(event) {
@@ -207,8 +203,7 @@ function initPosts(){
       });
 
     $(document).on('click', '#delete-btn', function(event) {
-        event.preventDefault()
-        
+        event.preventDefault()   
         let csrfToken = $(this).closest('form').find('input[name="csrfmiddlewaretoken"]').val();
         postBeingDeleted.remove();
         deleteObject(deletePostUrl, csrfToken)
@@ -231,6 +226,7 @@ function initPosts(){
             }
         });   
     })
+
     $(document).on('click', '.edit-btn', function(event) {
 
         // Find the closest ancestor with the class 'card-body'
@@ -247,7 +243,6 @@ function initPosts(){
         summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl, csrfToken)
         summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
 
-
         $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button style=" border-radius: 20px; border: 1px solid black;" class="cancel-edit px-1">cancel</button>');
 
         $('.cancel-edit').on('click', function(event){
@@ -263,7 +258,6 @@ function initPosts(){
             }
             }); 
         }
-
     });
 
 }

@@ -9,10 +9,12 @@ class EmojiPicker {
         // Initialize the emoji panel
     }
 
-    addListener(emojiClickedCallback) {
+    addListener(event, emojiClickedCallback) {
         if(this.$panel == null){
             this.emojiPanel();
         }
+        this.setContainerPos(event)
+
         this.emojiClickedCallback = emojiClickedCallback
         const KEY_ESC = 27;
         const KEY_TAB = 9;
@@ -126,6 +128,35 @@ class EmojiPicker {
         if (!Config.rx_codes) {
             Config.init_unified();
         }
+    }
+    setContainerPos(event){
+        const emojiMenu = $('.emoji-menu-container');
+        let offsetY = emojiMenu.height() /2 ;
+        let topPosition = event.clientY - offsetY;
+        const windowHeight = $(window).height();
+
+        console.table([
+            {
+              window: windowHeight,
+              'if state': event.clientY - emojiMenu.height(),
+              even: event.clientY,
+              offs: offsetY,
+              eheigt : emojiMenu.height()
+            }
+          ]);
+          
+
+        // Check if there is enough space below the event, otherwise, position above
+        if (event.clientY + offsetY > windowHeight) {
+            topPosition = event.clientY - emojiMenu.height() -50;
+        }else if(event.clientY - emojiMenu.height() < 0){
+            topPosition = event.clientY - 10 ;
+        }
+
+        emojiMenu.css({
+        top: topPosition,
+        left: event.clientX +10
+        });
     }
 
     updateEmojisList(index) {

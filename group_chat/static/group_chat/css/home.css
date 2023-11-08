@@ -77,7 +77,6 @@
     width: 600px;
     height: 100%;
     background-color: var(--background);
-    resize: horizontal; /* Allow horizontal resizing */
 }
 
 .comments-link {
@@ -137,7 +136,7 @@
 }
 
 .post-images img {
-    max-width: 20%;
+    max-width: 200px;
     display: block;
     margin: 30px 5px 5px 0;
     border-radius: 10px;
@@ -339,6 +338,8 @@
     }
     .gedf-card {
         margin-bottom: 2.77rem;
+        margin: 20px 5px;
+
     }
 
     .comments-container {
