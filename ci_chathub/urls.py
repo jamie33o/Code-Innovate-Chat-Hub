@@ -24,7 +24,5 @@ urlpatterns = [
     path('', include('group_chat.urls')),
     path('user_profile/', include('user_profile.urls')),
     path('emoji/', include('emoji.urls')),
-
-
     # get the files in the media folder url in settings.py
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
