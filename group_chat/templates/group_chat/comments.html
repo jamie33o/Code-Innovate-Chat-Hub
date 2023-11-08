@@ -23,7 +23,7 @@
                     </div>
                     <div class="ml-2">
                         <div class="h5 ml-2">{{ post.created_by }}</div>
-                        <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ post.created_date|date:"H:i" }}</div>
+                        <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ post.created_date|date:"H:i, b j"|upper }}</div>
                     </div>
                 </div>
             </div>
@@ -113,9 +113,9 @@
                                     {% else %}
                                         <img  class="rounded-circle shadow-1-strong mr-2" width="45" height="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                                     {% endif %}  
-                                    <div class="d-flex flex-column">
+                                    <div class="d-flex ">
                                         <h5 class="mb-1">{{ comment.created_by }}</h5>
-                                        <p class="small">{{ comment.created_date|date:"H:i" }}</p>
+                                        <p class="small">{{ comment.created_date|date:"H:i, b j"|upper }}</p>
                                     </div>
                                     {% if comment.created_by == user %}
                                     <div class="dropdown">
