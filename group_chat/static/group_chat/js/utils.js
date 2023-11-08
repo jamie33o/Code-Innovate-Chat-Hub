@@ -9,7 +9,7 @@ function displayMessage(response, divClass){
     let messageLi = `
     <div class="notification">
         <ul class="notification-messages">
-        <li class="message-item ${response.status}"><h3>${response.status}</h3><p>${response.message}</p></li>
+        <li class="message-item ${response.status.toLowerCase()}"><h3>${response.status}</h3><p>${response.message}</p></li>
         </ul>
     </div>
     `;

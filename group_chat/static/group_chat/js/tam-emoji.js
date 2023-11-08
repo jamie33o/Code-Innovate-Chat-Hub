@@ -135,17 +135,6 @@ class EmojiPicker {
         let topPosition = event.clientY - offsetY;
         const windowHeight = $(window).height();
 
-        console.table([
-            {
-              window: windowHeight,
-              'if state': event.clientY - emojiMenu.height(),
-              even: event.clientY,
-              offs: offsetY,
-              eheigt : emojiMenu.height()
-            }
-          ]);
-          
-
         // Check if there is enough space below the event, otherwise, position above
         if (event.clientY + offsetY > windowHeight) {
             topPosition = event.clientY - emojiMenu.height() -50;
