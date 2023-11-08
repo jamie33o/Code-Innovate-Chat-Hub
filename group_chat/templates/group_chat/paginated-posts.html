@@ -25,9 +25,11 @@
                             <i class="fa fa-ellipsis-h"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
-                            <button class="dropdown-item btn-ci">Delete</button>
-                            <button class="dropdown-item btn-ci">Save</button>
-                            <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
+                            <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
+                            {% if single_post.created_by == user %}
+                                <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
+                                <button class="dropdown-item btn-ci delete-post-btn"  data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -50,12 +52,20 @@
         <div class="card-footer d-flex justify-content-between align-items-center">
             <div id="post-emoji" class="card-link">
                 <ul class="list-inline m-0 p-0 emoji-list{{ single_post.id }}">
-                    <a data-post-id="{{ single_post.id }}" href="" class="post-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" style="color: #f58a32;"></i><i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i></a>
-                
+                    <a data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}" href="" 
+                    class="card-emoji-btn card-link">
+                    <i class="fa-regular fa-face-smile fa-lg" 
+                    style="color: #f58a32;"></i>
+                    <i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i>
+                </a>
                     <!-- Loop through your emojis and generate list items -->
                     {% for emoji in single_post.emojis.all %}
                     <li class="list-inline-item mr-2">
-                        <button class="added-emoji-btn btn" data-post-url="{% url 'post_emoji' single_post.id %}" data-post-emoji-list=".emoji-list{{ single_post.id }}" data-target="#emojiModal{{ emoji.id }}" data-emoji-code="{{ emoji.emoji_colon_name }}">
+                        <button class="added-emoji-btn btn"                                 
+                        data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}"  
+                        data-post-emoji-list=".emoji-list{{ single_post.id }}" 
+                        data-target="#emojiModal{{ emoji.id }}" 
+                        data-emoji-code="{{ emoji.emoji_colon_name }}">
                         {{ emoji.emoji_colon_name|emoji_replace }}
                         <span>
                             {% if emoji.users_who_incremented.all|length > 1 %}
@@ -115,7 +125,7 @@
                     {% endfor %}
                 </ul>
                 {% if single_post.latest_comment %}
-                    <span class="comment-date">{{ single_post.latest_comment.created_datedate:"H:i, b j"|upper  }}</span>
+                    <span class="comment-date">{{ single_post.latest_comment.created_date|date:"H:i, b j"|upper  }}</span>
                     <span class="view-comments">View Comments</span>
                 {% else %}
                     <span class="view-comments d-flex">Reply</span>

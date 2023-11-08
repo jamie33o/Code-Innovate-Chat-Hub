@@ -37,10 +37,9 @@
                         <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
                             <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
                             {% if single_post.created_by == user %}
-                            <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
-                            <button class="dropdown-item btn-ci delete-post-btn"  data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
+                                <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
+                                <button class="dropdown-item btn-ci delete-post-btn"  data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
                             {% endif %}
-
                         </div>
                     </div>
                 </div>
