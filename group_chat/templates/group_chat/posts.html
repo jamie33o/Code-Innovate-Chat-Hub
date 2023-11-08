@@ -26,7 +26,7 @@
                     </div>
                     <div class="ml-2 ">
                         <div class="h5 m-2">{{ single_post.created_by }}</div>
-                        <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i" }}</div>
+                        <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i, b j"|upper }}</div>
                     </div>
                 </div>
                 <div>
@@ -136,7 +136,7 @@
                     {% endfor %}
                 </ul>
                 {% if single_post.latest_comment %}
-                    <span class="comment-date">{{ single_post.latest_comment.created_date }}</span>
+                    <span class="comment-date">{{ single_post.latest_comment.created_date|date:"H:i, b j"|upper }}</span>
                     <span class="view-comments">View Comments</span>
                 {% else %}
                     <span class="view-comments d-flex">Reply</span>
@@ -170,8 +170,8 @@
        
     $(document).ready(function() {
        
-        {% if next_page_number %}
-        olderPosts = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
+        {% if prev_page_number %}
+        olderPosts = "{% url 'channel_posts' channel_id=channel.id %}?page={{ prev_page_number }}"
            
         {% endif %}
 
