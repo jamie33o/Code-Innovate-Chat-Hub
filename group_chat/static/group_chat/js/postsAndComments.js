@@ -7,11 +7,13 @@ let emojiPicker = new EmojiPicker();
 let olderPosts = null;
 let scrolledToTop = false;
 let tenthPost = null;
-let htmlStructure = null;
 let deletePostUrl = null;
 let postBeingDeleted = null;
 const SM_BRAKE_POINT = 575.98;
-const LG_BRAKE_POINT = 991.98;
+const MD_BRAKE_POINT = 991.98;
+const LG_BRAKE_POINT = 1111.98;
+
+
 let deleteModelBody = null;
 let sizeFactor = 1;
 let csrfToken = null;
@@ -60,29 +62,6 @@ function initPosts(){
         emojiPicker.$panel.show() 
     })
     
-    //event listener for the comments links on each post
-    $(".comments-link").click(function(event) {
-        event.preventDefault();
-        let url = $(this).attr('href');  // Use $(this) to access the clicked element
-        getRequestToDjango('#post-comments', url)
-
-        if(window.innerWidth < SM_BRAKE_POINT) {
-            $('#channel-posts').toggleClass('d-flex');
-        }else if(window.innerWidth < LG_BRAKE_POINT){
-            $('#channel-posts').toggleClass('d-sm-flex');
-        }
-        $('#post-comments').addClass('d-flex');
-    });
-
-    // button for hiding the comments list
-    $(document).on('click', '.comments-close-btn', function() {
-        if(window.innerWidth < SM_BRAKE_POINT) {
-            $('#channel-posts').toggleClass('d-flex');
-        }else if(window.innerWidth < LG_BRAKE_POINT){
-            $('#channel-posts').toggleClass('d-sm-flex');
-        }
-        $('#post-comments').removeClass('d-flex');
-    });
 
     $(document).on('click', '.post-images img', function(e) {
         let header =
@@ -113,11 +92,32 @@ function initPosts(){
     resizeImage(0.8, $('#modal').find('img')[0]); // Decrease size by 20%
     });
 
+    //event listener for the comments links on each post
+    $(document).on('click', '.comments-link', function(event) {
+        event.preventDefault();
+        let url = $(this).attr('href');  // Use $(this) to access the clicked element
+        getRequestToDjango('#post-comments', url)
 
-     // Click event for the close posts button
-    $(".posts-close-btn").click(function(event) {
-        $('#channel-posts').toggleClass('d-flex');
-        $('#channel-links-container').toggleClass('hide');
+        if(window.innerWidth < LG_BRAKE_POINT){
+            
+            $('#channel-posts').removeClass('d-flex');
+        }
+        $('#post-comments').addClass('d-flex');
+    });
+
+    // button for hiding the comments list
+    $(document).on('click', '.comments-close-btn', function() {
+        if(window.innerWidth < LG_BRAKE_POINT){
+            $('#channel-posts').addClass('d-flex');
+        }
+        $('#post-comments').removeClass('d-flex');
+        $('#post-comments').html('')
+    });
+
+     // Click event for the x button to close posts 
+    $(document).on('click', '.posts-close-btn', function() {
+        $('#channel-posts').removeClass('d-flex');
+        $('#channel-links-container').removeClass('hide');
         $('#nav-bar').removeClass('d-none')
         $('header').removeClass('d-none')
     });
@@ -218,7 +218,7 @@ function initPosts(){
             url: savePostUrl,    
             success: function(response) {
                 // Handle success, e.g., redirect to success_url or update UI
-                displayMessage(response)
+                displayMessage(response, '#channel-posts')
             },
             error: function(error) {
                 // Handle error, e.g., display an error message
@@ -228,7 +228,12 @@ function initPosts(){
     })
 
     $(document).on('click', '.edit-btn', function(event) {
-
+        if($('.cancel-edit').length > 0){
+            $('.cancel-edit').click()
+        }else if($('.edit-post').length > 0 ){
+            console.log('work')
+            $('.card.edit-post').removeClass('edit-post')
+        }
         // Find the closest ancestor with the class 'card-body'
         var card = $(this).closest('.card');
         let carbody = card.find('.card-body').html()
@@ -237,10 +242,13 @@ function initPosts(){
         card.addClass('edit-post')
         let postId = card.data("post-id")
         let editPostUrl = card.data('post-url')
-
+        card.find('.card-body').html('')
+        console.log(carbody)
         // Append the HTML structure to the body
         editPostUrl += postId + '/'
         summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl, csrfToken)
+        
+
         summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
 
         $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button style=" border-radius: 20px; border: 1px solid black;" class="cancel-edit px-1">cancel</button>');
@@ -248,11 +256,12 @@ function initPosts(){
         $('.cancel-edit').on('click', function(event){
             event.preventDefault()
             $('.edit-post .card-body').html(carbody)
+            $('.card.edit-post').removeClass('edit-post')
         })
 
         if(cardImages){
             $(cardImages).each(function () {
-            var src = $(this).attr('src');
+            let src = $(this).attr('src');
             if(src != undefined){
                 summernoteEnhancerEditPost.addimageToSummernote(src)
             }

@@ -50,7 +50,7 @@
         </div>
     </div>
 
-    <div id="channel-posts" class="posts-container w-100 d-none d-sm-flex d-lg-flex flex-column justify-content-between">
+    <div id="channel-posts" class="posts-container w-100  flex-column justify-content-between">
         
     </div>
     <div id='post-comments' class ="comments-container flex-column justify-content-between">
@@ -78,7 +78,7 @@
             if(window.innerWidth > 575){
                 let url = `{% url 'channel_posts' last_viewed_channel_id %}`
                 getRequestToDjango('#channel-posts', url)
-
+                $('#channel-posts').addClass('d-flex');
             }
         {% endif %}
 
