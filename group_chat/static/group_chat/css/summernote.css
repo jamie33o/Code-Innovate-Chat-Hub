@@ -182,3 +182,40 @@ div.note-editing-area {
     margin-bottom: 30px;
     max-height: 70vh;
 }
+
+
+/* /////////////////////// media queries ///////////////////////// */
+/* CSS for small screens (up to the "lg" breakpoint) */
+@media (max-width: 575.98px) {
+   /* summernote buttons */
+    .note-btn-group .note-btn {
+        display: none;
+    }
+    .note-toolbar {
+        padding: 0 !important;
+        border: none !important;
+        height: 0 !important;
+
+    }
+    .summernote-form {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .note-editing-area {
+        margin-top: 8px;
+    }
+
+    .note-resizebar {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        background-color: rgba(74, 74, 73, 0.105);
+    }
+
+}
+
+@media (max-width: 991.98px) {
+    
+    
+}

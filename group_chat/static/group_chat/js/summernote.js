@@ -15,55 +15,15 @@ class SummernoteEnhancer {
     this.uploadImageUrls = [];
   }
 
-
-
   init(divToLoadIn, djangoUrl, csrf_token) {
     let self = this;
     this.divToLoadIn = divToLoadIn
     this.djangoUrl = djangoUrl
     let emojiPicker = new EmojiPicker()
 
-
-
-    let htmlStructure = `
-      <!-- Container for summernote editor -->
-      <div class="summernote-form mb-2 px-2">
-          <!-- Container for usernames list that the user can tag with @ -->
-          <div class="tag-name-modal popup">
-              <ul class="channel-users d-flex flex-column ml-3 my-3"></ul>
-          </div>
-
-          <!-- Summernote editor form -->
-          <form class="sn-form" method="post">
-              
-              <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
-
-              <textarea name="post"></textarea>
-
-              <!-- Buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
-              <div class="summernote-btn-bottom">   
-                  <div>  
-                      <button class="mx-3 mt-1 emoji-popup-btn" type="button">
-                          <span class="fa-regular fa-face-smile fa-lg emoji-btn" style="color: var(--ci-orange);"></span>
-                      </button>
-                      <button class="mx-3 at-symbol" type="button">
-                          <span class="fa-solid fa-at fa-lg" style="color: var(--ci-orange);"></span>
-                      </button>
-                  </div>
-                  <div class="cancel-submit">   
-
-                      <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit">
-                          <span class="fa-solid fa-play fa-lg" style="color: var(--ci-orange);"></span>
-                      </button>
-                  </div>
-              </div>
-          </form>
-      </div>
-  `;
-    $(divToLoadIn).append($(htmlStructure))
+    this.createForm(csrf_token)
 
     this.$sn = $(`${this.divToLoadIn} textarea`);  
-
 
     this.$sn.summernote({
       toolbar: [
@@ -118,10 +78,9 @@ class SummernoteEnhancer {
     $(`${this.divToLoadIn} .at-symbol`).click(() => {
       let atSymbol = document.createTextNode(`@`);
       this.$sn.summernote(`editor.insertNode`, atSymbol);
-
       this.tagUser();      
-
     });
+
     // fading summerote buttons
     $(`${divToLoadIn} .note-editable`).on('focus', function() {
         $(`${divToLoadIn} .btn-group button, ${divToLoadIn} .note-placeholder, ${divToLoadIn} .note-toolbar`).removeClass('faded');
@@ -130,6 +89,14 @@ class SummernoteEnhancer {
     $(`${this.divToLoadIn} .note-editable`).on('blur', function() {
         $(`${divToLoadIn} .btn-group button, ${divToLoadIn} .note-placeholder, ${divToLoadIn} .note-toolbar`).addClass('faded');
 
+    });
+
+    $(`${this.divToLoadIn} .add-image`).click(() => {
+      $('.note-insert button')[1].click();
+    });
+
+    $(`${this.divToLoadIn} .note-resizebar`).on('mousedown',() => {
+      this.resizeEditor()
     });
 
     //overlay event listener to close modals
@@ -142,10 +109,10 @@ class SummernoteEnhancer {
     // Add this code to bind the click event of existing button
     $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function () {      
       $(`${self.divToLoadIn} .hide-modal`).show()
-      emojiPicker.addListener(function(emoji){
+        emojiPicker.addListener(function(emoji){
         self.$sn.summernote('editor.insertNode', emoji);
         $(`${self.divToLoadIn} .hide-modal`).hide()
-    });
+      });
       emojiPicker.$panel.show();
     });
 
@@ -215,9 +182,7 @@ class SummernoteEnhancer {
     const self = this;
     // Serialize the form data
     let formData = this.snForm.serialize();
-    console.log(self.uploadImageUrls)
     if(self.uploadImageUrls.length > 0 ){ // Loop through each URL in uploadImageUrls
-
       $.each(self.uploadImageUrls, function(index, url) {
           // Check if the URL is not already present in the form data
           if (formData.indexOf(encodeURIComponent(url)) === -1) {
@@ -226,18 +191,17 @@ class SummernoteEnhancer {
           }
       });
     }
-
-   
     // Send the form data to Django
     $.ajax({
         url: djangoUrl, 
         type: 'POST',
         data: formData,
         success: function(response) {
+
           if(response.status){
             let postBody = $('<div class="card-body">' +
             '<p class="card-text">' +
-                response.post +
+                response.post.post +
             '</p>' +
             '<div class="post-images">' +
             '</div>' +
@@ -248,17 +212,15 @@ class SummernoteEnhancer {
 
               if(imagesArray.length >= 1){
                   imagesArray.forEach(function(imageUrl) {
-                  postBody.find('.post-images').append(`<img src="${imageUrl}" alt="Post Image">`);
-                });
+                    postBody.find('.post-images').append(`<img src="${imageUrl}" alt="Post Image">`);
+                  });
               }else if(imagesArray.length > 0){
-
                 postBody.find('.post-images').append(`<img src="${response.images}" alt="Post Image">`)
               }
 
             }
             self.divsection.html(postBody)
             displayMessage(response);
-
           }else{
               self.divsection.html(response)
           }
@@ -284,9 +246,17 @@ class SummernoteEnhancer {
         <img src="${src}"  alt="Uploaded Image">
       </div>
     `);    
-    
   }
-
+  
+  // Handle mouse move to adjust the editor's height
+  resizeEditor() {
+      const fullScreen = 400
+      if($('.note-editable').height() < fullScreen-10){
+        $('.note-editable').css({height:` ${fullScreen}px`});
+      }else {
+        $('.note-editable').css({height:` 30px`});
+      }
+  }
 
   uploadImage(file, editor, welEditable) {
       // Create a FormData object to send the file to the server
@@ -304,7 +274,6 @@ class SummernoteEnhancer {
         processData: false,
         success: function(response) {
           self.addimageToSummernote(response.url)         
-
         },
         error: function(error) {
           console.error("Error uploading image:", error);
@@ -312,7 +281,56 @@ class SummernoteEnhancer {
       });
     }
 
+    createForm(csrf_token){
+      let htmlStructure = `
+      <!-- Container for summernote editor -->
+      <div class="summernote-form mb-2 px-2">
+          <!-- Container for usernames list that the user can tag with @ -->
+          <div class="tag-name-modal popup">
+              <ul class="channel-users d-flex flex-column ml-3 my-3"></ul>
+          </div>
+  
+          <!-- Summernote editor form -->
+          <form class="sn-form" method="post">
+              
+              <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+  
+              <textarea name="post"></textarea>
+  
+              <!-- Buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
+              <div class="summernote-btn-bottom">   
 
+                  <div>  
+                  <button class="mx-3 add-image d-none" type="button">
+                      <span class="fa-solid fa-plus fa-lg" style="color: var(--ci-orange);"></span>
+                  </button>
+                      <button class="mx-3 mt-1 emoji-popup-btn" type="button">
+                          <span class="fa-regular fa-face-smile fa-lg emoji-btn" style="color: var(--ci-orange);"></span>
+                      </button>
+                      <button class="mx-3 at-symbol" type="button">
+                          <span class="fa-solid fa-at fa-lg" style="color: var(--ci-orange);"></span>
+                      </button>
+                      
+                  </div>
+                  <div class="cancel-submit">   
+  
+                      <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit">
+                          <span class="fa-solid fa-play fa-lg" style="color: var(--ci-orange);"></span>
+                      </button>
+                  </div>
+              </div>
+          </form>
+      </div>
+      `;
+      let $htmlStructure = $(htmlStructure);
+
+      
+  
+    $(this.divToLoadIn).append($htmlStructure)  
+       if(window.innerWidth < 575.98){ 
+        $('.add-image').removeClass("d-none")
+       }
+    }
 }
 
 const summernoteEnhancerPosts = new SummernoteEnhancer();
