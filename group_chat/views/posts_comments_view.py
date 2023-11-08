@@ -61,7 +61,7 @@ class PostsView(BaseChatView):
         
         try:
             # Start from the last page and go backward
-            paginated_posts = paginator.page(total_pages - page + 1)
+            paginated_posts = paginator.page(total_pages - int(page) + 1)
         except PageNotAnInteger:
             # If the page is not an integer, show the first page
             paginated_posts = paginator.page(1)
@@ -136,7 +136,7 @@ class PostsView(BaseChatView):
             # if its an edited post post_id will not be none
             response_data = {
                 'status': 'success',
-                'post': post,
+                'post': post.post,
                 'images': None,
             }
 
