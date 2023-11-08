@@ -68,13 +68,14 @@
     position: relative;
     height: 100%;
     background-color: var(--background);
+    display: none;
 }
 
 .comments-container {
     position: relative;
     display: none;
     border-left: 1px solid var(--ci-orange);
-    width: 600px;
+    width: 700px;
     height: 100%;
     background-color: var(--background);
 }
@@ -319,6 +320,7 @@
         padding: 100px 50px;
         text-align: center;
     }
+    
 
     .hide {
         display: none;
@@ -349,7 +351,11 @@
     }
 }
 
-
+@media (max-width: 1110px) {
+    .comments-container {
+        width: 100%;
+    }
+}
 
 
 

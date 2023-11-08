@@ -99,7 +99,7 @@
 }
 
 .delete-img-icon {
-    z-index: 5; 
+    z-index: 2; 
     top: 0; 
     right: 0; 
     background-color: var(--dark-grey); 
