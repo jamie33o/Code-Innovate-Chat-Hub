@@ -197,15 +197,14 @@ class SummernoteEnhancer {
         type: 'POST',
         data: formData,
         success: function(response) {
-
           if(response.status){
-            let postBody = $('<div class="card-body">' +
-            '<p class="card-text">' +
-                response.post.post +
-            '</p>' +
-            '<div class="post-images">' +
-            '</div>' +
-            '</div>');
+            let postBody = $(`<div class="card-body">
+            <div class="card-text">
+                ${response.post} 
+            </div>
+            <div class="post-images">
+            </div>
+            </div>`);
             if(response.images){
 
               let imagesArray = response.images.split(',');
