@@ -7,11 +7,12 @@ class EmojiPicker {
         this.$panel = null;
         this.emojiClickedCallback = null; //  callback function to send emoji to summernote.js
         // Initialize the emoji panel
-        this.emojiPanel();
-        this.addListener();
     }
 
     addListener(emojiClickedCallback) {
+        if(this.$panel == null){
+            this.emojiPanel();
+        }
         this.emojiClickedCallback = emojiClickedCallback
         const KEY_ESC = 27;
         const KEY_TAB = 9;
@@ -132,8 +133,7 @@ class EmojiPicker {
         $items.html('');
 
         if (index > 0) {
-            $.each(this.icons, (key, icon) => {
-                
+            $.each(this.icons, (key, icon) => {     
                 if (this.icons.hasOwnProperty(key) && icon[0] === (index - 1)) {
                     $items.append('<a href="javascript:void(0)" title="' +
                         Config.htmlEntities(key) + '">' +
@@ -198,7 +198,6 @@ class EmojiPicker {
     }
 
     emojiPanel() {
-        if(this.$panel == null){
         this.$panel = $(`<div class="emoji-menu emoji-menu-container">\n` +
             '    <div class="emoji-items-wrap1">\n' +
             '        <table class="emoji-menu-tabs">\n' +
@@ -222,7 +221,6 @@ class EmojiPicker {
         this.$panel.appendTo('body');
         this.loadEmojis();
         this.updateEmojisList(0);
-        }
     }
 
     destroy() {
