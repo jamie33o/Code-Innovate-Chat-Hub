@@ -49,50 +49,64 @@ class PostsView(BaseChatView):
     paginated_template ='group_chat/paginated-posts.html'
     posts_per_page = 10
 
-    def get(self, request, channel_id, *args, **kwargs):
-        channel = get_object_or_404(ChannelModel, id=channel_id)
-        
-        posts = PostsModel.objects.filter(post_channel=channel).order_by('created_date')
-        # Pagination
-        paginator = Paginator(posts, self.posts_per_page)
-        page = request.GET.get('page')
+    def get_channel(self, channel_id):
+        return get_object_or_404(ChannelModel, id=channel_id)
 
+    def get_posts(self, channel):
+        return PostsModel.objects.filter(post_channel=channel).order_by('created_date')
+
+    def get_paginated_posts(self, posts, page):
+        paginator = Paginator(posts, self.posts_per_page)
+        total_pages = paginator.num_pages
+        
         try:
-            paginated_posts = paginator.page(page)
+            # Start from the last page and go backward
+            paginated_posts = paginator.page(total_pages - page + 1)
         except PageNotAnInteger:
+            # If the page is not an integer, show the first page
             paginated_posts = paginator.page(1)
         except EmptyPage:
-            paginated_posts = paginator.page(paginator.num_pages)
+            # If the page is out of range, show the last page
+            paginated_posts = paginator.page(total_pages)
 
-        # Create a list to store information about users who commented for each post
-        post_comments_users = self.users_that_commented(paginated_posts)
+        prev_page_number = paginated_posts.previous_page_number() if paginated_posts.has_previous() else None
 
-        if request.user in channel.users.all():
-            self.update_last_viewed_channel(request, channel_id)
+        return paginated_posts, prev_page_number
 
-        form = PostsForm()
-
-        # Update the user's last visit status for the channel
+    def update_user_status(self, request, channel):
         user_status, created = ChannelLastViewedModel.objects.get_or_create(
             user=request.user,
             channel=channel
         )
-
         user_status.last_visit = timezone.now()
         user_status.save()
 
-        next_page_number = paginated_posts.next_page_number() if paginated_posts.has_next() else None
+    def get(self, request, channel_id, *args, **kwargs):
+        channel = self.get_channel(channel_id)
+        posts = self.get_posts(channel)
+
+        cur_page_num = request.GET.get('page') 
+        page = cur_page_num if cur_page_num and int(cur_page_num) > 1 else 1
+        paginated_posts, prev_page_number = self.get_paginated_posts(posts, page)
+        print(prev_page_number)
+
+        post_comments_users = self.users_that_commented(paginated_posts)
+
+        if request.user in channel.users.all():
+            self.update_user_status(request, channel_id)
+
+        form = PostsForm()
 
         context = {
             'channel': channel,
             'posts': paginated_posts,
             'form': form,
             'channel_users': channel.users.all(),
-            'next_page_number': next_page_number,
+            'prev_page_number': prev_page_number,
             'post_comments_users': post_comments_users
         }
 
-        if page:
+        if cur_page_num:
             return render(request, self.paginated_template, context)
 
         return render(request, self.template_name, context)
@@ -118,18 +132,19 @@ class PostsView(BaseChatView):
                 redirect_url = reverse('channel_posts', args=[channel_id])
 
                 return redirect(redirect_url)
-            else:
-                response_data = {
-                    'status': 'success',
-                    'post': post.post,
-                    'images': None,
-                }
+            
+            # if its an edited post post_id will not be none
+            response_data = {
+                'status': 'success',
+                'post': post,
+                'images': None,
+            }
 
-                if post.images:
-                    response_data['images'] = post.images
-                return JsonResponse(response_data)
-        else:
-            return render(request, self.template_name, {'form': form})
+            if post.images:
+                response_data['images'] = post.images
+            return JsonResponse(response_data)
+        
+        return render(request, self.template_name, {'form': form})
 
     def update_last_viewed_channel(self, request, channel_id):
         user_profile = UserProfile.objects.get(user=request.user)
