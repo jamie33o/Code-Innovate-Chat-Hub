@@ -39,7 +39,7 @@ function emojiPickerCallback(emoji) {
     let emojiColonName = emoji.alt;
 
     // Send a post request to Django with the emoji information
-    postRequestToDjango(emojiUrl, emojiColonName, null, emoji);
+    postRequestToDjango(emojiUrl, emojiColonName, emoji, csrfToken);
 }
 
 ///////////////// event listeners ////////////////////////////
@@ -129,7 +129,7 @@ $('main').on({
         event.preventDefault();
         let emojiCode = $(this).data('emoji-code')
         let url = $(this).data('emoji-url');
-        postRequestToDjango(url, emojiCode, this);
+        postRequestToDjango(url, emojiCode, this, csrfToken);
     },
     mouseenter: function() {
         if(window.innerWidth > LG_BRAKE_POINT){
@@ -181,8 +181,6 @@ $(document).on('click', '.delete-btn', function() {
     clonedCard.append(overlay);
     deleteModelBody = `
     <form>
-        <input type="hidden" name="csrfmiddlewaretoken" id="csrf_token" value="${csrfToken}">
-
         <div class="input-group text-center d-flex justify-content-between">
             <button type="button" class="btn-oval" 
             data-dismiss="modal" aria-label="Close">No</button>
@@ -201,30 +199,35 @@ $(document).on('click', '.delete-btn', function() {
 // event listener for yes-btn on the delete post/comment card modal
 $(document).on('click', '#yes-btn', function(event) {
     event.preventDefault()   
-    let csrfToken = $(this).closest('form').find('input[name="csrfmiddlewaretoken"]').val();
     cardBeingDeleted.remove();
     deleteObject(deleteUrl, csrfToken)
 })
 
-// event listener for save post btn on posts dropdown menu
+// Attach a click event handler to the 'main' element, specifically for elements with the class 'save-post-btn'
 $('main').on('click', '.save-post-btn', function(event) {
-    event.preventDefault()
+    // Prevent the default behavior of the click event (e.g., preventing form submission)
+    event.preventDefault();
+
+    // Get the URL for saving the post from the 'data-save-post-url' attribute of the clicked element
     let savePostUrl = $(this).data('save-post-url');
 
+    // Make an AJAX request to save the post
     $.ajax({
-        type: 'POST',
-        url: savePostUrl,
-        headers: {'X-CSRFToken': csrfToken},      
+        type: 'POST',  // Using HTTP POST method
+        url: savePostUrl,  // The URL to send the request to
+        headers: {'X-CSRFToken': csrfToken},  // Include CSRF token in the headers
         success: function(response) {
-            displayMessage(response, '#channel-posts')
+            // If the request is successful, display a message in the '#channel-posts' element
+            displayMessage(response, '#channel-posts');
         },
         error: function(error) {
-            // Handle error, e.g., display an error message
-            displayMessage(error)
+            // If there is an error, display an error message in the '#channel-posts' element
+            displayMessage({status:'error', message: error.statusText}, '#channel-posts');
         }
-    });   
-})
+    });
+});
 
+// listener for edit button on posts and comments dropdown menu
 $('main').on('click', '.edit-btn', function(event) {
     if($('.cancel-edit').length > 0){
         $('.cancel-edit').click()
@@ -266,6 +269,10 @@ $('main').on('click', '.edit-btn', function(event) {
     }
 });
 
+/**
+ * Load older posts when scrolling to the top of the page.
+ * This function is triggered by a scroll event.
+ */
 function loadOldPosts(){
     // Attach scroll event to load older posts when scrolling to the top
     if ($(this).scrollTop() === 0 && !scrolledToTop && olderPostsUrl != null) {
@@ -302,16 +309,27 @@ function scrollTo(){
     }
 }
 
- // Function to resize the image for zooming in and out
- function resizeImage(factor, imgElement) {
+/**
+ * Resize the specified image by a given factor for zooming in or out.
+ *
+ * @param {number} factor - The factor by which to resize the image. 
+ *                         Use values greater than 1 to zoom in, and values between 0 and 1 to zoom out.
+ * @param {HTMLElement} imgElement - The HTML element representing the image to be resized.
+ */
+function resizeImage(factor, imgElement) {
     // Update the size factor
     sizeFactor *= factor;
     // Apply the new size to the image
     $(imgElement).css('width', 100 * sizeFactor + '%');
-  }
+}
 
-
-  function showModal(header, body,) {
+/**
+ * Display a modal with the specified header and body content.
+ *
+ * @param {string} header - The header content of the modal.
+ * @param {string} body - The body content of the modal.
+ */
+function showModal(header, body,) {
     // Check if the modal already exists
     let modal = $('#modal');
     if (modal.length === 0) {
@@ -336,4 +354,4 @@ function scrollTo(){
     modal.find('.modal-body').html(body);
 
     modal.modal('show');
-}
+    }
