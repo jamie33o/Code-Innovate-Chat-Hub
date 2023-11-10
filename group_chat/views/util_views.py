@@ -85,10 +85,11 @@ class GenericObjectDeleteView(DeleteView):
         # Get the object to be deleted
         obj = self.get_object()
 
+        model_name = obj.__class__.__name__
         # Delete the object
         obj.delete()
         # Override the delete method to return a JSON response
-        return JsonResponse({'status': 'success', 'message': 'Post deleted'})
+        return JsonResponse({'status': 'success', 'message': f'{model_name[:-6] } deleted'})
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -96,7 +97,6 @@ class GenericObjectDeleteView(DeleteView):
         return context
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class SavePostView(View):
     def post(self, request, post_id):
         post = get_object_or_404(PostsModel, id=post_id)  

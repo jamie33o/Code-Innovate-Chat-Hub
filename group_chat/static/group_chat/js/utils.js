@@ -238,8 +238,7 @@ function postRequestToDjango(url, emojiColonName, args, emoji){
 
         },
         error: function (error) {
-            // Handle error
-            // displayMessage({`status`: 'error'})
+            displayMessage({status: 'error',message: error.responseStatus}, 'main')
         }
     });
 }
@@ -248,15 +247,12 @@ function deleteObject(deletePostUrl, csrfToken){
     $.ajax({
         type: 'DELETE',
         url: deletePostUrl,
-        headers: {'X-CSRFToken': csrfToken},  // Use a function to get the CSRF token
-
+        headers: {'X-CSRFToken': csrfToken},  
         success: function(response) {
-            // Handle success, e.g., redirect to success_url or update UI
-            displayMessage(response, '#channel-posts')
+            displayMessage(response, 'main')
         },
         error: function(error) {
-            // Handle error, e.g., display an error message
-            displayMessage(error, '#channel-posts')
+            displayMessage(error, 'main')
         }
     });
 }
