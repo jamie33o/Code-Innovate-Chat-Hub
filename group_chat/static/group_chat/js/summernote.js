@@ -78,6 +78,7 @@ class SummernoteEnhancer {
     $(`${this.divToLoadIn} .at-symbol`).click(() => {
       let atSymbol = document.createTextNode(`@`);
       this.$sn.summernote(`editor.insertNode`, atSymbol);
+
       this.tagUser();      
     });
 
@@ -100,18 +101,18 @@ class SummernoteEnhancer {
     });
 
     //overlay event listener to close modals
-    $(`${this.divToLoadIn} .hide-modal`).click(() => {
+    $(`.hide-modal`).click(() => {
       $(`${this.divToLoadIn} .tag-name-modal`).hide();
-      $(`${this.divToLoadIn} .hide-modal`).hide();
+      $(`.hide-modal`).hide();
     });
 
 
     // Add this code to bind the click event of existing button
     $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function (event) {      
-      $(`${self.divToLoadIn} .hide-modal`).show()
+      $(`.hide-modal`).show()
         emojiPicker.addListener(event, function(emoji){
         self.$sn.summernote('editor.insertNode', emoji);
-        $(`${self.divToLoadIn} .hide-modal`).hide()
+        $(`.hide-modal`).hide()
       });
       emojiPicker.$panel.show();
     });
@@ -144,7 +145,6 @@ class SummernoteEnhancer {
       if ($snText.endsWith('@') && !/[A-Za-z\d]/.test($snText.slice(atIndex -1, atIndex))) {
           $(`${this.divToLoadIn} .tag-name-modal`).show()
 
-          $(`${this.divToLoadIn} .hide-modal`).show()
       }
       $(`${this.divToLoadIn} .channel-users`).empty()
 
@@ -159,7 +159,7 @@ class SummernoteEnhancer {
 
         const suggestion = $('<a>', {
           href: '#',
-          text: '@ ' + name
+          text: '@' + name
         });
         suggestion.on("click", (event) => {
           event.preventDefault()
@@ -169,7 +169,14 @@ class SummernoteEnhancer {
 
           $(`${this.divToLoadIn} .tag-name-modal`).hide()
 
-          $(`${this.divToLoadIn} .hide-modal`).hide()
+          $(`${this.divToLoadIn} .note-editable p`).contents().filter(function() {
+            return this.nodeType === 3 && /[^a-zA-Z0-9]@/.test(this.nodeValue);
+        }).each(function() {
+            const text = this.nodeValue.replace(/([^a-zA-Z0-9])@/g, '$1');
+            $(this).replaceWith(document.createTextNode(text));
+        });
+        
+          
 
         });
 
