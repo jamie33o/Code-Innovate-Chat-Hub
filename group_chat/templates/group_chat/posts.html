@@ -38,7 +38,7 @@
                             <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
                             {% if single_post.created_by == user %}
                                 <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
-                                <button class="dropdown-item btn-ci delete-post-btn"  data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
+                                <button class="dropdown-item btn-ci delete-btn"  data-delete-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
                             {% endif %}
                         </div>
                     </div>
@@ -169,13 +169,15 @@
        
     $(document).ready(function() {
        
-        {% if prev_page_number %}
-        olderPosts = "{% url 'channel_posts' channel_id=channel.id %}?page={{ prev_page_number }}"
-           
+        {% if next_page_number %}
+            olderPostsUrl = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
+        {% else %}     
+            olderPostsUrl = null
         {% endif %}
 
+        scrollTo()
+        $('#posts-list').scroll(loadOldPosts)
 
-        initPosts()
         csrfToken = "{{ csrf_token }}"
         // initialize summernote enhancer class
         summernoteEnhancerPosts.init('#channel-posts', `{% url 'channel_posts' channel.id %}`, '{{ csrf_token }}')
@@ -185,17 +187,6 @@
                 '{{ user.username }}',
             {% endfor %}
         ];
-
-        
-
-        deleteModelBody = `
-            <form>
-                {% csrf_token %}
-                <div class="input-group text-center d-flex justify-content-between">
-                    <button type="button" class="btn-oval" data-dismiss="modal" aria-label="Close">No</button>
-                    <button id="delete-btn" class="btn btn-oval" data-dismiss="modal" type="button">Yes</button>
-                </div>
-            </form>`;
        
         // get the channel id using django template literal which will be used in the js file and for the websocket
         channel_id = {{ channel.id }}; 

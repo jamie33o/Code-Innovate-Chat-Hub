@@ -28,7 +28,7 @@
                             <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
                             {% if single_post.created_by == user %}
                                 <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
-                                <button class="dropdown-item btn-ci delete-post-btn"  data-delete-post-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
+                                <button class="dropdown-item btn-ci delete-btn"  data-delete-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
                             {% endif %}
                         </div>
                     </div>
@@ -138,10 +138,10 @@
 
 <script>
     {% if next_page_number %}
-        olderPosts = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
+        olderPostsUrl = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
     {% else %}     
 
-        olderPosts = null
+        olderPostsUrl = null
 
     {% endif %}
 

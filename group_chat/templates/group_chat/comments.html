@@ -125,7 +125,7 @@
                                         
                                         <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
                                             <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
-                                            <button class="dropdown-item btn-ci delete-post-btn"  data-delete-post-url="{% url 'delete_object' model='CommentsModel' pk=comment.id %}">Delete</button>                
+                                            <button class="dropdown-item btn-ci delete-btn"  data-delete-url="{% url 'delete_object' model='CommentsModel' pk=comment.id %}">Delete</button>                
                                         </div>
                                     </div>
                                     {% endif %}
