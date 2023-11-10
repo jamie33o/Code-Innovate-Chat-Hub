@@ -58,16 +58,16 @@ class PostsView(BaseChatView):
     def get_paginated_posts(self, posts, page):
         paginator = Paginator(posts, self.posts_per_page)
         total_pages = paginator.num_pages
-        
+
+        page = total_pages if not page else total_pages - page 
+      
         try:
             # Start from the last page and go backward
-            paginated_posts = paginator.page(total_pages - int(page) + 1)
-        except PageNotAnInteger:
-            # If the page is not an integer, show the first page
-            paginated_posts = paginator.page(1)
-        except EmptyPage:
-            # If the page is out of range, show the last page
+            paginated_posts = paginator.page(page)
+        except (PageNotAnInteger, EmptyPage):           
+             # If the page is not an integer, show the last page
             paginated_posts = paginator.page(total_pages)
+
 
         prev_page_number = paginated_posts.previous_page_number() if paginated_posts.has_previous() else None
 
@@ -85,10 +85,8 @@ class PostsView(BaseChatView):
         channel = self.get_channel(channel_id)
         posts = self.get_posts(channel)
 
-        cur_page_num = request.GET.get('page') 
-        page = cur_page_num if cur_page_num and int(cur_page_num) > 1 else 1
-        paginated_posts, prev_page_number = self.get_paginated_posts(posts, page)
-        print(prev_page_number)
+        page = int(request.GET.get('page')) if request.GET.get('page') else None
+        paginated_posts, next_page_num = self.get_paginated_posts(posts, page)
 
         post_comments_users = self.users_that_commented(paginated_posts)
 
@@ -102,11 +100,11 @@ class PostsView(BaseChatView):
             'posts': paginated_posts,
             'form': form,
             'channel_users': channel.users.all(),
-            'prev_page_number': prev_page_number,
+            'next_page_number': next_page_num,
             'post_comments_users': post_comments_users
         }
 
-        if cur_page_num:
+        if page:
             return render(request, self.paginated_template, context)
 
         return render(request, self.template_name, context)
