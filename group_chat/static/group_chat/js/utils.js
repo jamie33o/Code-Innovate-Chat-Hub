@@ -9,7 +9,10 @@ function displayMessage(response, divClass){
     let messageLi = `
     <div class="notification">
         <ul class="notification-messages">
-        <li class="message-item ${response.status.toLowerCase()}"><h3>${response.status}</h3><p>${response.message}</p></li>
+            <li class="message-item ${response.status.toLowerCase()}">
+                <h3>${response.status}</h3>
+                <p>${response.message}</p>
+            </li>
         </ul>
     </div>
     `;
@@ -159,9 +162,12 @@ function getRequestToDjango(divToAddContent, url){
 
 
 // function for adding and removing emoji on posts
-function postRequestToDjango(url, emojiColonName, args, emoji){
+function postRequestToDjango(url, emojiColonName, clickedBtn, csrfToken){
     let id = url.match(/\d+/g);
-    let spanElement = $(emoji).find('span');
+    let spanElement;
+    if(clickedBtn){
+        spanElement = $(clickedBtn).find('span');
+    }
     let currentNumber = null
     $.ajax({
         url: url,  
@@ -169,13 +175,14 @@ function postRequestToDjango(url, emojiColonName, args, emoji){
         data: {
             emoji_colon_name: emojiColonName,
         },
+        headers: {'X-CSRFToken': csrfToken},  
         success: function (response) {
             // Handle success
             switch (response.status) {
                 case "added":
 
                     let emojiUlClass = `.emoji-list${id}`
-                    let em = $(emoji).prop('outerHTML');
+                    let em = $(clickedBtn).prop('outerHTML');
 
                     let newLi = $(`
                         <li class="list-inline-item mr-2">
@@ -233,7 +240,7 @@ function postRequestToDjango(url, emojiColonName, args, emoji){
                    
                   break;
                   case "removed":
-                    $(args).parent().remove()
+                    $(clickedBtn).parent().remove()
                 }           
 
         },
