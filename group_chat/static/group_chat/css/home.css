@@ -6,6 +6,10 @@
     background: #fcfcfc;
 }
 
+.active {
+    font-weight: bolder;
+    color: red;
+}
 .unread-indicator {
     width: 20px;
     height: 20px;
@@ -197,7 +201,7 @@
 }
 
 
-/* ///////////////// CSS to style the add to channel overlay  ////////////////////*/
+/* ///////////////// CSS to style the add to channel overlay  //////////////////// */
 #overlay {
     position: absolute;
     top: 0;
