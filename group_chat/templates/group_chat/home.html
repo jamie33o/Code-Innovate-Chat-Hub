@@ -20,7 +20,7 @@
                     <ul class="list-unstyled channels ">
                         {% for channel in channels %}
                             <li>
-                                <a class="channel-link btn-ci w-100" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}
+                                <a class="channel-link btn-ci w-100 {% if last_viewed_channel_id == channel.id %}active{% endif %}" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}
                                     <span class="pull-right">
                                         {% for key, value in user_statuses.items %}
                                             {% if key == channel.id %}
@@ -76,8 +76,12 @@
         
         {% if last_viewed_channel_id %}
             if(window.innerWidth > 575){
-                let url = `{% url 'channel_posts' last_viewed_channel_id %}`
-                getRequestToDjango('#channel-posts', url)
+                let lastViewedurl = `{% url 'channel_posts' last_viewed_channel_id %}`
+                ajaxRequest(lastViewedurl, null, 'GET', '#channel-posts', null, function(response){
+                    $('#channel-posts').html(response)
+                    autoScroll()
+                })
+
                 $('#channel-posts').addClass('d-flex');
             }
         {% endif %}
