@@ -71,7 +71,7 @@
                     <!-- Loop through your emojis and generate list items -->
                     {% for emoji in single_post.emojis.all %}
                     <li class="list-inline-item mr-2">
-                        <button class="added-emoji-btn btn" 
+                        <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}" 
                                 data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}"  
                                 data-target="#emojiModal{{ emoji.id }}" 
                                 data-emoji-code="{{ emoji.emoji_colon_name }}">
@@ -153,9 +153,9 @@
         <!-- Button to add channel -->
         <div id="overlay">
             <form method="post" 
-            action="{% url 'add_user_to_channel' channel_id=channel.id user_id=user.id %}" 
-            class="vh-100 d-flex justify-content-center align-items-center" 
-            id="add-user-form">
+                action="{% url 'add_user_to_channel' channel_id=channel.id user_id=user.id %}" 
+                class="vh-100 d-flex justify-content-center align-items-center" 
+                id="add-user-form">
                 {% csrf_token %}
                 <!-- Your form fields go here -->
                 <button type="submit" class="btn btn-primary">Join Channel</button>
@@ -168,9 +168,14 @@
 <script>
        
     $(document).ready(function() {
-       
         {% if next_page_number %}
             olderPostsUrl = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
+            if($('.card').length < 10){
+                ajaxRequest(olderPostsUrl, null, 'GET', '#channel-posts', null, function(response){
+                $('#posts-list').prepend(response)
+                autoScroll()
+                })
+            }
         {% else %}     
             olderPostsUrl = null
         {% endif %}
