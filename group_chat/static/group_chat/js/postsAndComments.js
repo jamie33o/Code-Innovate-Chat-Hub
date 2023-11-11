@@ -22,35 +22,9 @@ let deleteModelBody = null;
 let sizeFactor = 1;
 let csrfToken = null;
 
-
-////////////////////////// functions for posts ///////////////////////////////////
-
-
-/**
- * Callback function triggered when a user clicks an emoji in the emoji picker.
- *
- * This function sends a post request to the Django server with the selected emoji's
- * information.
- *
- * @param {Object} emoji - The emoji object representing the clicked emoji.
- */
-function emojiPickerCallback(emoji) {
-    // Extract the emoji's colon name
-    let emojiColonName = emoji.alt;
-
-    // Send a post request to Django with the emoji information
-    postRequestToDjango(emojiUrl, emojiColonName, emoji, csrfToken);
-}
-
 ///////////////// event listeners ////////////////////////////
 
-// event listener for the emoji button on posts and comments
-$('main').on('click', '.card-emoji-btn', function(event) {
-    event.preventDefault()
-    emojiUrl = $(this).data('emoji-url')
-    emojiPicker.addListener(event, emojiPickerCallback) 
-    emojiPicker.$panel.show() 
-})
+
 
 // event listener for images 
 $('main').on('click', '.post-images img', function(e) {
@@ -72,13 +46,13 @@ $('main').on('click', '.post-images img', function(e) {
     resizeImage(.5, $('#modal').find('img')[0]); // Increase size by 20%
 })
 
-// Event listener for the plus button
-$('main').on('click', '.zoom-in', function() {
+// Event listener for the plus button on image zoom model
+$('body').on('click', '.zoom-in', function() {
 resizeImage(1.2, $('#modal').find('img')[0]); // Increase size by 20%
 });
 
-// Event listener for the minus button
-$('main').on('click', '.zoom-out', function() {
+// Event listener for the minus button on image zoom model
+$('body').on('click', '.zoom-out', function() {
 resizeImage(0.8, $('#modal').find('img')[0]); // Decrease size by 20%
 });
 
@@ -86,10 +60,11 @@ resizeImage(0.8, $('#modal').find('img')[0]); // Decrease size by 20%
 $('main').on('click', '.comments-link', function(event) {
     event.preventDefault();
     let url = $(this).attr('href');  // Use $(this) to access the clicked element
-    getRequestToDjango('#post-comments', url)
+    ajaxRequest(url, null, 'GET', '#post-comments', null, function(response){
+        $('#post-comments').html(response);
+    })
 
     if(window.innerWidth < LG_BRAKE_POINT){
-        
         $('#channel-posts').removeClass('d-flex');
     }
     $('#post-comments').addClass('d-flex');
@@ -119,40 +94,18 @@ $('main').on('submit', '#add-user-form', function(event) {
     //get csrf token from the form
     let csrftoken = $(this).find('input[name="csrfmiddlewaretoken"]').val();
     let url = $(this).attr('action');
-    // function in home.js to send post request to add user
-    addUserPostRequest(url, csrftoken);
+    // send post request to add user
+    ajaxRequest(url, csrftoken, 'POST', '#channel-posts', null, function(response){
+        $('#overlay').addClass('d-none');
+        displayMessage(response, '#channel-posts');
+    });
 });
-
-// event listener for emojis that are added to posts or comments
-$('main').on({
-    click: function(event) {
-        event.preventDefault();
-        let emojiCode = $(this).data('emoji-code')
-        let url = $(this).data('emoji-url');
-        postRequestToDjango(url, emojiCode, this, csrfToken);
-    },
-    mouseenter: function() {
-        if(window.innerWidth > LG_BRAKE_POINT){
-            $(this).css('cursor', 'pointer');
-            let emojiId = $(this).data('target');
-            $(emojiId).removeClass('d-none');
-        }
-        
-    },
-    mouseleave: function() {
-        if(window.innerWidth > LG_BRAKE_POINT){
-            $(this).css('cursor', 'pointer');
-            let emojiId = $(this).data('target');
-            $(emojiId).addClass('d-none');
-        }
-    }
-}, '.added-emoji-btn');
 
 // event listener for the delete button on post and comments
 $(document).on('click', '.delete-btn', function() {
     // Get the URL of the image
     deleteUrl = $(this).data('delete-url')
-    // Make AJAX delete request
+    // get card to be deleted
     cardBeingDeleted = $(this).closest('.card');
 
     let header =
@@ -200,7 +153,7 @@ $(document).on('click', '.delete-btn', function() {
 $(document).on('click', '#yes-btn', function(event) {
     event.preventDefault()   
     cardBeingDeleted.remove();
-    deleteObject(deleteUrl, csrfToken)
+    ajaxRequest(deleteUrl, csrfToken, 'DELETE', 'main')
 })
 
 // Attach a click event handler to the 'main' element, specifically for elements with the class 'save-post-btn'
@@ -212,19 +165,7 @@ $('main').on('click', '.save-post-btn', function(event) {
     let savePostUrl = $(this).data('save-post-url');
 
     // Make an AJAX request to save the post
-    $.ajax({
-        type: 'POST',  // Using HTTP POST method
-        url: savePostUrl,  // The URL to send the request to
-        headers: {'X-CSRFToken': csrfToken},  // Include CSRF token in the headers
-        success: function(response) {
-            // If the request is successful, display a message in the '#channel-posts' element
-            displayMessage(response, '#channel-posts');
-        },
-        error: function(error) {
-            // If there is an error, display an error message in the '#channel-posts' element
-            displayMessage({status:'error', message: error.statusText}, '#channel-posts');
-        }
-    });
+    ajaxRequest(savePostUrl, csrfToken, 'POST', '#channel-posts')
 });
 
 // listener for edit button on posts and comments dropdown menu
@@ -269,6 +210,8 @@ $('main').on('click', '.edit-btn', function(event) {
     }
 });
 
+////////////////////////// functions for posts ///////////////////////////////////
+
 /**
  * Load older posts when scrolling to the top of the page.
  * This function is triggered by a scroll event.
@@ -277,38 +220,30 @@ function loadOldPosts(){
     // Attach scroll event to load older posts when scrolling to the top
     if ($(this).scrollTop() === 0 && !scrolledToTop && olderPostsUrl != null) {
         scrolledToTop = true;
-
-        $.ajax({
-            type: "GET",
-            url: olderPostsUrl,
-            success: function(response) {
-                // Update the div with the returned template
-                $('#posts-list').prepend(response)
-                scrollTo()
-                scrolledToTop = false;
-            },
-            error: function(error) {
-                displayMessage(response={status:'error', message: error.statusText},'#channel-posts')
-            }
-        });
+        ajaxRequest(olderPostsUrl, null, 'GET', '#channel-posts', null, function(response){
+            // Update the div with the returned template
+            $('#posts-list').prepend(response)
+            autoScroll()
+          
+        })
     }    
 }
 
-function scrollTo(){
+function autoScroll() {
     //get the post count
     let postCount = $('#channel-posts .scrollable-div .card').length;
+
     //get the index of the last post before the older posts being appended
     let postAtIndex = $('#channel-posts .scrollable-div .card').eq(9); 
-
     // scroll to post at index above if there are more 10 else scroll to bottom
-    if (postCount > 10) {
+    if(postCount >= 20){
         // Scroll to the 10th post
         $('#channel-posts .scrollable-div').animate({ scrollTop: postAtIndex.offset().top }, 'fast');
-    } else {
+    }else  {
         $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'fast');
     }
+    scrolledToTop = false;
 }
-
 /**
  * Resize the specified image by a given factor for zooming in or out.
  *
@@ -355,3 +290,137 @@ function showModal(header, body,) {
 
     modal.modal('show');
     }
+
+///////////////// Emoji functionality //////////////////////
+// event listener for the emoji button on posts and comments
+$('main').on('click', '.card-emoji-btn', function(event) {
+    event.preventDefault()
+    emojiUrl = $(this).data('emoji-url')
+    emojiPicker.addListener(event, emojiPickerCallback) 
+    emojiPicker.$panel.show() 
+})
+
+// event listener for emojis that are added to posts or comments
+$('main').on({
+    click: function(event) {
+        event.preventDefault();
+        const emojiCode = $(this).data('emoji-code')
+        const url = $(this).data('emoji-url');
+        const self = this;
+        data = {
+            emoji_colon_name: emojiCode,
+        }
+         // Send a post request to Django with the emoji information
+    ajaxRequest(url, csrfToken, 'POST', 'main', data, function(response){
+        updateEmoji(emojiCode, null, self, response, url)
+    });
+    },
+    mouseenter: function() {
+        if(window.innerWidth > LG_BRAKE_POINT){
+            $(this).css('cursor', 'pointer');
+            $(this).siblings('.emoji-user-count-modal').removeClass('d-none');
+        }
+        
+    },
+    mouseleave: function() {
+        if(window.innerWidth > LG_BRAKE_POINT){
+            $(this).css('cursor', 'pointer');
+            $(this).siblings('.emoji-user-count-modal').addClass('d-none');
+        }
+    }
+}, '.added-emoji-btn');
+
+    /**
+ * Callback function triggered when a user clicks an emoji in the emoji picker.
+ *
+ * This function sends a post request to the Django server with the selected emoji's
+ * information.
+ *
+ * @param {Object} emoji - The emoji object representing the clicked emoji.
+ */
+function emojiPickerCallback(emoji) {
+    // Extract the emoji's colon name
+    let emojiColonName = emoji.alt;
+    let data = {
+        emoji_colon_name: emojiColonName,
+    }
+
+    // Send a post request to Django with the emoji information
+    ajaxRequest(emojiUrl, csrfToken, 'POST', 'main', data, function(response){
+        updateEmoji(emojiColonName, emoji, null, response, emojiUrl)
+    });
+}
+
+function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
+    let id = url.match(/\d+/g);
+    let spanElement;
+    let emojiUlClass = `.emoji-list${id}`
+    const emojiClass = emojiColonName.slice(1,-1)
+    if(clickedBtn){
+        spanElement = $(clickedBtn).find('span');
+    }
+    let currentNumber = null
+    // Handle success
+    switch (response.status) {
+        case "added":
+            let em = $(emojiImg).prop('outerHTML');
+
+            let newLi = $(`
+                <li class="list-inline-item mr-2">
+                    <button class="added-emoji-btn btn ${emojiClass}" data-emoji-url="${url}" 
+                            data-target="#emojiModal${id}" 
+                            data-emoji-code="${emojiColonName}">
+                            ${em}
+                        <span></span>
+                    </button>
+                    <!-- Small Box Modal -->
+                    <div class="emoji-user-count-modal d-none" id="emojiModal${id}">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="emojiModalLabel">${em}</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <p>You reacted with ${emojiColonName}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            `);
+            $(emojiUlClass).append(newLi);
+            break;
+        case "decremented":
+            currentNumber = parseInt(spanElement.html(), 10);
+
+            if (!isNaN(currentNumber)) {
+                // Check if currentNumber is a valid number
+
+                // Subtract 1 from the current number
+                let newNumber = currentNumber - 1;
+                if (newNumber > 1) {
+                    // Update the HTML content of the span element with the new number
+                    spanElement.html(newNumber);
+                } else {
+                    spanElement.html('');
+
+                }
+            }
+            break;
+        case "incremented":
+            currentNumber = parseInt(spanElement.html(), 10);
+            if (!isNaN(currentNumber)) {
+                // add 1 to the current number
+                let newNumber = currentNumber + 1;
+                // Update the HTML content of the span element with the new number
+                spanElement.html(newNumber);
+            } else {
+                spanElement.html(2);
+            }
+
+            break;
+        case "removed":
+                $(emojiUlClass).find(`.${emojiClass}`).parent().remove()
+            
+    }
+}
