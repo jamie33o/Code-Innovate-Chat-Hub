@@ -2,17 +2,18 @@ import bleach
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.http import JsonResponse
-from django.contrib.auth import get_user_model
-from user_profile.models import UserProfile
-from group_chat.models import ChannelModel, PostsModel, ChannelLastViewedModel, CommentsModel
-from group_chat.forms import PostsForm, CommentsForm
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from user_profile.models import UserProfile
+from group_chat.models import ChannelModel, PostsModel, ChannelLastViewedModel, CommentsModel
+from group_chat.forms import PostsForm, CommentsForm
+
 
 
 
@@ -59,18 +60,18 @@ class PostsView(BaseChatView):
         paginator = Paginator(posts, self.posts_per_page)
         total_pages = paginator.num_pages
 
-        page = total_pages if not page else total_pages - page 
-      
+
+        page = total_pages if not page else page 
+
         try:
             # Start from the last page and go backward
             paginated_posts = paginator.page(page)
-        except (PageNotAnInteger, EmptyPage):           
+        except (PageNotAnInteger, EmptyPage):
              # If the page is not an integer, show the last page
             paginated_posts = paginator.page(total_pages)
 
 
         prev_page_number = paginated_posts.previous_page_number() if paginated_posts.has_previous() else None
-
         return paginated_posts, prev_page_number
 
     def update_user_status(self, request, channel):
