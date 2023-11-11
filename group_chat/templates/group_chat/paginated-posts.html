@@ -61,7 +61,7 @@
                     <!-- Loop through your emojis and generate list items -->
                     {% for emoji in single_post.emojis.all %}
                     <li class="list-inline-item mr-2">
-                        <button class="added-emoji-btn btn"                                 
+                        <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}"                                 
                         data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}"  
                         data-post-emoji-list=".emoji-list{{ single_post.id }}" 
                         data-target="#emojiModal{{ emoji.id }}" 
@@ -140,9 +140,7 @@
     {% if next_page_number %}
         olderPostsUrl = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
     {% else %}     
-
         olderPostsUrl = null
-
     {% endif %}
 
 

@@ -50,7 +50,7 @@
                     <!-- Loop through your emojis and generate list items -->
                     {% for emoji in post.emojis.all %}
                     <li class="list-inline-item mr-2">
-                        <button class="added-emoji-btn btn" data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=post.id %}" data-post-emoji-list=".emoji-list{{ single_post.id }}" data-target="#emojiModal{{ emoji.id }}" data-emoji-code="{{ emoji.emoji_colon_name }}">
+                        <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}" data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=post.id %}" data-post-emoji-list=".emoji-list{{ single_post.id }}" data-target="#emojiModal{{ emoji.id }}" data-emoji-code="{{ emoji.emoji_colon_name }}">
                         {{ emoji.emoji_colon_name|emoji_replace }}
                         <span>
                             {% if emoji.users_who_incremented.all|length > 1 %}
@@ -154,7 +154,7 @@
                                     <!-- Loop through your emojis and generate list items -->
                                     {% for emoji in comment.emojis.all %}
                                         <li class="list-inline-item mr-2">
-                                            <button class="added-emoji-btn btn" 
+                                            <button class="added-emoji-btn btn{{ emoji.emoji_colon_name|slice:'1:-1' }}" 
                                                     data-emoji-url="{% url 'emoji' model='CommentsModel' instance_id=comment.id %}" 
                                                     data-post-emoji-list=".emoji-list{{ comment.id }}" 
                                                     data-target="#emojiModal{{ emoji.id }}" 
