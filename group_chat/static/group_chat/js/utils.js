@@ -143,24 +143,6 @@ function getCurrentTime() {
 }
 
 
-// function to load posts
-function getRequestToDjango(divToAddContent, url){
-    // AJAX request
-    $.ajax({
-        type: "GET",
-        url: url,
-        success: function(response) {
-            // Update the div with the returned template
-            $(divToAddContent).html(response);
-
-        },
-        error: function(error) {
-            console.log("Error:", error);
-        }
-    });
-}
-
-
 // function for adding and removing emoji on posts
 function postRequestToDjango(url, emojiColonName, clickedBtn, csrfToken){
     let id = url.match(/\d+/g);
@@ -250,19 +232,22 @@ function postRequestToDjango(url, emojiColonName, clickedBtn, csrfToken){
     });
 }
 
-function deleteObject(deletePostUrl, csrfToken){
+function ajaxRequest(url, csrfToken, type, divClass, data, callBackFunction) {
     $.ajax({
-        type: 'DELETE',
-        url: deletePostUrl,
+        type: type,
+        url: url,
+        data: data,
         headers: {'X-CSRFToken': csrfToken},  
-        success: function(response) {
-            displayMessage(response, 'main')
+        success: (response) => {
+            if(callBackFunction){
+                callBackFunction(response)
+            }else{
+                displayMessage(response, divClass)            
+            }
         },
         error: function(error) {
-            displayMessage(error, 'main')
+            displayMessage({status:'error', message: error.statusText}, divClass)
         }
     });
 }
-
-
 
