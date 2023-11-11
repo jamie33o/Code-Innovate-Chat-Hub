@@ -1,5 +1,3 @@
-///////////////////////////////  initialize channels list listeners ////////////////////////////
-
 // Toggle the visibility of the messages list when the button is clicked
 $('.toggleLinksButton').click(function() {
     var target = $(this).data('target');
@@ -11,11 +9,21 @@ $('.toggleLinksButton').click(function() {
 
 // Use the ready function to execute code when the DOM is fully loaded
 // Click event for the button
-$(".channel-link").click(function(event) {
+$('main').on('click', '.channel-link', function(event) {
     event.preventDefault();
+    
+    $('.channel-link').removeClass('active')
+
     $(this).find('.unread-indicator').remove()
-    url = event.currentTarget.href
-    getRequestToDjango('#channel-posts', url)
+    $(this).addClass('active')
+    lastChannel = $(this)
+    let url = event.currentTarget.href
+    ajaxRequest(url, null, 'Get', '#channel-posts', null, function(response){
+        $('#channel-posts').html(response)
+        autoScroll()
+    } )
+   
+
     if(window.innerWidth < 575){
         $('#channel-posts').toggleClass('d-flex');
         $('#channel-links-container').toggleClass('hide');
@@ -39,34 +47,4 @@ if (addChannelButton && overlay) {
     });
   }
 
-$("#add_user_to_channel").click(function(event) {
-    event.preventDefault(); // Prevent the default navigation behavior
 
-    $.get($(this).attr("href"), function(data) {
-        // Display the response in the response-container element
-        $("#add_user_to_channel").text(data);
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-        console.error('There was a problem with the AJAX request:', errorThrown);
-    });
-});
-
-
-// add user to channel
-function addUserPostRequest(url, csrftoken){
-    // AJAX request
-    $.ajax({
-        type: "POST",
-        url: url,
-        headers: {
-            'X-CSRFToken': csrftoken
-        },
-        success: function(response) {
-            $('#overlay').addClass('d-none')
-            displayMessage(response)
-        },
-        error: function(error) {
-            displayMessage(error)
-        }
-    });
-}
