@@ -1,8 +1,23 @@
+/**
+ * Flag to track whether an animation is currently in progress.
+ * @type {boolean}
+ */
 let isAnimationInProgress = false;
+
+/**
+ * Reference to the current user.
+ * @type {null}
+ */
 let currentUser = null;
+
 /////////////////////// function for notification messages ///////////////////////////////
 
 
+/**
+ * Displays a notification message and handles the animation.
+ * @param {Object} response - The response object containing status and message.
+ * @param {string} divClass - The class of the HTML element to append the notification.
+ */
 function displayMessage(response, divClass){     
     // Check if the animation is already in progress
     if (isAnimationInProgress) {
@@ -49,7 +64,10 @@ function displayMessage(response, divClass){
 }
 
 ///////////////////////websocket for channel posts///////////////////////////////
-
+/**
+ * Initializes the WebSocket connection.
+ * @param {string} socketUrl - The WebSocket URL.
+ */
 function websocketInit(socketUrl) {
     let socket = null;
 
@@ -69,13 +87,14 @@ function websocketInit(socketUrl) {
             // and create and add the post/comment to the list
             const data = JSON.parse(event.data);
             if (data.type === 'post_notification') {
+                displayMessage({status: 'Success', message : data.message}, '.comments-list');
 
                 if (data.html) {
                     $('#posts-list').append(data.html);
                     if(data.created_by === currentUser){
                         autoScroll(true)
                     }else {
-                        displayMessage({status: 'Success', message : data.message});
+                        displayMessage({status: 'Success', message : data.message}, '#channel-posts');
                     }                 
                 }            
             } else if (data.type === 'comment_notification') {
@@ -84,9 +103,8 @@ function websocketInit(socketUrl) {
                     if(data.created_by === currentUser){
                         autoScroll(true)
                     }else {
-                        displayMessage({status: 'Success', message : data.message});
+                        displayMessage({status: 'Success', message : data.message}, '.comments-list');
                     }
-                    console.log('comment');
                 }
             } else {
                 console.error('Unknown notification type:', data.type);
@@ -110,6 +128,16 @@ function websocketInit(socketUrl) {
 
 }
 
+
+/**
+ * Sends an AJAX request.
+ * @param {string} url - The URL for the AJAX request.
+ * @param {string} csrfToken - The CSRF token for the request headers.
+ * @param {string} type - The type of the request (e.g., 'GET' or 'POST').
+ * @param {string} divClass - The class of the HTML element to append the response.
+ * @param {Object} data - The data to send with the request.
+ * @param {function} callBackFunction - Callback function to handle the response.
+ */
 function ajaxRequest(url, csrfToken, type, divClass, data, callBackFunction) {
     $.ajax({
         type: type,
@@ -129,6 +157,12 @@ function ajaxRequest(url, csrfToken, type, divClass, data, callBackFunction) {
     });
 }
 
+/**
+ * function to choose which url to use based on the protocol and parameters
+ * for posts and comments in production and development.
+ * @param {string} type - posts or comments.
+ * @param {string} id - The ID for the WebSocket connection.
+ */
 function startWebSocket(type, id){
     let url = null;
     if (window.location.protocol === 'http:') {
