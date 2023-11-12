@@ -173,7 +173,6 @@ $('main').on('click', '.edit-btn', function(event) {
     if($('.cancel-edit').length > 0){
         $('.cancel-edit').click()
     }else if($('.edit-post').length > 0 ){
-        console.log('work')
         $('.card.edit-post').removeClass('edit-post')
     }
     // Find the closest ancestor with the class 'card-body'
@@ -192,7 +191,7 @@ $('main').on('click', '.edit-btn', function(event) {
 
     summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
 
-    $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button style=" border-radius: 20px; border: 1px solid black;" class="cancel-edit px-1">cancel</button>');
+    $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button class="cancel-edit">Cancel</button>');
     
     $('main').on('click', '.cancel-edit', function(event) {
         event.preventDefault()
@@ -329,7 +328,6 @@ $('main').on({
         }
     }
 }, '.added-emoji-btn');
-
     /**
  * Callback function triggered when a user clicks an emoji in the emoji picker.
  *

@@ -93,7 +93,7 @@ class SummernoteEnhancer {
     });
 
     $(`${this.divToLoadIn} .add-image`).click(() => {
-      $('.note-insert button')[1].click();
+      $(`${this.divToLoadIn} .note-insert button`)[1].click();
     });
 
     $(`${this.divToLoadIn} .note-resizebar`).on('mousedown',() => {
@@ -254,13 +254,13 @@ class SummernoteEnhancer {
     `);    
   }
 
-  // Handle mouse move to adjust the editor's height
+  // adjust the editor's height
   resizeEditor() {
       const fullScreen = 400
-      if($('.note-editable').height() < fullScreen-10){
+      if($('.note-editable').height() < fullScreen-30){
         $('.note-editable').css({height:` ${fullScreen}px`});
       }else {
-        $('.note-editable').css({height:` 30px`});
+        $('.note-editable').css({height:` 50px`});
       }
   }
 
@@ -306,22 +306,22 @@ class SummernoteEnhancer {
               <!-- Buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
               <div class="summernote-btn-bottom">   
 
-                  <div>  
-                  <button class="mx-3 add-image d-none" type="button">
-                      <span class="fa-solid fa-plus fa-lg" style="color: var(--ci-orange);"></span>
-                  </button>
-                      <button class="mx-3 mt-1 emoji-popup-btn" type="button">
-                          <span class="fa-regular fa-face-smile fa-lg emoji-btn" style="color: var(--ci-orange);"></span>
+                  <div class="mb-2 ml-2">  
+                      <button class="mx-1 add-image d-none" type="button">
+                          <span class="fa-solid fa-plus fa-xl" style="color: var(--ci-orange);"></span>
                       </button>
-                      <button class="mx-3 at-symbol" type="button">
-                          <span class="fa-solid fa-at fa-lg" style="color: var(--ci-orange);"></span>
+                      <button class="mx-1 mt-1 emoji-popup-btn" type="button">
+                          <span class="fa-regular fa-face-smile fa-xl emoji-btn" style="color: var(--ci-orange);"></span>
+                      </button>
+                      <button class="mx-1 at-symbol" type="button">
+                          <span class="fa-solid fa-at fa-xl" style="color: var(--ci-orange);"></span>
                       </button>
                       
                   </div>
                   <div class="cancel-submit">   
   
                       <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit">
-                          <span class="fa-solid fa-play fa-lg" style="color: var(--ci-orange);"></span>
+                          <span class="fa-solid fa-play fa-xl" style="color: var(--ci-orange);"></span>
                       </button>
                   </div>
               </div>
