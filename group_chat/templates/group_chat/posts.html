@@ -13,7 +13,7 @@
 <div id="posts-list" class="scrollable-div">
     {% for single_post in posts %}
     <!--- \\\\\\\Post-->
-    <div class="card gedf-card" data-post-id = '{{ single_post.id }}' data-post-url = "{% url 'channel_posts' channel.id %}">
+    <div class="card" data-post-id = '{{ single_post.id }}' data-post-url = "{% url 'channel_posts' channel.id %}">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-between align-items-center">
@@ -204,8 +204,9 @@
        
         // get the channel id using django template literal which will be used in the js file and for the websocket
         channel_id = {{ channel.id }}; 
-        //websocketInit(`wss://${window.location.host}/ws/channel_posts/${channel_id}/`); 
+        currentUser = '{{ request.user.username }}'
         
+        startWebSocket('channel_posts', channel_id)
     });
 
         

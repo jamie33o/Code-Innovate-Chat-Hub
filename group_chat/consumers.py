@@ -17,26 +17,28 @@ class BaseConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type': 'post_notification',
             'message': event['message'],
-            'post_content': event['post_content'],
-            'post_creator': event['post_creator'],
+            'html': event['html'],
+            'created_by': event['created_by'],
         }))
 
     async def comment_notification(self, event):
         await self.send(text_data=json.dumps({
             'type': 'comment_notification',
             'message': event['message'],
-            'comment_content': event['comment_content'],
-            'comment_creator': event['comment_creator'],
+            'html': event['html'],
+            'created_by': event['created_by'],
+
         }))
+
 class PostConsumer(BaseConsumer):
     def get_room_group_name(self):
         self.channel_id = self.scope["url_route"]["kwargs"]["channel_id"]
-        return f"post_channel_{self.channel_id}"
+        return f"post_{self.channel_id}"
 
 class CommentConsumer(BaseConsumer):
     def get_room_group_name(self):
         self.post_id = self.scope["url_route"]["kwargs"]["post_id"]
-        return f"comment_post{self.post_id}"
+        return f"comment_{self.post_id}"
 
    
       

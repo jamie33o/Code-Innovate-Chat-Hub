@@ -218,8 +218,8 @@
 </div>
 <script>
 
-    //websocketInit(`wss://${window.location.host}/ws/post_comments/{{ post.id }}/`); 
     csrfToken = "{{ csrf_token }}"
+    startWebSocket('post_comments', {{ post.id }})
 
     summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`, '{{ csrf_token }}')  
 

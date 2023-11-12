@@ -204,32 +204,9 @@ class SummernoteEnhancer {
         type: 'POST',
         data: formData,
         success: function(response) {
-          if(response.status){
-            let postBody = $(`<div class="card-body">
-            <div class="card-text">
-                ${response.post} 
-            </div>
-            <div class="post-images">
-            </div>
-            </div>`);
-            if(response.images){
+          self.$sn.summernote('code', "");
+          $(`${self.divToLoadIn} div.note-editing-area .sn-img`).remove('')
 
-              let imagesArray = response.images.split(',');
-
-              if(imagesArray.length >= 1){
-                  imagesArray.forEach(function(imageUrl) {
-                    postBody.find('.post-images').append(`<img src="${imageUrl}" alt="Post Image">`);
-                  });
-              }else if(imagesArray.length > 0){
-                postBody.find('.post-images').append(`<img src="${response.images}" alt="Post Image">`)
-              }
-
-            }
-            self.divsection.html(postBody)
-            displayMessage(response);
-          }else{
-              self.divsection.html(response)
-          }
         },
         error: function(error) {
             // Handle errors
@@ -288,7 +265,7 @@ class SummernoteEnhancer {
           console.error("Error uploading image:", error);
         }
       });
-    }
+  }
 
     createForm(csrf_token){
       let htmlStructure = `

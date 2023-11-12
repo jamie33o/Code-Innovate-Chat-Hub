@@ -1,5 +1,7 @@
-/////////////////////// function for notification messages ///////////////////////////////
 let isAnimationInProgress = false;
+let currentUser = null;
+/////////////////////// function for notification messages ///////////////////////////////
+
 
 function displayMessage(response, divClass){     
     // Check if the animation is already in progress
@@ -64,14 +66,28 @@ function websocketInit(socketUrl) {
           // Message event listener
           socket.addEventListener('message', function (event) {
              // when a new message is broadcast, this websocket will receive it
-            // and create and add the post to the list
+            // and create and add the post/comment to the list
             const data = JSON.parse(event.data);
-            const currentTime = getCurrentTime(); 
-
             if (data.type === 'post_notification') {
-                handlePostNotification(data, currentTime);
+
+                if (data.html) {
+                    $('#posts-list').append(data.html);
+                    if(data.created_by === currentUser){
+                        autoScroll(true)
+                    }else {
+                        displayMessage({status: 'Success', message : data.message});
+                    }                 
+                }            
             } else if (data.type === 'comment_notification') {
-                handleCommentNotification(data, currentTime);
+                if (data.html) {
+                    $('.comments-list').append(data.html);
+                    if(data.created_by === currentUser){
+                        autoScroll(true)
+                    }else {
+                        displayMessage({status: 'Success', message : data.message});
+                    }
+                    console.log('comment');
+                }
             } else {
                 console.error('Unknown notification type:', data.type);
             }
@@ -94,144 +110,6 @@ function websocketInit(socketUrl) {
 
 }
 
-function handlePostNotification(data, currentTime){
-    if (data.post_content) {
-        const newPostItem = $('<li class="post-item mx-auto">');
-        const postHeader = $('<div class="post-header d-flex flex-dir-row">').html(`
-            <h5>${data.post_creator}</h5>
-            <p class="ml-3">${currentTime}</p>
-        `);
-        const postContent = $('<div class="post-content">').html(`<p>${data.post_content}</p>`);
-
-        newPostItem.append(postHeader, postContent);
-        $('#posts-ul').append(newPostItem);
-        console.log('post');
-    }
-}
-
-function handleCommentNotification(data, currentTime){
-    if (data.comment_content) {
-        const newPostItem = $('<li class="post-item mx-auto">');
-        const postHeader = $('<div class="post-header d-flex flex-dir-row">').html(`
-            <h5>${data.comment_creator}</h5>
-            <p class="ml-3">${currentTime}</p>
-        `);
-        const postContent = $('<div class="post-content">').html(`<p>${data.comment_content}</p>`);
-
-        newPostItem.append(postHeader, postContent);
-        $('#comments-ul').append(newPostItem);
-        console.log('comment');
-    }
-}
-
-
-function getCurrentTime() {
-    const now = new Date();
-
-    // Get hours, minutes, and seconds
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-
-    // Add leading zero if needed
-    hours = (hours < 10) ? `0${hours}` : hours;
-    minutes = (minutes < 10) ? `0${minutes}` : minutes;
-
-    // Construct the time string in 24-hour format
-    const currentTime = `${hours}:${minutes}`;
-
-    return currentTime;
-}
-
-
-// function for adding and removing emoji on posts
-function postRequestToDjango(url, emojiColonName, clickedBtn, csrfToken){
-    let id = url.match(/\d+/g);
-    let spanElement;
-    if(clickedBtn){
-        spanElement = $(clickedBtn).find('span');
-    }
-    let currentNumber = null
-    $.ajax({
-        url: url,  
-        type: 'POST',
-        data: {
-            emoji_colon_name: emojiColonName,
-        },
-        headers: {'X-CSRFToken': csrfToken},  
-        success: function (response) {
-            // Handle success
-            switch (response.status) {
-                case "added":
-
-                    let emojiUlClass = `.emoji-list${id}`
-                    let em = $(clickedBtn).prop('outerHTML');
-
-                    let newLi = $(`
-                        <li class="list-inline-item mr-2">
-                            <button class="added-emoji-btn btn" data-emoji-url="${url}" 
-                                    data-target="#emojiModal${id}" 
-                                    data-emoji-code="${emojiColonName}">
-                                    ${em}
-                                <span></span>
-                            </button>
-                            <!-- Small Box Modal -->
-                            <div class="emoji-user-count-modal d-none" id="emojiModal${id}">
-                                <div class="modal-dialog modal-sm">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="emojiModalLabel">${em}</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>You reacted with ${emojiColonName}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    `);
-                    
-                    $(emojiUlClass).append(newLi);
-                  break;
-                case "decremented":                   
-                     currentNumber = parseInt(spanElement.html(), 10);
-
-                    if (!isNaN(currentNumber)) {
-                    // Check if currentNumber is a valid number
-
-                    // Subtract 1 from the current number
-                    let newNumber = currentNumber - 1;
-                    if(newNumber > 1){
-                    // Update the HTML content of the span element with the new number
-                    spanElement.html(newNumber);
-                    }else{
-                        spanElement.html('');
-
-                    }
-                    }
-                  break;
-                case "incremented":
-                     currentNumber = parseInt(spanElement.html(), 10);
-                    if (!isNaN(currentNumber)) {
-                    // add 1 to the current number
-                    let newNumber = currentNumber + 1;
-                    // Update the HTML content of the span element with the new number
-                    spanElement.html(newNumber);
-                    }else{
-                        spanElement.html(2);
-                    }
-                   
-                  break;
-                  case "removed":
-                    $(clickedBtn).parent().remove()
-                }           
-
-        },
-        error: function (error) {
-            displayMessage({status: 'error',message: error.responseStatus}, 'main')
-        }
-    });
-}
-
 function ajaxRequest(url, csrfToken, type, divClass, data, callBackFunction) {
     $.ajax({
         type: type,
@@ -250,4 +128,16 @@ function ajaxRequest(url, csrfToken, type, divClass, data, callBackFunction) {
         }
     });
 }
+
+function startWebSocket(type, id){
+    let url = null;
+    if (window.location.protocol === 'http:') {
+        url = `ws://${window.location.host}/ws/${type}/${id}/`
+    } else if (window.location.protocol === 'https:') {
+        url = `wss://${window.location.host}/ws/${type}/${id}/`
+    } 
+    websocketInit(url); 
+
+}
+
 

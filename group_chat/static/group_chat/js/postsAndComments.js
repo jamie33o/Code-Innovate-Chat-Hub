@@ -228,14 +228,14 @@ function loadOldPosts(){
     }    
 }
 
-function autoScroll() {
+function autoScroll(bottomBool) {
     //get the post count
     let postCount = $('#channel-posts .scrollable-div .card').length;
 
     //get the index of the last post before the older posts being appended
     let postAtIndex = $('#channel-posts .scrollable-div .card').eq(9); 
     // scroll to post at index above if there are more 10 else scroll to bottom
-    if(postCount >= 20){
+    if(postCount >= 20 && !bottomBool){
         // Scroll to the 10th post
         $('#channel-posts .scrollable-div').animate({ scrollTop: postAtIndex.offset().top }, 'fast');
     }else  {

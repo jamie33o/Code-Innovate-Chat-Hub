@@ -1,0 +1,106 @@
+{% load static %}
+{% load emoji_tags %}
+<div class="my-2 py-2 text-dark m-0">
+    <div class="row d-flex m-0">
+        <div class="col-12 m-0">                       
+            <div class="card w-100 p-2 m-0" data-post-id = '{{ comment.id }}' data-post-url="{% url 'post_comments' post.id %}">
+                <div class="d-flex flex-column my-2">
+                    <div class="d-flex flex-dir-row justify-content-between">
+                        <div class="d-flex flex-dir-row">
+                            {% if comment.created_by.user_profile and post.created_by.user_profile.profile_picture %}
+                                <img  class="rounded-circle shadow-1-strong mr-2" width="45" height="45"  src="{{ comment.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                            {% else %}
+                                <img  class="rounded-circle shadow-1-strong mr-2" width="45" height="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                            {% endif %}  
+                            <div class="flex-column ml-2">
+                                <h5 class="mb-1">{{ comment.created_by }}</h5>
+                                <p class="small">{{ comment.created_date|date:"H:i, b j"|upper }}</p>
+                            </div>
+                        </div>
+                        {% if comment.created_by == user %}
+                        <div class="dropdown">
+                            <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </button>
+                            
+                            <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
+                                <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
+                                <button class="dropdown-item btn-ci delete-btn"  data-delete-url="{% url 'delete_object' model='CommentsModel' pk=comment.id %}">Delete</button>                
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body px-0">
+                        <div class="card-text p-2">
+                            {{ comment.post|safe }}
+                        </div>
+                        {% if comment.images %}
+                            <div class="post-images">
+                                {% for image_url in comment.get_image_urls %}
+                                {% if image_url %}
+                                    <img src= "{{ image_url }}">
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex px-2">
+                        <a data-emoji-url="{% url 'emoji' model='CommentsModel' instance_id=comment.id %}"  
+                        href="" class="card-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" 
+                        style="color: #f58a32;"></i></a>
+
+                        <ul class="list-inline ml-2 p-0 emoji-list{{ comment.id }}">
+
+                        <!-- Loop through your emojis and generate list items -->
+                        {% for emoji in comment.emojis.all %}
+                            <li class="list-inline-item mr-2">
+                                <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}" 
+                                        data-emoji-url="{% url 'emoji' model='CommentsModel' instance_id=comment.id %}" 
+                                        data-post-emoji-list=".emoji-list{{ comment.id }}" 
+                                        data-target="#emojiModal{{ emoji.id }}" 
+                                        data-emoji-code="{{ emoji.emoji_colon_name }}">
+                                        
+                                {{ emoji.emoji_colon_name|emoji_replace }}
+                                    <span>
+                                        {% if emoji.users_who_incremented.all|length > 1 %}
+                                            {{ emoji.users_who_incremented.all|length }}
+                                        {% endif %}
+                                    </span>
+                                </button>
+                                <!-- Small Box Modal -->
+                                <div class="emoji-user-count-modal d-none" id="emojiModal{{ emoji.id }}">
+                                    <div class="modal-dialog modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="emojiModalLabel">{{ emoji.emoji_colon_name|emoji_replace }}</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p> {% for emoji_creators in emoji.users_who_incremented.all %}
+                                                        {{ emoji_creators }}
+                                                    {% if emoji.users_who_incremented.all|length == 2 and forloop.counter == 1 %}
+                                                        and 
+                                                    {% elif emoji.users_who_incremented.all|length > 2 %}
+                                                        {% if forloop.counter < emoji.users_who_incremented.all|length|add:"-1" %}
+                                                            ,
+                                                        {% else %}
+                                                            and
+                                                        {% endif %}
+                                                    {% endif %}                                        
+                                                    
+                                                    {% endfor %}
+                                                    reacted with  {{ emoji.emoji_colon_name }}</p>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
