@@ -43,7 +43,7 @@ class AddOrUpdateEmojiView(View):
     """
     View class for adding or updating an emoji in a post or comments model instance. 
     """
-    def post(self, request, instance_id):
+    def post(self, request, instance_id, *args, **kwargs):
         """
         Handle POST requests to add or update an emoji in a post or comments model instance.
 
@@ -121,7 +121,7 @@ class GenericObjectDeleteView(DeleteView):
             return obj
         except (LookupError, ValueError, KeyError) as e:
             # Handle lookup errors, value errors, or key errors
-            return JsonResponse({'status': 'error', 
+            return JsonResponse({'status': 'error',
                                  'message': f'Error retrieving object: {str(e)}'})
 
     def delete(self, request, *args, **kwargs):

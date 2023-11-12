@@ -2,24 +2,27 @@
 {% load emoji_tags %}
 
 {% for single_post in posts %}
-    <!--- \\\\\\\Post-->
-    <div class="card" data-post-id = '{{ single_post.id }}' data-post-url = "{% url 'channel_posts' channel.id %}">
+    <!--- Post -->
+    <div class="card" data-post-id='{{ single_post.id }}' data-post-url="{% url 'channel_posts' channel.id %}">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-between align-items-center">
+                    <!-- Profile picture -->
                     <div class="mr-2">
                         {% if single_post.created_by.user_profile and single_post.created_by.user_profile.profile_picture %}
-                            <img  class="rounded-circle" width="45"  src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                            <img class="rounded-circle" width="45" src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
                         {% else %}
-                            <img  class="rounded-circle" width="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
-                        {% endif %}                    
+                            <img class="rounded-circle" width="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                        {% endif %}
                     </div>
+                    <!-- Username and date -->
                     <div class="ml-2 ">
                         <div class="h5 m-2">{{ single_post.created_by }}</div>
                         <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i, b j"|upper }}</div>
                     </div>
                 </div>
                 <div>
+                    <!-- Dropdown menu -->
                     <div class="dropdown">
                         <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-ellipsis-h"></i>
@@ -27,7 +30,7 @@
                         <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
                             <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
                             {% if single_post.created_by == user %}
-                                <button class="dropdown-item btn-ci edit-btn">Edit</buttton>
+                                <button class="dropdown-item btn-ci edit-btn">Edit</button>
                                 <button class="dropdown-item btn-ci delete-btn"  data-delete-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
                             {% endif %}
                         </div>
@@ -35,6 +38,7 @@
                 </div>
             </div>
         </div>
+        <!-- Card body text and images -->
         <div class="card-body">
             <div class="card-text">
                 {{ single_post.post|safe }}
@@ -42,70 +46,69 @@
             {% if single_post.images %}
                 <div class="post-images">
                     {% for image_url in single_post.get_image_urls %}
-                    {% if image_url %}
-                        <img src= "{{ image_url }}">
-                    {% endif %}
+                        {% if image_url %}
+                            <img src="{{ image_url }}">
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}
         </div>
+        <!-- Emoji buttons -->
         <div class="card-footer d-block d-sm-flex justify-content-between align-items-center">
             <div id="post-emoji" class="card-link">
                 <ul class="list-inline m-0 p-0 emoji-list{{ single_post.id }}">
-                    <a data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}" href="" 
-                    class="card-emoji-btn">
-                    <i class="fa-regular fa-face-smile fa-lg" 
-                    style="color: #f58a32;"></i>
-                </a>
-                    <!-- Loop through your emojis and generate list items -->
+                    <!-- Emoji button -->
+                    <a data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}" href="" class="card-emoji-btn">
+                        <i class="fa-regular fa-face-smile fa-lg" style="color: #f58a32;"></i>
+                    </a>
+                    <!-- Loop through emojis and generate list items -->
                     {% for emoji in single_post.emojis.all %}
-                    <li class="list-inline-item mr-2">
-                        <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}"                                 
-                        data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}"  
-                        data-post-emoji-list=".emoji-list{{ single_post.id }}" 
-                        data-target="#emojiModal{{ emoji.id }}" 
-                        data-emoji-code="{{ emoji.emoji_colon_name }}">
-                        {{ emoji.emoji_colon_name|emoji_replace }}
-                        <span>
-                            {% if emoji.users_who_incremented.all|length > 1 %}
-                                {{ emoji.users_who_incremented.all|length }}
-                            {% endif %}
-                        </span>
-                        </button>
-                        <!-- Small Box Modal -->
-                        <div class="emoji-user-count-modal d-none" id="emojiModal{{ emoji.id }}">
-                            <div class="modal-dialog modal-sm">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="emojiModalLabel">{{ emoji.emoji_colon_name|emoji_replace }}</h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p> {% for emoji_creators in emoji.users_who_incremented.all %}
-                                                {{ emoji_creators }}
-                                            {% if emoji.users_who_incremented.all|length == 2 and forloop.counter == 1 %}
-                                                and 
-                                            {% elif emoji.users_who_incremented.all|length > 2 %}
-                                                {% if forloop.counter < emoji.users_who_incremented.all|length|add:"-1" %}
-                                                    ,
-                                                {% else %}
-                                                    and
-                                                {% endif %}
-                                            {% endif %}                                        
-                                              
-                                            {% endfor %}
-                                            reacted with  {{ emoji.emoji_colon_name }}</p>
-                                        </p>
+                        <li class="list-inline-item mr-2">
+                            <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}" 
+                                    data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}"  
+                                    data-post-emoji-list=".emoji-list{{ single_post.id }}" 
+                                    data-target="#emojiModal{{ emoji.id }}" 
+                                    data-emoji-code="{{ emoji.emoji_colon_name }}">
+                                {{ emoji.emoji_colon_name|emoji_replace }}
+                                <span>
+                                    {% if emoji.users_who_incremented.all|length > 1 %}
+                                        {{ emoji.users_who_incremented.all|length }}
+                                    {% endif %}
+                                </span>
+                            </button>
+                            <!-- Small Box Modal -->
+                            <div class="emoji-user-count-modal d-none" id="emojiModal{{ emoji.id }}">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="emojiModalLabel">{{ emoji.emoji_colon_name|emoji_replace }}</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                {% for emoji_creators in emoji.users_who_incremented.all %}
+                                                    {{ emoji_creators }}
+                                                    {% if emoji.users_who_incremented.all|length == 2 and forloop.counter == 1 %}
+                                                        and 
+                                                    {% elif emoji.users_who_incremented.all|length > 2 %}
+                                                        {% if forloop.counter < emoji.users_who_incremented.all|length|add:"-1" %}
+                                                            ,
+                                                        {% else %}
+                                                            and
+                                                        {% endif %}
+                                                    {% endif %}                                        
+                                                {% endfor %}
+                                                reacted with  {{ emoji.emoji_colon_name }}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
+            <!-- Comments link -->
             <a href="{% url 'post_comments' single_post.id %}" class="comments-link">
-
                 <ul class="profile-pics">
                     {% for post_id, data in post_comments_users.items %}
                         {% if post_id == single_post.id %}
@@ -124,33 +127,31 @@
                     {% endfor %}
                 </ul>
                 {% if single_post.latest_comment %}
-                <span class="comment-date">
-                    <span class="mx-2">Last Reply </span>
-                    {% now "Y-m-d" as current_datetime %}             
-                    {% with comment_date=single_post.latest_comment.created_date %}
-                        {% if comment_date|date:"Y-m-d" == current_datetime %}
-                            {{ comment_date|date:"H:i"|upper }} <!-- Display time -->
-                        {% else %}
-                            {{ comment_date|date:"M j"|upper }} <!-- Display date -->
-                        {% endif %}
-                    {% endwith %}
-                </span>                    
-                <span class="view-comments">View Comments</span>
+                    <span class="comment-date">
+                        <span class="mx-2">Last Reply </span>
+                        {% now "Y-m-d" as current_datetime %}             
+                        {% with comment_date=single_post.latest_comment.created_date %}
+                            {% if comment_date|date:"Y-m-d" == current_datetime %}
+                                {{ comment_date|date:"H:i"|upper }} <!-- Display time -->
+                            {% else %}
+                                {{ comment_date|date:"M j"|upper }} <!-- Display date -->
+                            {% endif %}
+                        {% endwith %}
+                    </span>                    
+                    <span class="view-comments">View Comments</span>
                 {% else %}
                     <span class="view-comments d-flex">Reply</span>
                 {% endif %}
             </a>
         </div>
-        
     </div>
-    {% endfor %}
+{% endfor %}
 
 <script>
+    // Check if there are older posts
     {% if next_page_number %}
         olderPostsUrl = "{% url 'channel_posts' channel_id=channel.id %}?page={{ next_page_number }}"
     {% else %}     
         olderPostsUrl = null
     {% endif %}
-
-
 </script>

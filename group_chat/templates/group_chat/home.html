@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
+<!-- groupchat app css links -->
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'group_chat/css/home.css' %}">
     <link rel="stylesheet" href="{% static 'group_chat/css/summernote.css' %}"> 
@@ -13,7 +14,7 @@
     <div id="channel-links-container" class="channels-list scrollable-div">
         <div class="row mx-0">
             <div class="col-sm-12">    
-                <!-- Category -->
+                <!-- channels list -->
                 <div class="single category">
                     <h3 class="side-title ">Channels<button data-target=".channels" class="btn toggleLinksButton pull-right p-0"> <i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
                     </h3>
@@ -49,19 +50,18 @@
             </div> 
         </div>
     </div>
+    <!-- container where posts get loaded into with ajax -->
+    <div id="channel-posts" class="posts-container w-100  flex-column justify-content-between"></div>
 
-    <div id="channel-posts" class="posts-container w-100  flex-column justify-content-between">
-        
-    </div>
-    <div id='post-comments' class ="comments-container flex-column justify-content-between">
-
-    </div>
+    <!-- container where comments get loaded into with ajax -->
+    <div id='post-comments' class ="comments-container flex-column justify-content-between"></div>
 
 </div>
 {% endblock %}
 
 
 {% block postloadjs %}
+    <!-- group chat app scripts  -->
     <script src="{% static 'group_chat/js/config.js' %}"></script>
     <script src="{% static 'group_chat/js/tam-emoji.js' %}"></script>
     <script src="{% static 'group_chat/js/utils.js' %}"></script>
@@ -73,7 +73,8 @@
     <script>     
 
     $(document).ready(function() {
-        
+        // check if the id for the channel the user last visited exists
+        // if it does load posts
         {% if last_viewed_channel_id %}
             if(window.innerWidth > 575){
                 let lastViewedurl = `{% url 'channel_posts' last_viewed_channel_id %}`
@@ -87,7 +88,6 @@
         {% endif %}
 
         //url for emojis spritesheet
-        
         EmojiPicker.emojiSource = "{% static 'group_chat/tam-emoji/img' %}";
 
     });

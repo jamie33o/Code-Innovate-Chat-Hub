@@ -205,7 +205,7 @@ class SummernoteEnhancer {
         data: formData,
         success: function(response) {
           self.$sn.summernote('code', "");
-          $(`${self.divToLoadIn} div.note-editing-area .sn-img`).remove('')
+          $(`${self.divToLoadIn} div.note-editing-area .sn-img`).remove()
 
         },
         error: function(error) {

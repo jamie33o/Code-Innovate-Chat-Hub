@@ -7,18 +7,16 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
+from django.template.loader import render_to_string
 from django.contrib.auth import get_user_model
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from user_profile.models import UserProfile
 from group_chat.models import ChannelModel, PostsModel, ChannelLastViewedModel, CommentsModel
 from group_chat.forms import PostsForm, CommentsForm
-from django.template.loader import render_to_string
 
 
 # pylint: disable=no-member
-
-
 class BaseChatView(View):
     """
     Base class for chat views.
@@ -380,13 +378,9 @@ class CommentsView(BaseChatView):
                     'comment': comment,
                 }
 
-                try:
-                    html_content = render_to_string(self.single_comment_template, context)
-                except Exception as e:
-                    print(f"Error rendering template: {e}")
-                    
-                self.broadcast_message(request, 'comment', html_content, post_id)
+                html_content = render_to_string(self.single_comment_template, context)
 
+                self.broadcast_message(request, 'comment', html_content, post_id)
 
                 if comment_id is None:
                     redirect_url = reverse('post_comments', args=[post_id])
@@ -407,4 +401,4 @@ class CommentsView(BaseChatView):
 
         except Exception as e:
             # Handle unexpected exceptions
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            return JsonResponse({'status': 'error', 'message': str(e)})
