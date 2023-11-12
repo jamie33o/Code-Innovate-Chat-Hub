@@ -49,14 +49,13 @@
                 </div>
             {% endif %}
         </div>
-        <div class="card-footer d-flex justify-content-between align-items-center">
+        <div class="card-footer d-block d-sm-flex justify-content-between align-items-center">
             <div id="post-emoji" class="card-link">
                 <ul class="list-inline m-0 p-0 emoji-list{{ single_post.id }}">
                     <a data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}" href="" 
-                    class="card-emoji-btn card-link">
+                    class="card-emoji-btn">
                     <i class="fa-regular fa-face-smile fa-lg" 
                     style="color: #f58a32;"></i>
-                    <i class="smiley-plus-icon fa-solid fa-plus fa-xs"></i>
                 </a>
                     <!-- Loop through your emojis and generate list items -->
                     {% for emoji in single_post.emojis.all %}
@@ -105,7 +104,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <a href="{% url 'post_comments' single_post.id %}" class="card-link comments-link">
+            <a href="{% url 'post_comments' single_post.id %}" class="comments-link">
 
                 <ul class="profile-pics">
                     {% for post_id, data in post_comments_users.items %}
@@ -125,8 +124,18 @@
                     {% endfor %}
                 </ul>
                 {% if single_post.latest_comment %}
-                    <span class="comment-date">{{ single_post.latest_comment.created_date|date:"H:i, b j"|upper  }}</span>
-                    <span class="view-comments">View Comments</span>
+                <span class="comment-date">
+                    <span class="mx-2">Last Reply </span>
+                    {% now "Y-m-d" as current_datetime %}             
+                    {% with comment_date=single_post.latest_comment.created_date %}
+                        {% if comment_date|date:"Y-m-d" == current_datetime %}
+                            {{ comment_date|date:"H:i"|upper }} <!-- Display time -->
+                        {% else %}
+                            {{ comment_date|date:"M j"|upper }} <!-- Display date -->
+                        {% endif %}
+                    {% endwith %}
+                </span>                    
+                <span class="view-comments">View Comments</span>
                 {% else %}
                     <span class="view-comments d-flex">Reply</span>
                 {% endif %}
