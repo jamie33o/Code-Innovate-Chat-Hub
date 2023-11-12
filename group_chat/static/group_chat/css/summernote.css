@@ -1,3 +1,7 @@
+:root {
+    --light-grey: rgba(220, 219, 219, 0.695);
+}
+
 /* container for summernote */
 .summernote-form {
     position: relative;
@@ -50,35 +54,27 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: fit-content;
+    height: 40px;
     position: absolute;
-    padding: 2px;
     right: 0;
     bottom: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.393);
 }
 
 .summernote-btn-bottom button {
     background: none;
     border: none;
+    padding: 5px 3px 3px 3px;
+    border-radius: 5px;
+    text-align: center;
+    width: 30px;
+    height: 30px;
 }
 
-/* emoji icon on summernote */
-.summernote-btn-bottom button .fa-lg {
-    line-height: normal;
+.summernote-btn-bottom button:hover {
+    background-color: rgb(203, 202, 202);
 }
 
-.summernote-btn-bottom button .fa-lg:hover {
-    border-radius: 50%;
-    background-color: yellow;
-}
 
-/* summernote arrow btn for posting */
-.post-arrow-btn:hover {
-    box-shadow:  0 0 1px 1px var(--ci-orange);
-    background-color: white;
-    padding: 0 2px;
-}
 /* ///////////////// summernote non editable image div //////////////// */
 .uploaded-image-container img {
     width: 100px;
@@ -102,7 +98,7 @@
     z-index: 2; 
     top: 0; 
     right: 0; 
-    background-color: var(--dark-grey); 
+    background-color: var(--light-grey);
     border-radius:50%;
     padding: 5px !important;
     color: white;
@@ -115,10 +111,16 @@
 
 
 /* /////////////////  cancel-editing button ////////////////// */
+.cancel-edit {
+    width: 100px !important;
+    padding: 0 5px;
+    border: 1px solid var(--ci-orange) !important;
+    font-weight: 500;
+    color: var(--ci-orange);
+}
 
 .cancel-edit:hover {
     background-color: var(--ci-orange);
-    padding: 0 5px;
 }
 
 /* ////////////////////////// summernote CDN overites //////////////////////// */
@@ -131,8 +133,11 @@ div.modal-backdrop {
 div.modal.note-modal.show {
     position: fixed !important;
     bottom: 0 !important;
-    z-index: 1 !important;
-    margin-top: 200px;
+}
+
+.modal-dialog {
+    display: flex;
+    align-items: center;
 }
 
 /* uplaod image  in summernote editor*/
@@ -150,27 +155,27 @@ div.note-editable.card-block p img {
 div.note-editor.note-frame.panel.panel-default {
     background-color: white !important;
     border-radius: 10px !important;
-    overflow: hidden;    
-}
-/* summernote toolbar */
-div.panel-heading.note-toolbar {
-    border-bottom: 1px solid black;
-    
 }
 
-.note-editing-area .note-editable, .note-placeholder {
-    padding: 2px 10px !important;
-    min-height: 25px !important;
+.note-statusbar {
+    border: none !important;
+}
+
+/* summernote toolbar */
+div.panel-heading.note-toolbar {
+    background-color: var(--light-grey);
 }
 
 /* summernote buttons */
 .note-btn-group .note-btn {
-    font-size: 13px !important;
-    background-color: white;
+    background-color: var(--light-grey);
     border: none!important;
-    padding: 0 5px !important;
+    color: var(--ci-orange);
 }
 
+.note-btn-group .note-btn:hover {
+    background-color: rgb(203, 202, 202);
+}
 
 /* summernote code field */
 div.note-editing-area > textarea {
@@ -179,7 +184,7 @@ div.note-editing-area > textarea {
 
 /* for summernote text area */
 div.note-editing-area {
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     max-height: 70vh;
 }
 
@@ -197,9 +202,14 @@ div.note-editing-area {
         height: 0 !important;
 
     }
+
     .summernote-form {
         padding: 0 !important;
         margin: 0 !important;
+    }
+
+    .note-editable {
+        min-height: 40px;
     }
 
     .note-editing-area {
@@ -211,6 +221,15 @@ div.note-editing-area {
         position: absolute;
         top: 0;
         background-color: rgba(74, 74, 73, 0.105);
+    }
+
+    .summernote-btn-bottom {
+        height: 40px;
+    }
+    
+    .summernote-btn-bottom button {
+        background: none;
+        border: none;
     }
 
 }
