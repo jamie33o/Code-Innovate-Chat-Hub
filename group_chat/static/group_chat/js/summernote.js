@@ -274,7 +274,10 @@ class SummernoteEnhancer {
       $.ajax({
         data: formData,
         type: "POST",
-        url: 'upload-image/',  
+        url: 'upload-image/', 
+        headers: {
+          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+        },
         cache: false,
         contentType: false,
         processData: false,
