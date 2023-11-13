@@ -15,7 +15,7 @@
 <div id="posts-list" class="scrollable-div">
     {% for single_post in posts %}
     <!-- Post -->
-    <div class="card" data-post-id='{{ single_post.id }}' data-post-url="{% url 'channel_posts' channel.id %}">
+    <div class="card post{{ single_post.id }}" data-post-id='{{ single_post.id }}' data-post-url="{% url 'channel_posts' channel.id %}">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-between align-items-center">
