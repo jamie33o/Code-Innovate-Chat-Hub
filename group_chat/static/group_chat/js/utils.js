@@ -9,6 +9,9 @@ let isAnimationInProgress = false;
  * @type {null}
  */
 let currentUser = null;
+let postsWebSocket = null;
+let commentsWebSocket = null;
+
 
 /////////////////////// function for notification messages ///////////////////////////////
 
@@ -47,17 +50,14 @@ function displayMessage(response, divClass){
 
         notification.on('animationend webkitAnimationEnd oAnimationEnd', function() {
             if (!animationEndHandled) {
+                notification.removeClass('notification-keyframe-finish')
 
-            notification.removeClass('notification-keyframe-finish')
+                notification.off('animationend webkitAnimationEnd oAnimationEnd', this);
+                $(`.notification`).remove()        
 
-            notification.off('animationend webkitAnimationEnd oAnimationEnd', this);
-            $(`.notification`).remove()        
-
-            // Reset animation state       
-            isAnimationInProgress = false;
-            animationEndHandled = true;
-
-
+                // Reset animation state       
+                isAnimationInProgress = false;
+                animationEndHandled = true;
             }
         });
     }, 5000);
@@ -68,17 +68,11 @@ function displayMessage(response, divClass){
  * Initializes the WebSocket connection.
  * @param {string} socketUrl - The WebSocket URL.
  */
-function websocketInit(socketUrl) {
-    let socket = null;
-
-    function connect(socketUrl) {
-
-        socket = new WebSocket(socketUrl);
-
+function websocketInit(socket) {
+        
         // Open event listener
         socket.addEventListener('open', function (event) {
-            console.log('WebSocket connection opened:', event);
-            // Additional actions when the connection is open, if needed
+
         });
 
           // Message event listener
@@ -87,23 +81,31 @@ function websocketInit(socketUrl) {
             // and create and add the post/comment to the list
             const data = JSON.parse(event.data);
             if (data.type === 'post_notification') {
-                displayMessage({status: 'Success', message : data.message}, '.comments-list');
-
                 if (data.html) {
-                    $('#posts-list').append(data.html);
-                    if(data.created_by === currentUser){
-                        autoScroll(true)
-                    }else {
-                        displayMessage({status: 'Success', message : data.message}, '#channel-posts');
-                    }                 
+                    if(data.edit_id){
+                        $(`.post${data.edit_id}`).replaceWith(data.html);
+                    }else{
+                        $('#posts-list').append(data.html);
+                        
+                        if(data.created_by === currentUser){
+                            autoScroll(true)
+                        }else {
+                            displayMessage({status: 'Success', message : data.message}, '#channel-posts');
+                        } 
+                    }                
                 }            
             } else if (data.type === 'comment_notification') {
                 if (data.html) {
-                    $('.comments-list').append(data.html);
-                    if(data.created_by === currentUser){
-                        autoScroll(true)
-                    }else {
-                        displayMessage({status: 'Success', message : data.message}, '.comments-list');
+                    if(data.edit_id){
+                        $(`.comment${data.edit_id}`).replaceWith(data.html);
+                    }else{
+                        $('.comments-list').append(data.html);
+                        
+                        if(data.created_by === currentUser){
+                            autoScroll(true)
+                        }else {
+                            displayMessage({status: 'Success', message : data.message}, '.comments-list');
+                        }
                     }
                 }
             } else {
@@ -113,21 +115,17 @@ function websocketInit(socketUrl) {
         });
 
         socket.addEventListener('error', function(event) {
-            console.error('WebSocket Error:', event);
+            setTimeout(() => websocketInit(this), 1000);
         });
 
         socket.addEventListener('close', function(event) {
-            console.log('WebSocket Closed:', event);
-            // Attempt to reconnect after a delay
-            setTimeout(() => connect(socketUrl), 1000);
-
+            // Attempt to reconnect after a delay if the socket ends due to error 
+            if(!event.wasClean){
+                setTimeout(() => websocketInit(this), 1000);
+            }
         });
 
-    }
-    connect(socketUrl); //initial connect
-
 }
-
 
 /**
  * Sends an AJAX request.
@@ -170,7 +168,20 @@ function startWebSocket(type, id){
     } else if (window.location.protocol === 'https:') {
         url = `wss://${window.location.host}/ws/${type}/${id}/`
     } 
-    websocketInit(url); 
+
+    if(type === 'channel_posts'){
+        if(postsWebSocket){
+            postsWebSocket.close()
+        }
+        postsWebSocket = new WebSocket(url)
+        websocketInit(postsWebSocket); 
+    }else{
+        if(commentsWebSocket){
+            commentsWebSocket.close()
+        }
+        commentsWebSocket = new WebSocket(url)
+        websocketInit(commentsWebSocket); 
+    }
 
 }
 

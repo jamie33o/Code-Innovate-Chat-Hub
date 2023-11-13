@@ -49,7 +49,7 @@ class BaseChatView(View):
             # Handle unexpected exceptions
             return JsonResponse({'status': 'error', 'message': str(e)})
 
-    def broadcast_message(self, request, message_type, instance_html, instance_id):
+    def broadcast_message(self, request, message_type, instance_html, instance_id, edit_id):
         """
         Broadcast a message to the channel layer.
 
@@ -73,6 +73,7 @@ class BaseChatView(View):
                     'message': f'New {message_type} added!',
                     'html': instance_html,
                     'created_by': request.user.username,
+                    'edit_id': edit_id,
                 }
             )
             return JsonResponse({'status': 'success', 'message': 'message sent'})
@@ -243,7 +244,7 @@ class PostsView(BaseChatView):
                 except Exception as e:
                     print(f"Error rendering template: {e}")
 
-                self.broadcast_message(request, 'post', html_content, channel_id)
+                self.broadcast_message(request, 'post', html_content, channel_id, post_id)
 
                 if post_id is None:
                     redirect_url = reverse('channel_posts', args=[channel_id])
@@ -380,7 +381,7 @@ class CommentsView(BaseChatView):
 
                 html_content = render_to_string(self.single_comment_template, context)
 
-                self.broadcast_message(request, 'comment', html_content, post_id)
+                self.broadcast_message(request, 'comment', html_content, post_id, comment_id)
 
                 if comment_id is None:
                     redirect_url = reverse('post_comments', args=[post_id])
