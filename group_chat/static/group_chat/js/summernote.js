@@ -1,3 +1,28 @@
+/**
+ * SummernoteEnhancer class for enhancing the functionality of Summernote editors in a web application.
+ * This class provides methods to initialize, display, and handle events related to Summernote editors.
+ *
+ * Properties:
+ * - sharedChannelUsers: Array containing shared channel user information.
+ * - emojiImgs: Null or emoji images.
+ * - imgUrl: Null or image URL.
+ *
+ * Methods:
+ * - constructor(): Initializes class properties.
+ * - init(divToLoadIn, djangoUrl, csrf_token): Initializes SummernoteEnhancer with the specified parameters.
+ * - tagUser(): Tags a user in the Summernote editor.
+ * - submitForm(djangoUrl): Submits the form data to Django.
+ * - addToSummernoteeditorField(content): Adds content to the Summernote editor.
+ * - addimageToSummernote(src): Adds an image to the Summernote editor.
+ * - resizeEditor(): Adjusts the height of the editor.
+ * - uploadImage(file, editor, welEditable): Uploads an image using AJAX.
+ * - createForm(csrf_token): Creates the structure of the Summernote editor form.
+ *
+ * Instances:
+ * - summernoteEnhancerPosts: Instance for handling Summernote editors in posts.
+ * - summernoteEnhancerComments: Instance for handling Summernote editors in comments.
+ * - summernoteEnhancerEditPost: Instance for handling Summernote editors in editing posts.
+ */
 class SummernoteEnhancer {
 
   static sharedChannelUsers= [];
@@ -15,6 +40,13 @@ class SummernoteEnhancer {
     this.uploadImageUrls = [];
   }
 
+  /**
+   * Initializes SummernoteEnhancer with the specified parameters.
+   *
+   * @param {string} divToLoadIn - The ID or class of the container where Summernote editor is loaded.
+   * @param {string} djangoUrl - The Django URL for handling form submission.
+   * @param {string} csrf_token - The CSRF token for form submission.
+   */
   init(divToLoadIn, djangoUrl, csrf_token) {
     let self = this;
     this.divToLoadIn = divToLoadIn
@@ -134,57 +166,61 @@ class SummernoteEnhancer {
 
   }
 
+  /**
+   * Tags a user in the Summernote editor.
+   */
   tagUser() {
     
     let nameSuggestions = SummernoteEnhancer.sharedChannelUsers;
     let $snText = $('<p>').html(this.$sn.summernote('code')).text();
     
     if($snText.includes('@')){
-      let atIndex = $snText.lastIndexOf("@");
-      // Check if "@" was the last character entered and the character before it is not a letter or symbol
-      if ($snText.endsWith('@') && !/[A-Za-z\d]/.test($snText.slice(atIndex -1, atIndex))) {
-          $(`${this.divToLoadIn} .tag-name-modal`).show()
+        let atIndex = $snText.lastIndexOf("@");
+        // Check if "@" was the last character entered and the character before it is not a letter or symbol
+        if ($snText.endsWith('@') && !/[A-Za-z\d]/.test($snText.slice(atIndex -1, atIndex))) {
+            $(`${this.divToLoadIn} .tag-name-modal`).show()
 
-      }
-      $(`${this.divToLoadIn} .channel-users`).empty()
+        }
+        $(`${this.divToLoadIn} .channel-users`).empty()
 
-      const searchText = $snText.slice(atIndex + 1);
+        const searchText = $snText.slice(atIndex + 1);
 
-      const matchingNames = nameSuggestions.filter(name =>
-        name.toLowerCase().startsWith(searchText.toLowerCase())
-      );
+        const matchingNames = nameSuggestions.filter(name =>
+          name.toLowerCase().startsWith(searchText.toLowerCase())
+        );
 
-      // Display matching names as suggestions
-      $.each(matchingNames, (index, name) => {
+        // Display matching names as suggestions
+        $.each(matchingNames, (index, name) => {
 
-        const suggestion = $('<a>', {
-          href: '#',
-          text: '@' + name
+          const suggestion = $('<a>', {
+            href: '#',
+            text: '@' + name
+          });
+          suggestion.on("click", (event) => {
+            event.preventDefault()
+            // Replace the typed text with the selected name
+
+            this.$sn.summernote(`editor.insertNode`, suggestion[0]);
+
+            $(`${this.divToLoadIn} .tag-name-modal`).hide()
+
+            $(`${this.divToLoadIn} .note-editable p`).contents().filter(function() {
+              return this.nodeType === 3 && /[^a-zA-Z0-9]@/.test(this.nodeValue);
+          }).each(function() {
+              const text = this.nodeValue.replace(/([^a-zA-Z0-9])@/g, '$1');
+              $(this).replaceWith(document.createTextNode(text));
+          });
         });
-        suggestion.on("click", (event) => {
-          event.preventDefault()
-          // Replace the typed text with the selected name
-
-          this.$sn.summernote(`editor.insertNode`, suggestion[0]);
-
-          $(`${this.divToLoadIn} .tag-name-modal`).hide()
-
-          $(`${this.divToLoadIn} .note-editable p`).contents().filter(function() {
-            return this.nodeType === 3 && /[^a-zA-Z0-9]@/.test(this.nodeValue);
-        }).each(function() {
-            const text = this.nodeValue.replace(/([^a-zA-Z0-9])@/g, '$1');
-            $(this).replaceWith(document.createTextNode(text));
-        });
-        
-          
-
-        });
-
         $(`${this.divToLoadIn} .channel-users`).append(suggestion);
       });
     }
   }
 
+  /**
+   * Submits the form data to Django.
+   *
+   * @param {string} djangoUrl - The Django URL for handling form submission.
+   */
   submitForm(djangoUrl){
     const self = this;
     // Serialize the form data
@@ -216,10 +252,21 @@ class SummernoteEnhancer {
     self.uploadImageUrls = []
 
   }
+
+  /**
+   * Adds content to the Summernote editor.
+   *
+   * @param {string} content - The content to be added.
+   */
   addToSummernoteeditorField(content){
     this.$sn.summernote('code', content);
   }
 
+  /**
+   * Adds an image to the Summernote editor.
+   *
+   * @param {string} src - The source URL of the image.
+   */
   addimageToSummernote(src){
     this.uploadImageUrls.push(src)
     // Append the image and icon to the specified container
@@ -231,7 +278,9 @@ class SummernoteEnhancer {
     `);    
   }
 
-  // adjust the editor's height
+  /**
+   * Adjusts the height of the editor.
+   */t
   resizeEditor() {
       const fullScreen = 400
       if($('.note-editable').height() < fullScreen-30){
@@ -241,6 +290,13 @@ class SummernoteEnhancer {
       }
   }
 
+  /**
+   * Uploads an image using AJAX.
+   *
+   * @param {File} file - The image file to be uploaded.
+   * @param {object} editor - The Summernote editor object.
+   * @param {object} welEditable - The editable element in the editor.
+   */
   uploadImage(file, editor, welEditable) {
       // Create a FormData object to send the file to the server
       var formData = new FormData();
@@ -266,7 +322,11 @@ class SummernoteEnhancer {
         }
       });
   }
-
+  /**
+   * Creates the structure of the Summernote editor form.
+   *
+   * @param {string} csrf_token - The CSRF token for form submission.
+   */
     createForm(csrf_token){
       let htmlStructure = `
       <!-- Container for summernote editor -->
@@ -318,9 +378,18 @@ class SummernoteEnhancer {
        }
     }
 }
-
+/**
+ * Instance for handling Summernote editors in posts.
+ */
 const summernoteEnhancerPosts = new SummernoteEnhancer();
+/**
+ * Instance for handling Summernote editors in comments.
+ */
 const summernoteEnhancerComments = new SummernoteEnhancer();
+
+/**
+ * Instance for handling Summernote editors in editing posts.
+ */
 const summernoteEnhancerEditPost = new SummernoteEnhancer();
 
 

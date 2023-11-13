@@ -1,5 +1,24 @@
+/**
+ * Strict mode declaration to enforce cleaner JavaScript syntax and prevent common coding mistakes.
+ * 
+ * @strict
+ * @namespace
+ * @global
+ */
 'use strict';
 
+/**
+ * Object managing storage configurations, providing methods to interact with local storage.
+ * 
+ * @namespace
+ * @global
+ * @readonly
+ * @property {function} prefix - Sets the prefix for storage keys.
+ * @property {function} noPrefix - Instructs to use no prefix for storage keys.
+ * @property {function} get - Retrieves values from storage.
+ * @property {function} set - Sets values in storage.
+ * @property {function} remove - Removes values from storage.
+ */
 //ConfigStorage
 (function(window)
 {

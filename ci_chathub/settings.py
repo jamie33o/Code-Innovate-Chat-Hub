@@ -71,11 +71,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-
-
-# for channels app 
+# for channels app
 ASGI_APPLICATION = 'ci_chathub.asgi.application'
 # Configure Redis channel layer
 if 'REDIS_URL' in os.environ:
@@ -247,7 +243,7 @@ if 'USE_AWS' in os.environ:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
+# email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587

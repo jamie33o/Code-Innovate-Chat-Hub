@@ -1,4 +1,26 @@
+/**
+ * EmojiPicker class for handling emoji selection .
+ * This class provides methods to initialize, display, and handle events related to the emoji picker.
+ *
+ * Properties:
+ * - emojiSource: The source URL for emoji images.
+ * - icons: Object containing emoji icons information.
+ * - reverseIcons: Object containing reverse mapping of emoji icons.
+ * - $panel: jQuery object representing the emoji panel.
+ * - emojiClickedCallback: Callback function to handle the selected emoji.
+ *
+ * Methods:
+ * - addListener(event, emojiClickedCallback): Adds event listeners for emoji selection.
+ * - loadEmojis(): Loads emoji data into the class.
+ * - setContainerPos(event): Sets the position of the emoji panel based on the event.
+ * - updateEmojisList(index): Updates the list of emojis in the panel based on the selected category.
+ * - createdEmojiIcon(emoji): Creates HTML for displaying an emoji icon.
+ * - colonToUnicode(emoij): Converts colon-based emoji notation to Unicode.
+ * - emojiPanel(): Initializes and displays the emoji panel.
+ * - destroy(): Destroys the emoji picker, removing its elements from the DOM.
+ */
 class EmojiPicker {
+
     static emojiSource = null;
 
     constructor() {
@@ -8,7 +30,12 @@ class EmojiPicker {
         this.emojiClickedCallback = null; //  callback function to send emoji to summernote.js
         // Initialize the emoji panel
     }
-
+    /**
+     * Adds event listeners for emoji selection.
+     *
+     * @param {Event} event - The event triggering the emoji selection.
+     * @param {function} emojiClickedCallback - Callback function for handling the selected emoji.
+     */
     addListener(event, emojiClickedCallback) {
         if(this.$panel == null){
             this.emojiPanel();
@@ -105,7 +132,9 @@ class EmojiPicker {
             });
         });
     }
-
+    /**
+    * Loads emoji data into the class.
+    */
     loadEmojis() {
         let icons = {};
         let reverseIcons = {};
@@ -129,6 +158,11 @@ class EmojiPicker {
             Config.init_unified();
         }
     }
+    /**
+     * Sets the position of the emoji panel based on the event.
+     *
+     * @param {Event} event - The event triggering the emoji panel display.
+     */
     setContainerPos(event){
         const emojiMenu = $('.emoji-menu-container');
         let offsetY = emojiMenu.height() /2 ;
@@ -148,6 +182,11 @@ class EmojiPicker {
         });
     }
 
+    /**
+     * Updates the list of emojis in the panel based on the selected category.
+     *
+     * @param {number} index - The index of the selected emoji category.
+     */
     updateEmojisList(index) {
         const $items = $(`.emoji-menu .emoji-items`);
         $items.html('');
@@ -180,7 +219,12 @@ class EmojiPicker {
             });
         }
     }
-
+    /**
+     * Creates HTML for displaying an emoji icon.
+     *
+     * @param {Array} emoji - Array containing emoji information.
+     * @returns {string} - HTML representation of the emoji icon.
+     */
     createdEmojiIcon(emoji) {
         const category = emoji[0];
         const row = emoji[1];
@@ -205,6 +249,12 @@ class EmojiPicker {
             style + '" alt="' + Config.htmlEntities(name) + '">';
     }
 
+    /**
+     * Converts colon-based emoji notation to Unicode.
+     *
+     * @param {string} emoji - Emoji notation using colons.
+     * @returns {string} - Unicode representation of the emoji.
+     */
     colonToUnicode(emoij) {
         return emoij.replace(Config.rx_colons, (m) => {
             const val = Config.mapcolon[m];
@@ -217,6 +267,9 @@ class EmojiPicker {
         });
     }
 
+    /**
+     * Initializes and displays the emoji panel.
+    */
     emojiPanel() {
         this.$panel = $(`<div class="emoji-menu emoji-menu-container">\n` +
             '    <div class="emoji-items-wrap1">\n' +
@@ -242,7 +295,9 @@ class EmojiPicker {
         this.loadEmojis();
         this.updateEmojisList(0);
     }
-
+    /**
+     * Destroys the emoji picker, removing its elements from the DOM.
+     */
     destroy() {
         this.$panel.remove();
         this.$panel = null;

@@ -8,8 +8,8 @@
     </div>
 </div>    
 
- <!-- list for channels posts -->
- <div class="scrollable-div h-100" style="background-color: #e7effd;"> 
+ <!-- channels posts brought into comments -->
+ <div class="scrollable-div h-100 post{{ post.id }}" style="background-color: #e7effd;"> 
     <div class="card m-1">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
@@ -108,7 +108,7 @@
 
     <div class="comments-list">
     {% for comment in comments %}
-        <div class="my-2 py-2 text-dark m-0">
+        <div class="my-2 py-2 text-dark m-0 comment{{ comment.id }}">
             <div class="row d-flex m-0">
                 <div class="col-12 m-0">                       
                     <div class="card w-100 p-2 m-0" data-post-id = '{{ comment.id }}' data-post-url="{% url 'post_comments' post.id %}">

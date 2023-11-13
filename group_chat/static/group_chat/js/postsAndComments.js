@@ -146,7 +146,6 @@ $(document).on('click', '.delete-btn', function() {
     let body = $(deleteModelBody).prepend(clonedCard)
             
     showModal(header, body)
-
     });
 
 // event listener for yes-btn on the delete post/comment card modal
@@ -154,6 +153,10 @@ $(document).on('click', '#yes-btn', function(event) {
     event.preventDefault()   
     cardBeingDeleted.remove();
     ajaxRequest(deleteUrl, csrfToken, 'DELETE', 'main')
+    // close comments if user deletes post
+    if($(cardBeingDeleted)[0].className.includes('post')){
+        $('.comments-close-btn').click()
+    }
 })
 
 // Attach a click event handler to the 'main' element, specifically for elements with the class 'save-post-btn'
@@ -228,6 +231,11 @@ function loadOldPosts(){
     }    
 }
 
+/**
+ * Auto-scroll function for handling automatic scrolling in a chat application.
+ *
+ * @param {boolean} bottomBool - A boolean indicating whether to scroll to the bottom (true) or to a specific post index (false).
+ */
 function autoScroll(bottomBool) {
     //get the post count
     let postCount = $('#channel-posts .scrollable-div .card').length;
@@ -328,7 +336,8 @@ $('main').on({
         }
     }
 }, '.added-emoji-btn');
-    /**
+
+/**
  * Callback function triggered when a user clicks an emoji in the emoji picker.
  *
  * This function sends a post request to the Django server with the selected emoji's
@@ -349,6 +358,15 @@ function emojiPickerCallback(emoji) {
     });
 }
 
+/**
+ * Update Emoji function for handling the response and updating the emoji UI.
+ *
+ * @param {string} emojiColonName - The colon-style name of the emoji (e.g., ':smile:').
+ * @param {string} emojiImg - The HTML representation of the emoji image.
+ * @param {HTMLElement} clickedBtn - The button element that was clicked to trigger the update.
+ * @param {object} response - The response object containing the status of the update.
+ * @param {string} url - The URL associated with the emoji update.
+ */
 function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
     let id = url.match(/\d+/g);
     let spanElement;

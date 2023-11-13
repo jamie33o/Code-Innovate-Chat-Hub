@@ -12,7 +12,7 @@ class PostsForm(forms.ModelForm):
         model = PostsModel
         fields = ['post', 'images']  # Include the 'images' field in the form
 
-    
+
 
 class CommentsForm(forms.ModelForm):
     """
@@ -25,8 +25,3 @@ class CommentsForm(forms.ModelForm):
         model = CommentsModel
         fields =  ['post', 'images']
 
-    
-
-# use for the tag drop down list
-# class AddUserToChannelForm(forms.Form):
-#     user = forms.ModelChoiceField(queryset=User.objects.all(), label='Select User')

@@ -1,3 +1,19 @@
+
+"""
+ASGI application configuration for the Django Channels routing.
+
+- Uses the ProtocolTypeRouter to route HTTP and WebSocket protocols separately.
+- For HTTP requests, it uses the Django ASGI application.
+- For WebSocket connections, it uses the 
+AllowedHostsOriginValidator to validate the origin of the connection.
+- It then applies the AuthMiddlewareStack for 
+handling authentication in WebSocket connections.
+- Finally, it uses the URLRouter to route WebSocket 
+connections to the specified URL patterns in the 'websocket_urlpatterns' module.
+
+Note: Ensure that the 'DJANGO_SETTINGS_MODULE' 
+environment variable is set to your Django project's settings module.
+"""
 import os
 
 from channels.auth import AuthMiddlewareStack
@@ -12,8 +28,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ci_chathub.settings")
 # is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
 
-import group_chat.routing
-
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
@@ -22,4 +36,3 @@ application = ProtocolTypeRouter(
         ),
     }
 )
-
