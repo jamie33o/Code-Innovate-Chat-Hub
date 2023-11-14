@@ -31,6 +31,8 @@ $('main').on('click', '.channel-link', function(event) {
         $('header').addClass('d-none')
 
     }
+    $('#channel-posts').addClass('d-flex');
+
     $('#post-comments').removeClass('d-flex');
 });
 

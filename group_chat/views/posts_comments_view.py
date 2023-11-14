@@ -183,6 +183,7 @@ class PostsView(BaseChatView):
             paginated_posts, next_page_num = self.get_paginated_posts(posts, page)
 
             post_comments_users = self.users_that_commented(paginated_posts)
+            self.update_last_viewed_channel(request, channel_id)
 
             if request.user in channel.users.all():
                 self.update_user_status(request, channel_id)
