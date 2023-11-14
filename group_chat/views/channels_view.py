@@ -20,16 +20,19 @@ class ChannelsView(View):
 
     template_name = 'group_chat/home.html'
 
-    def get(self, request):
+    def get(self, request, channel_id=None,post_id=None):
         """
         Handle GET requests to display the list of channels.
 
         Returns:
             HttpResponse: Rendered template with channel information.
         """
+        last_viewed_channel_id = None
 
         channels = ChannelModel.objects.all()
-        last_viewed_channel_id = request.user.userprofile.last_viewed_channel_id
+        if not channel_id:
+            last_viewed_channel_id = request.user.userprofile.last_viewed_channel_id
+
 
         # Create an empty dictionary to store user_status for each channel
         user_statuses = {}
@@ -52,6 +55,8 @@ class ChannelsView(View):
             'channels': channels,
             'last_viewed_channel_id': last_viewed_channel_id,
             'user_statuses': user_statuses,
+            'post_id': post_id,
+            'channel_id': channel_id
         }
 
         return render(request, self.template_name, context)

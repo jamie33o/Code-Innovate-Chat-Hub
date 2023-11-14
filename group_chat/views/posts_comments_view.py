@@ -144,6 +144,11 @@ class PostsView(BaseChatView):
             if paginated_posts.has_previous()
             else None
         )
+        next_page_number = (
+            paginated_posts.next_page_number()
+            if paginated_posts.has_next()
+            else None
+        )
         return paginated_posts, prev_page_number
 
 
@@ -162,7 +167,7 @@ class PostsView(BaseChatView):
         user_status.last_visit = timezone.now()
         user_status.save()
 
-    def get(self, request, channel_id):
+    def get(self, request, channel_id, post_id=None):
         """
         Handle GET requests to display posts in a channel.
 
@@ -175,11 +180,19 @@ class PostsView(BaseChatView):
         Returns:
             HttpResponse: Rendered HTML template with posts.
         """
+        page_number = None
         try:
             channel = self.get_channel(channel_id)
             posts = self.get_posts(channel)
-
-            page = int(request.GET.get('page')) if request.GET.get('page') else None
+            if post_id:
+                try:
+                    post_index = next((index for index, post in enumerate(posts) if post.id == post_id), None)
+                    page_number = post_index // self.posts_per_page + 1
+                    print(page_number)
+                    print(post_index)
+                except Exception as e:
+                    print(e)
+            page = int(request.GET.get('page')) if request.GET.get('page') else (page_number if page_number is not None else None)
             paginated_posts, next_page_num = self.get_paginated_posts(posts, page)
 
             post_comments_users = self.users_that_commented(paginated_posts)
@@ -199,13 +212,14 @@ class PostsView(BaseChatView):
                 'post_comments_users': post_comments_users
             }
 
-            if page:
+            if page and not post_id:
                 return render(request, self.paginated_template, context)
 
             return render(request, self.posts_template, context)
 
         except Exception as e:
             # Handle unexpected exceptions
+            print(e)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
     def post(self, request, channel_id, post_id=None):

@@ -236,9 +236,12 @@ function loadOldPosts(){
  *
  * @param {boolean} bottomBool - A boolean indicating whether to scroll to the bottom (true) or to a specific post index (false).
  */
-function autoScroll(bottomBool) {
+function autoScroll(bottomBool, id) {
     //get the post count
     let postCount = $('#channel-posts .scrollable-div .card').length;
+
+    let container = $('#channel-posts .scrollable-div');
+
 
     //get the index of the last post before the older posts being appended
     let postAtIndex = $('#channel-posts .scrollable-div .card').eq(9); 
@@ -246,6 +249,20 @@ function autoScroll(bottomBool) {
     if(postCount >= 20 && !bottomBool){
         // Scroll to the 10th post
         $('#channel-posts .scrollable-div').animate({ scrollTop: postAtIndex.offset().top }, 'fast');
+    }else if (id){
+        // scroll to the saved post
+        let targetPost = $(`#channel-posts .scrollable-div .card[data-post-id="${id}"]`);
+
+        let offsetRelativeToContainer = targetPost.offset().top - container.offset().top;
+        container.animate({ scrollTop: offsetRelativeToContainer  }, 'fast');
+        // Set multiple CSS properties for the targetPost element
+        targetPost.css({
+            'border': '2px solid green',
+            
+        });
+
+        $('#channel-posts .scrollable-div').animate({ scrollTop: targetPost.offset().top }, 'fast');
+
     }else  {
         $('#channel-posts .scrollable-div').animate({ scrollTop: $('.scrollable-div')[1].scrollHeight }, 'fast');
     }

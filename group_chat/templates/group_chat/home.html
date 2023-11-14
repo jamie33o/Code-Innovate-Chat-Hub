@@ -85,9 +85,15 @@
                 $('#channel-posts').addClass('d-flex');
 
             }
+        {% elif channel_id %}
+                let savedPostChannel = `{% url 'channel_posts' channel_id post_id %}`
+
+                ajaxRequest(savedPostChannel, null, 'GET', '#channel-posts', null, function(response){
+                    $('#channel-posts').html(response)
+                    autoScroll(null, {{ post_id }})
+                })
+                $('#channel-posts').addClass('d-flex');
         {% endif %}
-
-
         //url for emojis spritesheet
         EmojiPicker.emojiSource = "{% static 'group_chat/tam-emoji/img' %}";
 
