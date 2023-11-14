@@ -87,6 +87,20 @@
     background-color: var(--peach);
 }
 
+.comments-close-btn, .comments-close-btn {
+    width: fit-content;
+    height: fit-content;
+    padding: 10px;
+    margin: auto 15px;
+
+}
+
+.comments-close-btn:hover, .comments-close-btn:hover {
+    background-color: var(--background);
+    box-shadow: var(--sm-box-shadow);
+
+}
+
 /* posts/comments card */
 .card {
     margin: 20px 10px;

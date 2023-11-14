@@ -353,21 +353,6 @@ nav > div a.nav-item.nav-link:focus
     color: var(--dark-grey) !important;
 }
 
-/* ///////////////////// move to user profile ///////////////////////////// */
-
-/* user profile */
-.user-profile {
-    width: 100vw;
-    height: 100vh;
-
-}
-
-.user-profile img {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-}
-
 .navbar {
     padding: 0 !important;
 }
