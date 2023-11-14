@@ -1,36 +1,124 @@
 {% extends "base.html" %}
 {% load static %}
+{% load emoji_tags %}
 
 
 
 {% block content %}
-
-    <div class="user-profile d-flex justify-content-center align-items-center">
-        <div class="row">
-            <div class="col-md-12">
+<div class="user-profile">
+    <div class="row m-0 p-0 h-100">
+  		<div class="col-sm-3 m-0 p-0  h-100">
+            <div class="profile-container scrollable-div">
                 {% if user_profile.profile_picture %}
-                    <img src="{{ user_profile.profile_picture.url }}" alt="profile image">
+                <img class="profile_pic" src="{{ user_profile.profile_picture.url }}" alt="profile image">
                 {% else %}
-                    <img src="{% static 'noimage.png' %}" alt="default image">
+                <img class="profile_pic" src="{% static 'noimage.png' %}" alt="default image">
                 {% endif %}
+                <h2>{{ user_profile.user.username }}</h2>
+                <h6>Upload a different photo...</h6>
 
+                <form class="form" method="post" enctype="multipart/form-data"  data-url='{% url "update_profile_image" %}'>
+                    {% csrf_token %}
+                    {{ profile_image_form.as_p }}
+                    <button type="submit">Update Profile Image</button>
+                </form>
+
+                <form class="form" method="post" data-url='{% url "update_status" %}'>
+                    {% csrf_token %}
+                    {{ status_form.as_p }}
+                    <button type="submit">Update Status</button>
+                </form>
+
+                <p class ="status">Status: {{ user_profile.status }}</p>
+                <div class="d-flex flex-column">
+                    <a href="">Edit Profile</a>
+                    <a href="">Saved Posts</a>
+                </div>
+        
+                <hr>
+                
+                <div class="links-container">
+                    <div class="links-heading">Website <i class="fa fa-link fa-1x"></i></div>
+                    <div class="links-body"><a href="https://{{ user_profile.website }}" target="_blank">{{ user_profile.website }}</a></div>
+                </div>
+                <div class="links-container">
+                    <div class="links-heading">Linkdin <i class="fa fa-link fa-1x"></i></div>
+                    <div class="links-body"><a href="https://{{ user_profile.linkedin }}" target="_blank">{{ user_profile.linkedin }}</a></div>
+                </div>
+                <div class="links-container">
+                    <div class="links-heading">Github <i class="fa fa-link fa-1x"></i></div>
+                    <div class="links-body"><a href="https://{{ user_profile.github }}" target="_blank">{{ user_profile.github }}</a></div>
+                </div>
             </div>
-            <div class="col-md-12">
-                <h3>{{ user_profile.user.username }}</h3>
-                <p>{{ user_profile.is_active }}</p>
-                <p>Status:
-                    <select id="statusDropdown">
-                        <option value="active" {% if user_profile.is_active %}selected{% endif %}>Active</option>
-                        <option value="away" {% if not user_profile.is_active %}selected{% endif %}>Away</option>
-                    </select>
-                </p>
-                <a href="{% url 'edit_user_profile' %}">Edit Profile</a>
-<hr>
-            </div>
+        </div>
+
+
+        <div class="col-sm-6 p-0 m-0 ">
+            <div class="update_profile_container scrollable-div">
+                <h1 class="h1">Personal Info</h1>
+                <hr>
+                <form class="form" method="post" action="{% url 'user_profile' %}"
+                id="registrationForm">
+                {% csrf_token %}
+                {{ Edit_profile_form.as_p }}
+                <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
+                    Update</button>
+            </form>
             
+            </div>
+        </div>
+
+
+    
+        <div class="col-sm-3 ">
+            <div class="saved-posts-container scrollable-div">
+                {% if posts %}
+                {% include 'user_profile/saved-posts.html' %}
+                {% endif %}
+            </div>
         </div>
     </div>
+</div>
 
-    
-    
+
+<script>
+    $(document).ready(function () {
+
+        $('.form').on('submit', function (event) {
+            event.preventDefault();
+
+            let url = $(this).data('url')
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: 'POST',
+                url: url, 
+                data: formData,
+                processData: false,  
+                contentType: false,  
+         
+                success: function (response) {
+                    if (response.success === 'status') {
+
+                        $('.status').html(`Status: ${response.message}`)
+                        alert(response.message);
+                      
+                    } else if (response.success === 'image') {
+                        $('.profile_pic').attr('src', response.message);
+                        alert(`Success updating image ${response.success}.`);
+
+                    }else{
+                        alert(`Error updating ${response.success}.`);
+                        console.log(response.errors);
+                    }
+                },
+                error: function () {
+                    alert('An error occurred.');
+                }
+            });
+        });
+    });
+    </script>
 {% endblock %}
+
+

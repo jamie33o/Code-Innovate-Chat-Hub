@@ -1,0 +1,102 @@
+/* ///////////////////// user profile ///////////////////////////// */
+
+/* user profile pic, social links and status */
+.user-profile {
+    width: 100%;
+    height: 100%;
+}
+
+.profile-container {
+    padding: 50px 30px;
+    width: 100%;
+    height: calc(100vh - 95px);
+    border-right: 1px solid var(--ci-orange);
+}
+
+.profile-container-inner {
+    padding: 20px 10px 130px 10px;
+}
+
+.profile-container-header {
+
+} 
+
+.links-container {
+    width: 100%;
+    height: fit-content;
+    border: 1px solid rgb(154, 153, 153);
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.links-heading {
+    background-color: rgba(168, 168, 168, 0.286);
+    padding: 5px 0 5px 5px;
+    border-bottom: 1px solid rgb(154, 153, 153);
+}
+
+.links-body {
+    padding: 5px 0 5px 5px;
+}
+
+.update_profile_container {
+    height: calc(100vh - 95px); /* Use viewport height */
+    margin-top: 0; /* Remove the margin-top */
+    border-right: 1px solid var(--ci-orange);
+    padding: 100px 20px;
+    width: 100%;
+}
+
+/* input fields container */
+.update_profile_container_inner {
+    margin-top: 200px;
+    height: 150%;
+}
+
+.form {
+    width: 100% !important;
+}
+
+.form label {
+    font-size: 1.1em;
+    font-weight: 400;
+    margin: 5px 0;
+}
+.form input {
+    width: 100%;
+    height: 30px;
+    min-height: 50px;
+    padding: 5px;
+    border-radius: 5px;
+    border-color: rgba(128, 128, 128, 0.234);
+}
+
+.form textarea {
+    width: 100%;
+    height: 50px;
+    padding-top: 13px;
+    padding-left: 5px;
+    border-radius: 5px;
+    border: 2px solid rgba(128, 128, 128, 0.234);;
+} 
+
+/* saved posts container */
+.saved-posts-container {
+    height: calc(100vh - 95px); /* Use viewport height */
+    padding: 30px 5px;
+}
+
+.saved-posts-container .card {
+    margin-bottom: 20px;
+}
+
+.saved-posts-container .card-header {
+    background-color: var(--peach)
+} 
+
+.profile_pic {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
+
