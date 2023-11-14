@@ -1,9 +1,11 @@
 # urls.py
 
 from django.urls import path
-from .views import UserProfileView, EditUserProfileView
+from .views import UserProfileView, update_profile_image, update_status
 
 urlpatterns = [
     path('', UserProfileView.as_view(), name='user_profile'),
-    path('edit_user_profile/', EditUserProfileView.as_view(), name='edit_user_profile'),
+    path('update_profile_image/', update_profile_image, name='update_profile_image'),
+    path('update_status/', update_status, name='update_status'),
 ]
+
