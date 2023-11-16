@@ -7,15 +7,21 @@
 {% block content %}
 <div class="user-profile ">
     <div class="profile-container scrollable-div">
+        <div class="w-100 text-center mb-3">
         {% if user_profile.profile_picture %}
         <img class="profile_pic" src="{{ user_profile.profile_picture.url }}" alt="profile image">
         {% else %}
         <img class="profile_pic" src="{% static 'noimage.png' %}" alt="default image">
         {% endif %}
-        <h2>{{ user_profile.user.username }}</h2>
-        <p class="status">Current Status: {{ user_profile.status }}</p>
-        <hr>
-        <div class="border py-3 custom-box">
+    </div>
+    <h2>{{ user_profile.user.username }}</h2>
+    <h5 class="status ">Current Status: {{ user_profile.status }}</h5>
+
+    <hr>
+    {% if user_profile.user.username == request.user.username %}
+    <div class="links-container">
+        <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
+        <div class="links-body pb-2">
             <button class="btn btn-ci profile-img-modal" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
                 Change profile Picture</button>
             <button class="btn btn-ci status-update-btn" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
@@ -23,43 +29,59 @@
             <button class="btn btn-ci edit-profile-btn d-flex d-sm-none d-lg-none">Edit Profile</button>
             <button class="btn btn-ci view-save-posts-btn">Saved Posts</button>
         </div>
-        <hr>
+    </div>
+    <!-- </div> -->
+    {% endif %}
 
+    <div class="links-container">
+        <div class="links-heading">Bio</div>
+        <div class="links-body"><p>{{ user_profile.bio }}</p>
+        </div>
+    </div>
+    {% if user_profile.website %}
         <div class="links-container">
             <div class="links-heading">Website <i class="fa fa-link fa-1x"></i></div>
             <div class="links-body"><a href="https://{{ user_profile.website }}" target="_blank">{{ user_profile.website }}</a>
             </div>
         </div>
+    {% endif %}
+    {% if user_profile.website %}
         <div class="links-container">
             <div class="links-heading">Linkdin <i class="fa fa-link fa-1x"></i></div>
             <div class="links-body"><a href="https://{{ user_profile.linkedin }}" target="_blank">
                 {{ user_profile.linkedin }}</a></div>
         </div>
+    {% endif %}
+
+    {% if user_profile.website %}
         <div class="links-container">
             <div class="links-heading">Github <i class="fa fa-link fa-1x"></i></div>
             <div class="links-body"><a href="https://{{ user_profile.github }}" target="_blank">
                 {{ user_profile.github }}</a></div>
         </div>
-    </div>
-
+    {% endif %}
+</div>
     <div class="update_profile_container scrollable-div d-none d-sm-flex d-lg-flex">
 
-        <div class="custom-box p-1 saved-posts-header d-flex flex-dir-row d-flex d-sm-none d-lg-none">
+        <div class="custom-box fixed-header d-flex flex-dir-row d-none d-sm-none d-lg-none">
             <button class="btn mr-3 close-edit-profile-btn">X</button>
             <h3>Edit Profile</h3>
         </div>
-        <h1 class="h1">Personal Info</h1>
-        <hr>
-        <form class="form" method="post" action="{% url 'user_profile' %}" id="registrationForm">
-            {% csrf_token %}
-            {{ Edit_profile_form.as_p }}
-            <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
-                Update</button>
-        </form>
+
+        <div class="p-3">
+            <h1 class="h1">Personal Info</h1>
+            <hr>
+            <form class="form" method="post" action="{% url 'user_profile' %}" id="registrationForm">
+                {% csrf_token %}
+                {{ Edit_profile_form.as_p }}
+                <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
+                    Update</button>
+            </form>
+        </div>
     </div>
 
     <div class="saved-posts-container d-none">
-        <div class="custom-box saved-posts-header d-flex flex-dir-row">
+        <div class="custom-box fixed-header d-flex flex-dir-row">
             <button class="btn mr-3 saved-posts-close-btn">X</button>
             <h3>Saved Post's</h3>
         </div>
@@ -76,23 +98,25 @@
     $(document).ready(function () {
 
         $('body').on('click', '.edit-profile-btn', function () {
-            $('.saved-posts-container').removeClass('d-none')
-            if(window.innerWidth < 575.98){
-                $('.profile-container').addClass('d-none')
-            }
+            $('.update_profile_container').removeClass('d-none')
+            $('.profile-container').addClass('d-none')
+            $('#nav-bar').addClass('d-none')
+            $('header').addClass('d-none')
         });
 
         $('body').on('click', '.close-edit-profile-btn', function () {
-            $('.saved-posts-container').addClass('d-none')
-            if(window.innerWidth < 575.98){
-                $('.profile-container').removeClass('d-none')
-            }
+            $('.update_profile_container').addClass('d-none')
+            $('.profile-container').removeClass('d-none')
+            $('#nav-bar').removeClass('d-none')
+            $('header').removeClass('d-none')
         });
 
         $('body').on('click', '.view-save-posts-btn', function () {
             $('.saved-posts-container').removeClass('d-none')
             if(window.innerWidth < 575.98){
                 $('.profile-container').addClass('d-none')
+                $('#nav-bar').addClass('d-none')
+                $('header').addClass('d-none')
             }
         });
 
@@ -100,6 +124,8 @@
             $('.saved-posts-container').addClass('d-none')
             if(window.innerWidth < 575.98){
                 $('.profile-container').removeClass('d-none')
+                $('#nav-bar').removeClass('d-none')
+                $('header').removeClass('d-none')
             }
         });
 

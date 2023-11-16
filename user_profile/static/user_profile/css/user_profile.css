@@ -12,10 +12,10 @@
 
 .profile-container {
     padding: 50px 30px;
-    width: 100%;
-    height: calc(100vh - 95px);
+    width: 30%;
+    height: 100%;
     border-right: 1px solid var(--ci-orange);
-    flex: 1 10 100%;
+    flex: 1 1 30%;
 
 }
 
@@ -34,19 +34,21 @@
 }
 
 .links-body {
-    padding: 5px 0 5px 5px;
+    padding: 5px 5px 5px 5px;
 }
 
 /*/////////////////////////// update profile container ////////////////////////////////*/
 
 .update_profile_container {
-    height: calc(100vh - 95px); /* Use viewport height */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     margin-top: 0; /* Remove the margin-top */
     border-right: 1px solid var(--ci-orange);
-    padding: 30px 5%;
     max-width: 100%;
     min-width: 40%;
     flex: 1 10 100%;
+    padding-bottom: 100px;
 }
 
 .form {
@@ -81,7 +83,7 @@
 /* saved posts container */
 .saved-posts-container {
     position: relative;
-    height: calc(100vh - 95px); /* Use viewport height */
+    height: 100%;
     width: 100%;
     flex: 1 10 100%;
 }
@@ -90,12 +92,22 @@
     height: 90%;
 }
 
-.saved-posts-header {
+.fixed-header {
     width: 100%;
-    height: 50px;
     position: sticky;
     top:0;
     z-index: 5;
+    background-color: var(--peach);
+    padding: 20px;
+}
+
+.fixed-header button {
+    width: fit-content;
+    height: fit-content;
+    background-color: var(--background);
+    border-radius: 10px;
+    border: 1px solid var(--ci-orange);
+    
 }
 
 .saved-posts-container .card {
