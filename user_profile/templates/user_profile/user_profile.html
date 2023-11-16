@@ -5,77 +5,68 @@
 
 
 {% block content %}
-<div class="user-profile">
-    <div class="row m-0 p-0 h-100">
-  		<div class="col-sm-3 m-0 p-0  h-100">
-            <div class="profile-container scrollable-div">
-                {% if user_profile.profile_picture %}
-                <img class="profile_pic" src="{{ user_profile.profile_picture.url }}" alt="profile image">
-                {% else %}
-                <img class="profile_pic" src="{% static 'noimage.png' %}" alt="default image">
-                {% endif %}
-                <h2>{{ user_profile.user.username }}</h2>
-                <h6>Upload a different photo...</h6>
+<div class="user-profile ">
+    <div class="profile-container scrollable-div">
+        {% if user_profile.profile_picture %}
+        <img class="profile_pic" src="{{ user_profile.profile_picture.url }}" alt="profile image">
+        {% else %}
+        <img class="profile_pic" src="{% static 'noimage.png' %}" alt="default image">
+        {% endif %}
+        <h2>{{ user_profile.user.username }}</h2>
+        <p class="status">Current Status: {{ user_profile.status }}</p>
+        <hr>
+        <div class="border py-3 custom-box">
+            <button class="btn btn-ci profile-img-modal" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
+                Change profile Picture</button>
+            <button class="btn btn-ci status-update-btn" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
+                Change status</button>
+            <button class="btn btn-ci edit-profile-btn d-flex d-sm-none d-lg-none">Edit Profile</button>
+            <button class="btn btn-ci view-save-posts-btn">Saved Posts</button>
+        </div>
+        <hr>
 
-                <form class="form" method="post" enctype="multipart/form-data"  data-url='{% url "update_profile_image" %}'>
-                    {% csrf_token %}
-                    {{ profile_image_form.as_p }}
-                    <button type="submit">Update Profile Image</button>
-                </form>
-
-                <form class="form" method="post" data-url='{% url "update_status" %}'>
-                    {% csrf_token %}
-                    {{ status_form.as_p }}
-                    <button type="submit">Update Status</button>
-                </form>
-
-                <p class ="status">Status: {{ user_profile.status }}</p>
-                <div class="d-flex flex-column">
-                    <a href="">Edit Profile</a>
-                    <a href="">Saved Posts</a>
-                </div>
-        
-                <hr>
-                
-                <div class="links-container">
-                    <div class="links-heading">Website <i class="fa fa-link fa-1x"></i></div>
-                    <div class="links-body"><a href="https://{{ user_profile.website }}" target="_blank">{{ user_profile.website }}</a></div>
-                </div>
-                <div class="links-container">
-                    <div class="links-heading">Linkdin <i class="fa fa-link fa-1x"></i></div>
-                    <div class="links-body"><a href="https://{{ user_profile.linkedin }}" target="_blank">{{ user_profile.linkedin }}</a></div>
-                </div>
-                <div class="links-container">
-                    <div class="links-heading">Github <i class="fa fa-link fa-1x"></i></div>
-                    <div class="links-body"><a href="https://{{ user_profile.github }}" target="_blank">{{ user_profile.github }}</a></div>
-                </div>
+        <div class="links-container">
+            <div class="links-heading">Website <i class="fa fa-link fa-1x"></i></div>
+            <div class="links-body"><a href="https://{{ user_profile.website }}" target="_blank">{{ user_profile.website }}</a>
             </div>
         </div>
-
-
-        <div class="col-sm-6 p-0 m-0 ">
-            <div class="update_profile_container scrollable-div">
-                <h1 class="h1">Personal Info</h1>
-                <hr>
-                <form class="form" method="post" action="{% url 'user_profile' %}"
-                id="registrationForm">
-                {% csrf_token %}
-                {{ Edit_profile_form.as_p }}
-                <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
-                    Update</button>
-            </form>
-            
-            </div>
+        <div class="links-container">
+            <div class="links-heading">Linkdin <i class="fa fa-link fa-1x"></i></div>
+            <div class="links-body"><a href="https://{{ user_profile.linkedin }}" target="_blank">
+                {{ user_profile.linkedin }}</a></div>
         </div>
+        <div class="links-container">
+            <div class="links-heading">Github <i class="fa fa-link fa-1x"></i></div>
+            <div class="links-body"><a href="https://{{ user_profile.github }}" target="_blank">
+                {{ user_profile.github }}</a></div>
+        </div>
+    </div>
 
+    <div class="update_profile_container scrollable-div d-none d-sm-flex d-lg-flex">
 
-    
-        <div class="col-sm-3 ">
-            <div class="saved-posts-container scrollable-div">
-                {% if posts %}
-                {% include 'user_profile/saved-posts.html' %}
-                {% endif %}
-            </div>
+        <div class="custom-box p-1 saved-posts-header d-flex flex-dir-row d-flex d-sm-none d-lg-none">
+            <button class="btn mr-3 close-edit-profile-btn">X</button>
+            <h3>Edit Profile</h3>
+        </div>
+        <h1 class="h1">Personal Info</h1>
+        <hr>
+        <form class="form" method="post" action="{% url 'user_profile' %}" id="registrationForm">
+            {% csrf_token %}
+            {{ Edit_profile_form.as_p }}
+            <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
+                Update</button>
+        </form>
+    </div>
+
+    <div class="saved-posts-container d-none">
+        <div class="custom-box saved-posts-header d-flex flex-dir-row">
+            <button class="btn mr-3 saved-posts-close-btn">X</button>
+            <h3>Saved Post's</h3>
+        </div>
+        <div class="py-5 px-3 scrollable-div h-100">
+            {% if posts %}
+            {% include 'user_profile/saved-posts.html' %}
+            {% endif %}
         </div>
     </div>
 </div>
@@ -84,41 +75,140 @@
 <script>
     $(document).ready(function () {
 
-        $('.form').on('submit', function (event) {
+        $('body').on('click', '.edit-profile-btn', function () {
+            $('.saved-posts-container').removeClass('d-none')
+            if(window.innerWidth < 575.98){
+                $('.profile-container').addClass('d-none')
+            }
+        });
+
+        $('body').on('click', '.close-edit-profile-btn', function () {
+            $('.saved-posts-container').addClass('d-none')
+            if(window.innerWidth < 575.98){
+                $('.profile-container').removeClass('d-none')
+            }
+        });
+
+        $('body').on('click', '.view-save-posts-btn', function () {
+            $('.saved-posts-container').removeClass('d-none')
+            if(window.innerWidth < 575.98){
+                $('.profile-container').addClass('d-none')
+            }
+        });
+
+        $('body').on('click', '.saved-posts-close-btn', function () {
+            $('.saved-posts-container').addClass('d-none')
+            if(window.innerWidth < 575.98){
+                $('.profile-container').removeClass('d-none')
+            }
+        });
+
+
+        $('body').on('change', '#id_profile_picture', function () {
+            console.log("Event triggered!");
+            var selectedFile = event.target.files[0];
+
+            if (selectedFile) {
+                // Get a temporary URL for the selected file
+                var imageURL = URL.createObjectURL(selectedFile);
+                $('.modal-body .profile_pic').attr('src', imageURL)
+
+                // Log or use the imageURL as needed
+                console.log("Image URL:", imageURL);
+            }
+        })
+        $('body').on('click', '.sub-form', function () {
             event.preventDefault();
 
-            let url = $(this).data('url')
-            var formData = new FormData(this);
+            let url = $(this).parent().data('url')
+            var formData = new FormData($(this).closest('form')[0]);
 
-            $.ajax({
-                type: 'POST',
-                url: url, 
-                data: formData,
-                processData: false,  
-                contentType: false,  
-         
-                success: function (response) {
-                    if (response.success === 'status') {
+            var csrfToken = $(this).find('input[name="csrf_token"]').val();
 
-                        $('.status').html(`Status: ${response.message}`)
-                        alert(response.message);
-                      
-                    } else if (response.success === 'image') {
-                        $('.profile_pic').attr('src', response.message);
-                        alert(`Success updating image ${response.success}.`);
 
-                    }else{
-                        alert(`Error updating ${response.success}.`);
-                        console.log(response.errors);
-                    }
-                },
-                error: function () {
-                    alert('An error occurred.');
+
+            ajaxRequest(url, csrfToken, 'Post', '.profile-container', formData, function (response) {
+                if (response.status === 'success') {
+
+                    $('.status').html(`Current Status: ${response.message}`)
+                    displayMessage(response, '.profile-container');
+                    //$('#modal').hide()
+
+                } else if (response.success === 'image') {
+                    $('.profile_pic').attr('src', response.message);
+                    displayMessage({ 'status': 'success', 'message': 'Profile picture updated' }, '.profile-container');
+
+                } else {
+                    alert(`Error updating ${response.success}.`);
+                    console.log(response.errors);
                 }
-            });
+            })
+
+
         });
     });
-    </script>
+
+    let statusModalBody = `<form class="form" method="post" data-url='{% url "update_status" %}'>
+            {% csrf_token %}
+            {{ status_form.as_p }}
+            <button class="sub-form" type="submit" data-dismiss="modal">Update Status</button>
+        </form>`
+
+
+    $('.status-update-btn').on('click', function () {
+        showModal('<h3>Update Your Status</h3>', statusModalBody)
+
+    });
+    let profileImgModal = `{% if user_profile.profile_picture %}
+                <img class="profile_pic" src="{{ user_profile.profile_picture.url }}" alt="profile image">
+                {% else %}
+                <img class="profile_pic" src="{% static 'noimage.png' %}" alt="default image">
+                {% endif %}
+                <form class="form" method="post" enctype="multipart/form-data"  data-url='{% url "update_profile_image" %}'>
+                    {% csrf_token %}
+                    {{ profile_image_form.as_p }}
+                    <button class="sub-form" type="submit" data-dismiss="modal">Update Profile Image</button>
+                </form>
+                `;
+
+
+    $('.profile-img-modal').on('click', function () {
+        showModal('<h3>Update Profile Picture</h3>', profileImgModal)
+    })
+
+
+
+    /**
+ * Display a modal with the specified header and body content.
+ *
+ * @param {string} header - The header content of the modal.
+ * @param {string} body - The body content of the modal.
+ */
+    function showModal(header, body,) {
+        // Check if the modal already exists
+        let modal = $('#modal');
+        if (modal.length === 0) {
+            // If not, create the modal element
+            modal = $(`
+            <div class="modal fade modal" id="modal" tabindex="-1" role="dialog" aria-labelledby="model" aria-hidden="true">
+                <div class="modal-dialog modal-div " role="document">
+                    <div class="modal-content mt-5 ">
+                        <div class="modal-header d-block text-center"></div>
+                        <div class="modal-body scrollable-div text-center"></div>
+                    </div>
+                </div>
+            </div>
+        `);
+
+            // Append the modal to the body
+            $('body').append(modal);
+        }
+
+        // Find the modal-header and modal-body elements within the modal
+        modal.find('.modal-header').html(header);
+        modal.find('.modal-body').html(body);
+
+        modal.modal('show');
+    }
+</script>
 {% endblock %}
-
-

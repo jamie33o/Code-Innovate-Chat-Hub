@@ -17,3 +17,10 @@ def save_profile(sender, instance, **kwargs):
         profile.save()
     except UserProfile.DoesNotExist:
         UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=UserProfile)
+def update_user_username(sender, instance, **kwargs):
+    if instance.username and instance.user.username != instance.username:
+        instance.user.username = instance.username
+        instance.user.save()

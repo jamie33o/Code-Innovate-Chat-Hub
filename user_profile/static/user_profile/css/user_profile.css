@@ -4,22 +4,20 @@
 .user-profile {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: row;
 }
+
+/*/////////////////////////// profile container ////////////////////////////////*/
 
 .profile-container {
     padding: 50px 30px;
     width: 100%;
     height: calc(100vh - 95px);
     border-right: 1px solid var(--ci-orange);
+    flex: 1 10 100%;
+
 }
-
-.profile-container-inner {
-    padding: 20px 10px 130px 10px;
-}
-
-.profile-container-header {
-
-} 
 
 .links-container {
     width: 100%;
@@ -39,18 +37,16 @@
     padding: 5px 0 5px 5px;
 }
 
+/*/////////////////////////// update profile container ////////////////////////////////*/
+
 .update_profile_container {
     height: calc(100vh - 95px); /* Use viewport height */
     margin-top: 0; /* Remove the margin-top */
     border-right: 1px solid var(--ci-orange);
-    padding: 100px 20px;
-    width: 100%;
-}
-
-/* input fields container */
-.update_profile_container_inner {
-    margin-top: 200px;
-    height: 150%;
+    padding: 30px 5%;
+    max-width: 100%;
+    min-width: 40%;
+    flex: 1 10 100%;
 }
 
 .form {
@@ -80,10 +76,26 @@
     border: 2px solid rgba(128, 128, 128, 0.234);;
 } 
 
+/*/////////////////////////// saved posts container ////////////////////////////////*/
+
 /* saved posts container */
 .saved-posts-container {
+    position: relative;
     height: calc(100vh - 95px); /* Use viewport height */
-    padding: 30px 5px;
+    width: 100%;
+    flex: 1 10 100%;
+}
+
+.modal {
+    height: 90%;
+}
+
+.saved-posts-header {
+    width: 100%;
+    height: 50px;
+    position: sticky;
+    top:0;
+    z-index: 5;
 }
 
 .saved-posts-container .card {

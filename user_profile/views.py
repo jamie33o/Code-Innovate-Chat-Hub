@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from .models import UserProfile
 from group_chat.models import SavedPost
-from .forms import ProfileImageForm, EditProfileForm, StatusForm
 from django.http import JsonResponse
+from .forms import ProfileImageForm, EditProfileForm, StatusForm
+from .models import UserProfile
 
 
 @method_decorator(login_required, name='dispatch')
@@ -16,16 +16,16 @@ class UserProfileView(View):
     def get(self, request):
         user_profile = get_object_or_404(UserProfile, user=request.user)
         saved_posts = SavedPost.objects.filter(user=request.user)
-         # Retrieve the actual posts
+        # Retrieve the actual posts
         posts = [saved_post.post for saved_post in saved_posts]
 
-        Edit_profile_form = EditProfileForm(instance=user_profile)
+        edit_profile_form = EditProfileForm(instance=user_profile)
         profile_image_form = ProfileImageForm(instance=user_profile)
         status_form = StatusForm(instance=user_profile)
 
         context = {
             'user_profile': user_profile,
-            'Edit_profile_form': Edit_profile_form,
+            'Edit_profile_form': edit_profile_form,
             'profile_image_form': profile_image_form,
             'status_form': status_form,
             'posts': posts,
@@ -34,13 +34,14 @@ class UserProfileView(View):
     
 
     def post(self, request):
-        Edit_profile_form = EditProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
+        edit_profile_form = EditProfileForm(request.POST, instance=request.user.userprofile)
+        if edit_profile_form.is_valid():
 
-        if Edit_profile_form.is_valid():
-            Edit_profile_form.save()
+            edit_profile_form.save()
+
             return redirect('user_profile')  # Redirect to the user profile page
         
-        return render(request, self.template_name, {'Edit_profile_form': Edit_profile_form})
+        return render(request, self.template_name, {'Edit_profile_form': edit_profile_form})
     
 @login_required
 def update_profile_image(request):
@@ -60,7 +61,7 @@ def update_status(request):
         form = StatusForm(request.POST, instance=request.user.userprofile)
         if form.is_valid():
             status = form.save()
-            return JsonResponse({'success': 'status', 'message': status.status })
+            return JsonResponse({'status': 'success', 'message': status.status })
         return JsonResponse({'success': False, 'message': 'Error updating status', 'errors': form.errors})
     form = StatusForm(instance=request.user.userprofile)
     return JsonResponse({'success': False, 'message': 'Invalid request'})

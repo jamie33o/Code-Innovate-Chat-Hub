@@ -1,8 +1,10 @@
 # forms.py
-
+from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth import get_user_model
 from django import forms
 from .models import UserProfile
-from django.contrib.auth.forms import UserChangeForm
+
+
 
 
 class StatusForm(forms.ModelForm):
@@ -28,16 +30,10 @@ class ProfileImageForm(forms.ModelForm):
         fields = ['profile_picture']
       
             
-
-
-class EditProfileForm(UserChangeForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
-    
-
+class EditProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['bio', 'linkedin', 'website', 'github', 'email', 'phone', 'mobile', 'location', 'password', 'password2']
+        fields = ['username','phone', 'mobile', 'linkedin', 'website', 'github',  'location', 'bio']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,3 +42,5 @@ class EditProfileForm(UserChangeForm):
         for field_name, field in self.fields.items():
             field.label_suffix = ''
             field.widget.attrs['placeholder'] = f'Enter your {field_name}'
+
+      
