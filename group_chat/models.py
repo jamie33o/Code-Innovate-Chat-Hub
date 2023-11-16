@@ -18,7 +18,8 @@ class ChannelModel(models.Model):
     """
     created_by = models.ForeignKey(get_user_model(),
                                    on_delete=models.SET_NULL,
-                                   null=True, related_name='%(class)s_created')
+                                   null=True,
+                                   related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     is_private = models.BooleanField(default=True)
     name = models.CharField(max_length=254,default='')
@@ -98,8 +99,8 @@ class PostsModel(models.Model):
 
     """
     created_by = models.ForeignKey(get_user_model(),
-                                   on_delete=models.SET_NULL,
-                                   null=True, related_name='%(class)s_created')
+                                   on_delete=models.CASCADE,
+                                   related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
     images = models.TextField(blank=True, default="")
@@ -108,8 +109,7 @@ class PostsModel(models.Model):
     post = models.TextField()
     post_channel = models.ForeignKey(
         ChannelModel,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.CASCADE,
         related_name='posts_created'
     )
 
@@ -148,8 +148,8 @@ class CommentsModel(models.Model):
 
     """
     created_by = models.ForeignKey(get_user_model(),
-                                   on_delete=models.SET_NULL,
-                                   null=True, related_name='%(class)s_created')
+                                   on_delete=models.CASCADE,
+                                   related_name='%(class)s_created')
     created_date = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=254,default='')
     emojis = models.ManyToManyField(EmojiModel)
@@ -160,8 +160,7 @@ class CommentsModel(models.Model):
 
     comment_post = models.ForeignKey(
         PostsModel,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.CASCADE,
         related_name='comments_created'
     )
 
