@@ -9,10 +9,10 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <!-- Profile picture -->
                     <div class="mr-2">
-                        {% if single_post.created_by.user_profile and single_post.created_by.user_profile.profile_picture %}
-                            <img class="rounded-circle" width="45" src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                        {% if single_post.created_by.userprofile and single_post.created_by.userprofile.profile_picture %}
+                            <img class="rounded-circle"  src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
                         {% else %}
-                            <img class="rounded-circle" width="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                            <img class="rounded-circle"  src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                         {% endif %}
                     </div>
                     <!-- Username and date -->
@@ -116,9 +116,9 @@
                                 <li class="list-inline-item">
                                     {% if user.userprofile %}
                                         {% if user.userprofile.profile_picture %}
-                                            <img class="rounded-circle" width="20" src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
+                                            <img class="rounded-circle" src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
                                         {% else %}
-                                            <img class="rounded-circle" width="20" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                                            <img class="rounded-circle" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                                         {% endif %}
                                     {% endif %}
                                 </li>

@@ -1,10 +1,8 @@
 {% load static %}
 {% load emoji_tags %}
-<div class="comments-header border-bottom custom-box d-flex flex-dir-row">
-    <button class="btn comments-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
-    <div class="ml-3 my-0">
-        <h4>Comments</h4>
-        <p>Comment's on {{ post.created_by.username }}'s post</p>
+<div class="comments-header border-bottom custom-box p-3 d-flex flex-dir-row">
+    <button class="btn comments-close-btn position-absolute"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
+        <h4 class="w-100 text-center">Comment's on {{ post.created_by.username }}'s post</h4>
     </div>
 </div>    
 
@@ -15,10 +13,10 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="mr-2">
-                        {% if post.created_by.user_profile and post.created_by.user_profile.profile_picture %}
-                            <img  class="rounded-circle" width="45"  src="{{ post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                        {% if post.created_by.userprofile and post.created_by.userprofile.profile_picture %}
+                            <img  class="rounded-circle" src="{{ post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
                         {% else %}
-                            <img  class="rounded-circle" width="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                            <img  class="rounded-circle" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                         {% endif %}                    
                     </div>
                     <div class="ml-2">
@@ -115,10 +113,10 @@
                         <div class="d-flex flex-column my-2">
                             <div class="d-flex flex-dir-row justify-content-between">
                                 <div class="d-flex flex-dir-row">
-                                    {% if comment.created_by.user_profile and post.created_by.user_profile.profile_picture %}
-                                        <img  class="rounded-circle shadow-1-strong mr-2" width="45" height="45"  src="{{ comment.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                                    {% if comment.created_by.userprofile and post.created_by.userprofile.profile_picture %}
+                                        <img  class="rounded-circle shadow-1-strong mr-2 comments-profile-img"  src="{{ comment.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
                                     {% else %}
-                                        <img  class="rounded-circle shadow-1-strong mr-2" width="45" height="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                                        <img  class="rounded-circle shadow-1-strong mr-2 comments-profile-img" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                                     {% endif %}  
                                     <div class="flex-column ml-2">
                                         <h5 class="mb-1">{{ comment.created_by }}</h5>
@@ -156,7 +154,6 @@
                                 <a data-emoji-url="{% url 'emoji' model='CommentsModel' instance_id=comment.id %}"  
                                 href="" class="card-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" 
                                 style="color: #f58a32;"></i></a>
-
                                 <ul class="list-inline ml-2 p-0 emoji-list{{ comment.id }}">
 
                                 <!-- Loop through your emojis and generate list items -->

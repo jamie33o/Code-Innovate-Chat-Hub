@@ -2,13 +2,10 @@
 {% load emoji_tags %}
 
 <!-- Mobile header -->
-<div class="posts-mobile-header border-bottom custom-box d-flex d-sm-none d-lg-none flex-dir-row">
+<div class="posts-mobile-header border-bottom p-3 custom-box d-flex d-sm-none d-lg-none flex-dir-row">
     <!-- Close button -->
-    <button class="btn posts-close-btn"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
-    <div class="ml-3 my-0">
-        <h4>Posts</h4>
-        <p>Posts in {{ channel.name }}</p>
-    </div>
+    <button class="btn posts-close-btn position-absolute"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
+    <h4 class="text-center w-100">Post's #{{ channel.name }}</h4>
 </div>
 
 <!-- Posts list populated by Django -->
@@ -21,10 +18,10 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <!-- Profile picture -->
                     <div class="mr-2">
-                        {% if single_post.created_by.user_profile and single_post.created_by.user_profile.profile_picture %}
-                            <img class="rounded-circle" width="45" src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                        {% if single_post.created_by.userprofile and single_post.created_by.userprofile.profile_picture %}
+                            <img class="rounded-circle profile-pic" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
                         {% else %}
-                            <img class="rounded-circle" width="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                            <img class="rounded-circle profile-pic" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                         {% endif %}
                     </div>
                     <!-- Username and date -->
@@ -128,9 +125,9 @@
                                 <li class="list-inline-item">
                                     {% if user.userprofile %}
                                         {% if user.userprofile.profile_picture %}
-                                            <img class="rounded-circle" width="20" src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
+                                            <img class="rounded-circle"  src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
                                         {% else %}
-                                            <img class="rounded-circle" width="20" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                                            <img class="rounded-circle"  src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                                         {% endif %}
                                     {% endif %}
                                 </li>
