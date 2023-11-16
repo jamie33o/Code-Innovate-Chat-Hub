@@ -82,7 +82,7 @@ $('main').on('click', '.comments-close-btn', function() {
     // Click event for the x button to close posts 
 $('main').on('click', '.posts-close-btn', function() {
     $('#channel-posts').removeClass('d-flex');
-    $('#channel-links-container').removeClass('hide');
+    $('#channel-links-container').removeClass('d-none');
     $('#nav-bar').removeClass('d-none')
     $('header').removeClass('d-none')
 });

@@ -82,7 +82,6 @@
                     autoScroll()
                 })
                 $('#channel-posts').addClass('d-flex');
-
             }
         {% elif channel_id %}
                 let savedPostChannel = `{% url 'channel_posts' channel_id post_id %}`
@@ -90,7 +89,14 @@
                 ajaxRequest(savedPostChannel, null, 'GET', '#channel-posts', null, function(response){
                     $('#channel-posts').html(response)
                     autoScroll(null, {{ post_id }})
+
                 })
+                if(window.innerWidth < 575.5){
+                    $('#nav-bar').addClass('d-none')
+                    $('header').addClass('d-none')
+                    $('#channel-links-container').addClass('d-none');
+                }
+               
                 $('#channel-posts').addClass('d-flex');
         {% endif %}
         //url for emojis spritesheet

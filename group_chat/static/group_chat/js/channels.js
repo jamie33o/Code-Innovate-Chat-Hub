@@ -25,8 +25,8 @@ $('main').on('click', '.channel-link', function(event) {
    
 
     if(window.innerWidth < 575){
-        $('#channel-posts').toggleClass('d-flex');
-        $('#channel-links-container').toggleClass('hide');
+        $('#channel-posts').addClass('d-flex');
+        $('#channel-links-container').addClass('d-none');
         $('#nav-bar').addClass('d-none')
         $('header').addClass('d-none')
 
