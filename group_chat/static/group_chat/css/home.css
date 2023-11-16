@@ -87,15 +87,15 @@
     background-color: var(--peach);
 }
 
-.comments-close-btn, .comments-close-btn {
+.comments-close-btn, .posts-close-btn {
     width: fit-content;
     height: fit-content;
-    padding: 10px;
-    margin: auto 15px;
-
+    background-color: var(--background);
+    border-radius: 10px;
+    border: 1px solid var(--ci-orange);
 }
 
-.comments-close-btn:hover, .comments-close-btn:hover {
+.comments-close-btn:hover, .posts-close-btn:hover {
     background-color: var(--background);
     box-shadow: var(--sm-box-shadow);
 
@@ -108,6 +108,18 @@
 
 .card-header {
     background-color: var(--peach)
+}
+
+.card-header img, .comments-profile-img {
+    width: 45px;
+    height: 45px;
+    background-size: contain;
+}
+
+.card-footer img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
 }
 
 /* three dots icon on posts/comments */
@@ -126,7 +138,7 @@
 /* profile pic on the card header */
 .profile-pics {
     display: flex;
-    gap: -10px; 
+    gap: -10px;
 }
 
 /* time on posts */
