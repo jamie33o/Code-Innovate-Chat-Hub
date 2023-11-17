@@ -144,6 +144,7 @@ function ajaxRequest(url, csrfToken, type, divClass, data, callBackFunction) {
         processData = false;
         contentType = false;
     }
+    
     $.ajax({
         type: type,
         url: url,
@@ -195,3 +196,35 @@ function startWebSocket(type, id){
 }
 
 
+    /**
+ * Display a modal with the specified header and body content.
+ *
+ * @param {string} header - The header content of the modal.
+ * @param {string} body - The body content of the modal.
+ */
+    function showModal(header, body,) {
+        // Check if the modal already exists
+        let modal = $('#modal');
+        if (modal.length === 0) {
+            // If not, create the modal element
+            modal = $(`
+            <div class="modal fade modal" id="modal" tabindex="-1" role="dialog" aria-labelledby="model" aria-hidden="true">
+                <div class="modal-dialog modal-div " role="document">
+                    <div class="modal-content mt-5 ">
+                        <div class="modal-header d-block text-center"></div>
+                        <div class="modal-body scrollable-div text-center"></div>
+                    </div>
+                </div>
+            </div>
+        `);
+
+            // Append the modal to the body
+            $('body').append(modal);
+        }
+
+        // Find the modal-header and modal-body elements within the modal
+        modal.find('.modal-header').html(header);
+        modal.find('.modal-body').html(body);
+
+        modal.modal('show');
+    }
