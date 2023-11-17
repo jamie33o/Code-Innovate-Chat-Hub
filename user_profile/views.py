@@ -1,22 +1,32 @@
+"""
+Views for handling user profile.
+"""
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from group_chat.models import SavedPost
 from django.http import JsonResponse
-from .forms import ProfileImageForm, EditProfileForm, StatusForm
+from group_chat.models import SavedPost
 from .models import UserProfile
+from .forms import ProfileImageForm, EditProfileForm, StatusForm
 
-
+# pylint: disable=no-member
 @method_decorator(login_required, name='dispatch')
 class UserProfileView(View):
+    """
+    View for displaying and updating user profiles.
+    """
     template_name = 'user_profile/user_profile.html'
-  
 
     def get(self, request):
+        """
+        Handle GET requests to display the user profile.
+
+        Returns:
+            HttpResponse: The rendered user profile page.
+        """
         user_profile = get_object_or_404(UserProfile, user=request.user)
         saved_posts = SavedPost.objects.filter(user=request.user)
-        # Retrieve the actual posts
         posts = [saved_post.post for saved_post in saved_posts]
 
         edit_profile_form = EditProfileForm(instance=user_profile)
@@ -31,41 +41,58 @@ class UserProfileView(View):
             'posts': posts,
         }
         return render(request, self.template_name, context)
-    
 
     def post(self, request):
+        """
+        Handle POST requests to update the user profile.
+
+        Returns:
+            HttpResponse: The rendered user profile page or a redirect.
+        """
         edit_profile_form = EditProfileForm(request.POST, instance=request.user.userprofile)
         if edit_profile_form.is_valid():
-
             edit_profile_form.save()
-
             return redirect('user_profile')  # Redirect to the user profile page
-        
+
         return render(request, self.template_name, {'Edit_profile_form': edit_profile_form})
-    
+
 @login_required
 def update_profile_image(request):
+    """
+    Update the profile picture of the currently logged-in user.
+
+    Returns:
+        JsonResponse: A JSON response indicating success or failure.
+    """
     if request.method == 'POST':
         form = ProfileImageForm(request.POST, request.FILES, instance=request.user.userprofile)
         if form.is_valid():
             image = form.save()
             return JsonResponse({'success': 'image', 'message': image.profile_picture.url})
-        return JsonResponse({'success': False, 'message': 'Error updating profile picture', 'errors': form.errors})
+        return JsonResponse({'success': False, 'message': 'Error updating profile picture', 
+                             'errors': form.errors})
     form = ProfileImageForm(instance=request.user.userprofile)
     return JsonResponse({'success': False, 'message': 'Invalid request'})
 
 
 @login_required
 def update_status(request):
+    """
+    View for updating the user's status.
+
+    Args:
+    - request: HTTP request object.
+
+    Returns:
+    - JsonResponse: JSON response indicating success or failure.
+    """
     if request.method == 'POST':
         form = StatusForm(request.POST, instance=request.user.userprofile)
         if form.is_valid():
             status = form.save()
             return JsonResponse({'status': 'success', 'message': status.status })
-        return JsonResponse({'success': False, 'message': 'Error updating status', 'errors': form.errors})
+        return JsonResponse({'success': False, 
+                             'message': 'Error updating status', 
+                             'errors': form.errors})
     form = StatusForm(instance=request.user.userprofile)
     return JsonResponse({'success': False, 'message': 'Invalid request'})
-
-
-
-

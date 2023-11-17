@@ -1,5 +1,7 @@
 """
-    AppConfig for the 'group_chat' Django app.
+    apps.py is for performing any necessary setup when the app is loaded.
+    This might include registering signals,
+    loading initial data, or any other actions required during the app's initialization.
 """
 from django.apps import AppConfig
 

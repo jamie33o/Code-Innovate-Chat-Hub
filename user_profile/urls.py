@@ -1,4 +1,4 @@
-# urls.py
+"""URL patterns for user profile-related views."""
 
 from django.urls import path
 from .views import UserProfileView, update_profile_image, update_status
