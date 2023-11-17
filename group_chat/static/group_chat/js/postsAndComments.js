@@ -368,7 +368,6 @@ function emojiPickerCallback(emoji) {
     let data = {
         emoji_colon_name: emojiColonName,
     }
-
     // Send a post request to Django with the emoji information
     ajaxRequest(emojiUrl, csrfToken, 'POST', 'main', data, function(response){
         updateEmoji(emojiColonName, emoji, null, response, emojiUrl)
@@ -441,6 +440,7 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
             }
             break;
         case "incremented":
+
             currentNumber = parseInt(spanElement.html(), 10);
             if (!isNaN(currentNumber)) {
                 // add 1 to the current number
@@ -456,4 +456,6 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
                 $(emojiUlClass).find(`.${emojiClass}`).parent().remove()
             
     }
+    
+
 }

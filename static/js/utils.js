@@ -137,12 +137,19 @@ function websocketInit(socket) {
  * @param {function} callBackFunction - Callback function to handle the response.
  */
 function ajaxRequest(url, csrfToken, type, divClass, data, callBackFunction) {
+    let processData = undefined;
+    let contentType = undefined;
+
+    if (data instanceof FormData) {
+        processData = false;
+        contentType = false;
+    }
     $.ajax({
         type: type,
         url: url,
         data: data,
-        processData: false,  
-        contentType: false,  
+        processData: processData,  
+        contentType: contentType,  
         headers: {'X-CSRFToken': csrfToken},  
         success: (response) => {
             if(callBackFunction){
