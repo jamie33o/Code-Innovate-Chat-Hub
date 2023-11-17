@@ -3,6 +3,11 @@
 {% load emoji_tags %}
 
 
+{% block extra_js %}
+<script src="{% static 'user_profile/js/user-profile.js' %}"></script>
+
+{% endblock %}
+
 
 {% block content %}
 <div class="user-profile ">
@@ -93,99 +98,12 @@
     </div>
 </div>
 
+{% endblock %}
 
-<script>
-    $(document).ready(function () {
-
-        $('body').on('click', '.edit-profile-btn', function () {
-            $('.update_profile_container').removeClass('d-none')
-            $('.profile-container').addClass('d-none')
-            $('#nav-bar').addClass('d-none')
-            $('header').addClass('d-none')
-        });
-
-        $('body').on('click', '.close-edit-profile-btn', function () {
-            $('.update_profile_container').addClass('d-none')
-            $('.profile-container').removeClass('d-none')
-            $('#nav-bar').removeClass('d-none')
-            $('header').removeClass('d-none')
-        });
-
-        $('body').on('click', '.view-save-posts-btn', function () {
-            $('.saved-posts-container').removeClass('d-none')
-            if(window.innerWidth < 575.98){
-                $('.profile-container').addClass('d-none')
-                $('#nav-bar').addClass('d-none')
-                $('header').addClass('d-none')
-            }
-        });
-
-        $('body').on('click', '.saved-posts-close-btn', function () {
-            $('.saved-posts-container').addClass('d-none')
-            if(window.innerWidth < 575.98){
-                $('.profile-container').removeClass('d-none')
-                $('#nav-bar').removeClass('d-none')
-                $('header').removeClass('d-none')
-            }
-        });
-
-
-        $('body').on('change', '#id_profile_picture', function () {
-            console.log("Event triggered!");
-            var selectedFile = event.target.files[0];
-
-            if (selectedFile) {
-                // Get a temporary URL for the selected file
-                var imageURL = URL.createObjectURL(selectedFile);
-                $('.modal-body .profile_pic').attr('src', imageURL)
-
-                // Log or use the imageURL as needed
-                console.log("Image URL:", imageURL);
-            }
-        })
-        $('body').on('click', '.sub-form', function () {
-            event.preventDefault();
-
-            let url = $(this).parent().data('url')
-            var formData = new FormData($(this).closest('form')[0]);
-
-            var csrfToken = $(this).find('input[name="csrf_token"]').val();
-
-
-
-            ajaxRequest(url, csrfToken, 'Post', '.profile-container', formData, function (response) {
-                if (response.status === 'success') {
-
-                    $('.status').html(`Current Status: ${response.message}`)
-                    displayMessage(response, '.profile-container');
-                    //$('#modal').hide()
-
-                } else if (response.success === 'image') {
-                    $('.profile_pic').attr('src', response.message);
-                    displayMessage({ 'status': 'success', 'message': 'Profile picture updated' }, '.profile-container');
-
-                } else {
-                    alert(`Error updating ${response.success}.`);
-                    console.log(response.errors);
-                }
-            })
-
-
-        });
-    });
-
-    let statusModalBody = `<form class="form" method="post" data-url='{% url "update_status" %}'>
-            {% csrf_token %}
-            {{ status_form.as_p }}
-            <button class="sub-form" type="submit" data-dismiss="modal">Update Status</button>
-        </form>`
-
-
-    $('.status-update-btn').on('click', function () {
-        showModal('<h3>Update Your Status</h3>', statusModalBody)
-
-    });
-    let profileImgModal = `{% if user_profile.profile_picture %}
+{% block postloadjs %}
+    <script>
+        let profileImgModal = 
+            `{% if user_profile.profile_picture %}
                 <img class="profile_pic" src="{{ user_profile.profile_picture.url }}" alt="profile image">
                 {% else %}
                 <img class="profile_pic" src="{% static 'noimage.png' %}" alt="default image">
@@ -195,46 +113,15 @@
                     {{ profile_image_form.as_p }}
                     <button class="sub-form" type="submit" data-dismiss="modal">Update Profile Image</button>
                 </form>
-                `;
+            `;
+    
+        let statusModalBody = 
+            `<form class="form" method="post" data-url='{% url "update_status" %}'>
+                {% csrf_token %}
+                {{ status_form.as_p }}
+                <button class="sub-form" type="submit" data-dismiss="modal">Update Status</button>
+             </form>
+            `;
+    </script>
 
-
-    $('.profile-img-modal').on('click', function () {
-        showModal('<h3>Update Profile Picture</h3>', profileImgModal)
-    })
-
-
-
-    /**
- * Display a modal with the specified header and body content.
- *
- * @param {string} header - The header content of the modal.
- * @param {string} body - The body content of the modal.
- */
-    function showModal(header, body,) {
-        // Check if the modal already exists
-        let modal = $('#modal');
-        if (modal.length === 0) {
-            // If not, create the modal element
-            modal = $(`
-            <div class="modal fade modal" id="modal" tabindex="-1" role="dialog" aria-labelledby="model" aria-hidden="true">
-                <div class="modal-dialog modal-div " role="document">
-                    <div class="modal-content mt-5 ">
-                        <div class="modal-header d-block text-center"></div>
-                        <div class="modal-body scrollable-div text-center"></div>
-                    </div>
-                </div>
-            </div>
-        `);
-
-            // Append the modal to the body
-            $('body').append(modal);
-        }
-
-        // Find the modal-header and modal-body elements within the modal
-        modal.find('.modal-header').html(header);
-        modal.find('.modal-body').html(body);
-
-        modal.modal('show');
-    }
-</script>
 {% endblock %}
