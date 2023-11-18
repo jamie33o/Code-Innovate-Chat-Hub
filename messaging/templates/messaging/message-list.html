@@ -1,0 +1,107 @@
+{% load static %}
+{% load emoji_tags %}
+
+<!-- Mobile header -->
+<div class="messages-mobile-header border-bottom p-3 custom-box d-flex d-sm-none d-lg-none flex-dir-row">
+    <!-- Close button -->
+    <button class="btn inbox-close-btn position-absolute"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
+    <h4 class="text-center w-100">
+        {%if sender is user %}
+        <img class="rounded-circle profile-pic" src="{{ receiver.userprofile.profile_picture.url }}" alt="Profile Picture">
+        {{ receiver.username }} 
+        {% else %} 
+        <img class="rounded-circle profile-pic" src="{{ sender.userprofile.profile_picture.url }}" alt="Profile Picture">
+        {{ sender.username }} 
+        {% endif %} </h4>
+</div>
+
+
+<!-- Posts list populated by Django -->
+<div id="message-list" class="scrollable-div p-3">
+
+    {% for message in messages %}
+        {% if message.sender == request.user %}          
+            <div class="message info">
+            {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
+                <img class="img-circle medium-image" src="{{ message.sender.userprofile.profile_picture.url }}" alt="Profile Picture">
+            {% else %}
+                <img class="img-circle medium-image" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+            {% endif %}
+            <div class="message-body">
+                    <!-- Dropdown menu
+                <div class="dropdown">
+                    <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right p-0">
+                        <div class="links-container m-0 p-0">
+                            <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
+                            <div class="links-body pb-2">
+                                {% if single_post.created_by == user %}
+                                    <button class="dropdown-item btn-ci edit-btn">Edit</button>
+                                    <button class="dropdown-item btn-ci delete-btn" data-delete-url="{% url 'delete_object' model='Messages' pk=message.id %}">Delete</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="message-info">
+                    <h4> {{ message.sender.username }} </h4>
+                    <h5> <i class="fa fa-clock-o"></i> {{ message.timestamp|date:"H:i, b j"|upper }}</h5>
+                </div>
+                <hr>
+                <div class="message-text">
+                    {{ message.content|safe|emoji_replace }}
+                </div>
+            </div>
+            <br>
+        </div>
+        {% else %}
+        <div class="message my-message">
+            {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
+                <img class="img-circle medium-image" src="{{ message.sender.userprofile.profile_picture.url }}" alt="Profile Picture">
+            {% else %}
+                <img class="img-circle medium-image" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+            {% endif %}
+            <div class="message-body">
+                <div class="message-body-inner">
+                    <div class="message-info">
+                        <h4>{{ message.sender.username }} </h4>
+                        <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>
+                    </div>
+                    <hr>
+                    <div class="message-text">
+                        {{ message.content|safe|emoji_replace }}
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+        {% endif %}
+        <!-- Post /////-->
+    {% endfor %}
+
+</div>
+
+
+</div>
+
+<!-- JavaScript code -->
+<script>
+    $(document).ready(function() {
+        // Check if there are older posts
+
+        
+
+        // // Scroll to the bottom of the posts list
+        // scrollTo()
+        // $('#posts-list').scroll(loadOldPosts)
+
+        csrfToken = "{{ csrf_token }}"
+
+        EmojiPicker.emojiSource = "{% static 'group_chat/tam-emoji/img' %}";
+        // Initialize summernote enhancer class
+        summernoteEnhancerPosts.init('#messages-list-container', ` `, '{{ csrf_token }}')
+       
+    });
+</script>
