@@ -1,0 +1,53 @@
+{% load static %}
+{% load emoji_tags %}
+
+<div class="user-profile ">
+    <div class="profile-container scrollable-div">
+        <div class="w-100 text-center mb-3">
+        {% if user_profile.profile_picture %}
+        <img class="profile_pic" src="{{ user_profile.profile_picture.url }}" alt="profile image">
+        {% else %}
+        <img class="profile_pic" src="{% static 'noimage.png' %}" alt="default image">
+        {% endif %}
+    </div>
+    <h2>{{ user_profile.user.username }}</h2>
+    <h5 class="status ">Current Status: {{ user_profile.status }}</h5>
+
+    <hr>
+    <div class="links-container">
+        <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
+        <div class="links-body pb-2">
+            <a href="{% url 'new_message' user_profile.user.id %}" class="btn btn-info profile-img-modal" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
+                Message</a>
+        </div>
+    </div>
+    <!-- </div> -->
+
+    <div class="links-container">
+        <div class="links-heading">Bio</div>
+        <div class="links-body"><p>{{ user_profile.bio }}</p>
+        </div>
+    </div>
+    {% if user_profile.website %}
+        <div class="links-container">
+            <div class="links-heading">Website <i class="fa fa-link fa-1x"></i></div>
+            <div class="links-body"><a href="https://{{ user_profile.website }}" target="_blank">{{ user_profile.website }}</a>
+            </div>
+        </div>
+    {% endif %}
+    {% if user_profile.website %}
+        <div class="links-container">
+            <div class="links-heading">Linkdin <i class="fa fa-link fa-1x"></i></div>
+            <div class="links-body"><a href="https://{{ user_profile.linkedin }}" target="_blank">
+                {{ user_profile.linkedin }}</a></div>
+        </div>
+    {% endif %}
+
+    {% if user_profile.website %}
+        <div class="links-container">
+            <div class="links-heading">Github <i class="fa fa-link fa-1x"></i></div>
+            <div class="links-body"><a href="https://{{ user_profile.github }}" target="_blank">
+                {{ user_profile.github }}</a></div>
+        </div>
+    {% endif %}
+</div>
