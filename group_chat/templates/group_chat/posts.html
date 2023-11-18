@@ -19,7 +19,7 @@
                     <!-- Profile picture -->
                     <div class="mr-2">
                         {% if single_post.created_by.userprofile and single_post.created_by.userprofile.profile_picture %}
-                            <img class="rounded-circle profile-pic" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
+                            <img class="rounded-circle profile-pic" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
                         {% else %}
                             <img class="rounded-circle profile-pic" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                         {% endif %}

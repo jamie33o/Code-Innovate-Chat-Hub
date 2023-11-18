@@ -7,6 +7,8 @@ from .models import Message, UnreadMessage
 from django.utils.decorators import method_decorator
 from django.db import models  
 from django.db.models import Q
+from datetime import datetime
+
 
 
 
@@ -14,23 +16,42 @@ from django.db.models import Q
 class InboxView(View):
     template_name = 'messaging/inbox.html'
 
-    def get(self, request):
+    def get(self, request, receiver_id=None):
         # Retrieve received messages and unread messages for the user
-
+        message_exists = None
+            
+        
         messages = Message.objects.filter(
                 Q(sender=request.user) | Q(receiver=request.user)
         ).order_by('sender', 'receiver', '-timestamp').distinct('sender', 'receiver')
 
         unread_messages = UnreadMessage.objects.filter(user=request.user)
 
+        if receiver_id:
+            receiver= get_object_or_404(User, id=receiver_id)
+            message_exists = any(receiver_id is message.sender.id or receiver_id is message.receiver.id for message in messages)
+            if not message_exists:
+                # Create a new Message object
+                new_message = Message(
+                    sender=request.user,  # Set the sender
+                    receiver= receiver,
+                    timestamp=datetime.now(),
+                    content="New message!",
+                )
+        
+
+                # Append the new_message object to the list
+                messages = list(messages)
+                messages.append(new_message)
 
         context = {
             'messages': messages,
             'unread_messages': unread_messages,
         }
-
-        # Mark unread messages as read
-        unread_messages.delete()
+        if not message_exists and receiver_id:
+            context['new_message'] = True
+        elif receiver_id:
+            context['receiver'] = receiver
 
         return render(request, self.template_name, context)
     
@@ -55,7 +76,8 @@ class MessageListView(View):
             'receiver': receiver,
             'messages': messages,
         }
-
+        # Mark unread messages as read
+        # unread_messages.delete()
         return render(request, self.template_name, context)
 
 
@@ -72,3 +94,5 @@ class SendMessageView(View):
             message.save()
 
         return redirect('inbox')
+
+

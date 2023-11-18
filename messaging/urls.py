@@ -4,7 +4,7 @@ from .views import InboxView, SendMessageView, MessageListView
 
 urlpatterns = [
     path('', InboxView.as_view(), name='inbox'),
+    path('new_message/<int:receiver_id>/', InboxView.as_view(), name='new_message'),
     path('send_message/<int:receiver_id>/', SendMessageView.as_view(), name='send_message'),
     path('message_list/<int:sender_id>/<int:receiver_id>/', MessageListView.as_view(), name='message_list'),
-
 ]

@@ -28,7 +28,7 @@
                     <div class="contacts-outter">
                         <ul class="list-unstyled contacts">
                             {% for message in messages %}
-                                <li class="message-link" data-toggle="tab" data-target="#inbox-message-1" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}" class="active">
+                                <li class="message-link active" data-userid="{% if messsage.sender == user %}{{ message.receiver.id}}{% else %}{{ message.sender.id }}{% endif %}" data-toggle="tab" data-target="#inbox-message-1" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}" >
                                     <div class="img-count">
                                         <div class="message-count"> 1</div>
                                         <img alt="" class="img-circle medium-image" src="{{ message.sender.userprofile.profile_picture.url }}">
@@ -149,6 +149,7 @@
 
 
     <script>     
+
         $('.message-link').on('click', function(e){
             e.preventDefault()
             let url = $(this).data('url')
@@ -158,7 +159,11 @@
                 //autoScroll()
             })
         })
-        
+        {% if new_message %}
+            $('.message-link:last').click()
+        {% elif receiver %}
+            $('.message-link[data-userid="{{ receiver.id }}"]').click();
+        {% endif %}
     //$(document).ready(function() {
         // check if the id for the channel the user last visited exists
         // if it does load posts

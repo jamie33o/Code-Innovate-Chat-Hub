@@ -148,6 +148,19 @@ $(document).on('click', '.delete-btn', function() {
     showModal(header, body)
     });
 
+$('main').on('click', '.profile-pic', function(event){
+    
+    let header = `
+        User Profile
+    `;
+    let url = $(this).data('message-url')
+    ajaxRequest(url, csrfToken, 'GET', '#channel-posts', null, function(response){
+        showModal(header, response)
+        showModal()
+    });
+    
+});
+
 // event listener for yes-btn on the delete post/comment card modal
 $(document).on('click', '#yes-btn', function(event) {
     event.preventDefault()   
