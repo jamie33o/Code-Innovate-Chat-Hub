@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from .models import Message, UnreadMessage
 from django.utils.decorators import method_decorator
 from django.db import models  
+from django.db.models import Q
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -16,8 +18,8 @@ class InboxView(View):
         # Retrieve received messages and unread messages for the user
 
         messages = Message.objects.filter(
-            (models.Q(sender=request.user) | models.Q(receiver=request.user)) 
-        ).order_by('timestamp')
+                Q(sender=request.user) | Q(receiver=request.user)
+        ).order_by('sender', 'receiver', '-timestamp').distinct('sender', 'receiver')
 
         unread_messages = UnreadMessage.objects.filter(user=request.user)
 

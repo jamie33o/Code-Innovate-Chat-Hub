@@ -35,10 +35,19 @@
                                     </div>
                                     <div class="vcentered info-combo">
                                         <h3 class="no-margin-bottom name"> {{ message.sender.username }}</h3>
-                                        <h5> Hah, too late, I already bought it and my team is impleting the new design right now.</h5>
+                                        <h5> {{ message.content}}</h5>
                                     </div>
                                     <div class="contacts-add">
-                                        <span class="message-time"> 2:32 <sup>AM</sup></span>
+                                        <span class="message-time">
+                                            {% now "Y-m-d" as current_datetime %}             
+                                            {% with message_date=message.timestamp%}
+                                                {% if message_date|date:"Y-m-d" == current_datetime %}
+                                                    {{ message_date|date:"H:i"|upper }} <!-- Display time -->
+                                                {% else %}
+                                                    {{ message_date|date:"M j"|upper }} <!-- Display date -->
+                                                {% endif %}
+                                            {% endwith %}
+                                        </span>
                                         <i class="fa fa-trash-o"></i>
                                         <i class="fa fa-paperclip"></i>
                                     </div>
