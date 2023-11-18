@@ -13,7 +13,6 @@
 {% block content %}
 <div class="w-100 h-100 d-flex flex-dir-row">
     <div class="inbox-container">
-        <div class="contacts-list">
             <div class="inbox-categories">
                 <div data-toggle="tab" data-target="#inbox" class="active"> Inbox </div>
                 <div data-toggle="tab" data-target="#sent"> Sent </div>
@@ -21,7 +20,7 @@
                 <div data-toggle="tab" data-target="#drafts"> Drafts </div>
             </div>
             <div class="tab-content">
-                <div id="inbox" class="contacts-outter-wrapper tab-pane active">
+                <div id="inbox" class="tab-pane active">
                     <form class="panel-search-form info form-group has-feedback no-margin-bottom">
                         <input type="text" class="form-control" name="search" placeholder="Search">
                         <span class="fa fa-search form-control-feedback"></span>
@@ -30,13 +29,14 @@
                         <ul class="list-unstyled contacts">
                             {% for message in messages %}
                                 <li class="message-link" data-toggle="tab" data-target="#inbox-message-1" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}" class="active">
+                                    <div class="img-count">
                                         <div class="message-count"> 1</div>
                                         <img alt="" class="img-circle medium-image" src="{{ message.sender.userprofile.profile_picture.url }}">
-
-                                        <div class="vcentered info-combo">
-                                            <h3 class="no-margin-bottom name"> {{ message.sender.username }}</h3>
-                                            <h5> Hah, too late, I already bought it and my team is impleting the new design right now.</h5>
-                                        </div>
+                                    </div>
+                                    <div class="vcentered info-combo">
+                                        <h3 class="no-margin-bottom name"> {{ message.sender.username }}</h3>
+                                        <h5> Hah, too late, I already bought it and my team is impleting the new design right now.</h5>
+                                    </div>
                                     <div class="contacts-add">
                                         <span class="message-time"> 2:32 <sup>AM</sup></span>
                                         <i class="fa fa-trash-o"></i>
@@ -47,7 +47,7 @@
                         </ul>
                     </div>
                 </div>
-                <div id="sent" class="contacts-outter-wrapper tab-pane">
+                <div id="sent" class="tab-pane">
                     <form class="panel-search-form success form-group has-feedback no-margin-bottom">
                         <input type="text" class="form-control" name="search" placeholder="Search">
                         <span class="fa fa-search form-control-feedback"></span>
@@ -70,7 +70,7 @@
                         </ul>
                     </div>
                 </div>
-                <div id="marked" class="contacts-outter-wrapper tab-pane">
+                <div id="marked" class="tab-pane">
                     <form class="panel-search-form warning form-group has-feedback no-margin-bottom">
                         <input type="text" class="form-control" name="search" placeholder="Search">
                         <span class="fa fa-search form-control-feedback"></span>
@@ -95,7 +95,7 @@
                         </ul>
                     </div>
                 </div>
-                <div id="drafts" class="contacts-outter-wrapper tab-pane">
+                <div id="drafts" class="tab-pane">
                     <form class="panel-search-form dark form-group has-feedback no-margin-bottom">
                         <input type="text" class="form-control" name="search" placeholder="Search">
                         <span class="fa fa-search form-control-feedback"></span>
@@ -117,7 +117,6 @@
                             </li>
                         </ul>
                     </div>
-                </div>
             </div>
         </div>
     </div>
