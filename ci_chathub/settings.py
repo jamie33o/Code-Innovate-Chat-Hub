@@ -53,9 +53,10 @@ INSTALLED_APPS = [
     'crispy_forms',
     # for live messaging
     'channels',
-    # apps i created
+    # my apps
     'group_chat',
     'user_profile',
+    'messaging',
     # for emoji
     'emoji',
     
