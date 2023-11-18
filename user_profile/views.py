@@ -41,6 +41,30 @@ class UserProfileView(View):
             'posts': posts,
         }
         return render(request, self.template_name, context)
+    
+
+@method_decorator(login_required, name='dispatch')
+class ViewUserProfile(View):
+    """
+    View for displaying and updating user profiles.
+    """
+    template_name = 'user_profile/view-user-profile.html'
+
+    def get(self, request, user_id):
+        """
+        Handle GET requests to display the user profile.
+
+        Returns:
+            HttpResponse: The rendered user profile page.
+        """
+        user_profile = get_object_or_404(UserProfile, id=user_id)
+
+        context = {
+            'user_profile': user_profile,
+        }
+        return render(request, self.template_name, context)
+    
+
 
     def post(self, request):
         """
