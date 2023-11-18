@@ -1,4 +1,4 @@
-/* //////////////////////   channels styles ///////////////////////  */
+/*//////////////////////   channels styles ///////////////////////*/
 /* style for channels list */
 .channels-list { 
     border-right: 2px solid var(--ci-orange);
@@ -132,7 +132,6 @@
     background-color: var(--background);
     border-radius: 5px;
     box-shadow: var(--sm-box-shadow); 
-
 }
 
 /* profile pic on the card header */
@@ -188,6 +187,7 @@
 .comment-date {
     display: flex;
 }
+
 .view-comments {
     display: none;
 }
@@ -310,7 +310,6 @@
 }
 
 /* //////////////////// modal for images and deleting posts/comments ///////////////////*/
-
 .modal-dialog {
     max-width: 100%;
     height: 90%;
