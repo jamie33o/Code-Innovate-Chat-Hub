@@ -62,7 +62,6 @@ class BaseChatView(View):
         Returns:
             JsonResponse: JSON response indicating the status of the broadcast.
         """
-        print('working')
 
         try:
             channel_layer = get_channel_layer()

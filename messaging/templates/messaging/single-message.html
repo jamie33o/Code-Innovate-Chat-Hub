@@ -1,0 +1,24 @@
+{% load static %}
+{% load emoji_tags %}
+  
+<div class="message new-message">
+    {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
+        <img class="img-circle medium-image" src="{{ message.sender.userprofile.profile_picture.url }}" alt="Profile Picture">
+    {% else %}
+        <img class="img-circle medium-image" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+    {% endif %}
+    <div class="message-body">
+        <div class="message-body-inner">
+            <div class="message-info">
+                <h4>{{ message.sender.username }} </h4>
+                <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>
+            </div>
+            <hr>
+            <div class="message-text">
+                {{ message.content|safe|emoji_replace }}
+            </div>
+        </div>
+    </div>
+    <br>
+</div>      
+    

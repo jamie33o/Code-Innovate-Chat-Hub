@@ -11,6 +11,7 @@ let isAnimationInProgress = false;
 let currentUser = null;
 let postsWebSocket = null;
 let commentsWebSocket = null;
+let messageWebsocket = null;
 
 
 /////////////////////// function for notification messages ///////////////////////////////
@@ -72,7 +73,7 @@ function websocketInit(socket) {
         
         // Open event listener
         socket.addEventListener('open', function (event) {
-
+            console.log(event)
         });
 
           // Message event listener
@@ -108,7 +109,19 @@ function websocketInit(socket) {
                         }
                     }
                 }
-            } else {
+            } else if (data.type === 'messaging_notification') {
+
+                    $('#message-list').append(data.html)
+                    let user = $('#message-list').data('user')
+                   
+                    if(data.created_by === user){
+
+                        $('#message-list .new-message').removeClass('new-message').addClass('my-message');
+                    }else{
+                        $('#message-list .new-message').removeClass('new-message')
+                    }
+
+            }else {
                 console.error('Unknown notification type:', data.type);
             }
             
@@ -185,6 +198,13 @@ function startWebSocket(type, id){
         }
         postsWebSocket = new WebSocket(url)
         websocketInit(postsWebSocket); 
+    }else if(type === 'messaging'){
+        if(messageWebsocket){
+            messageWebsocket.close()
+        }
+        messageWebsocket = new WebSocket(url)
+        websocketInit(messageWebsocket); 
+    
     }else{
         if(commentsWebSocket){
             commentsWebSocket.close()
@@ -192,7 +212,6 @@ function startWebSocket(type, id){
         commentsWebSocket = new WebSocket(url)
         websocketInit(commentsWebSocket); 
     }
-
 }
 
 

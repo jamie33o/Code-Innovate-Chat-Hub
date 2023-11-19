@@ -37,7 +37,10 @@
                                     </div>
                                     <div class="vcentered info-combo">
                                         <h3 class="no-margin-bottom name"> {% if message.sender == user %}{{ message.receiver.username }}{% else %}{{ message.sender.username }}{% endif %}</h3>
-                                        <h5> {{ message.content}}</h5>
+                                        <h5 class="d-flex flex-dir-row">
+                                            <span class="mr-1">{% if message.sender == user %}You: {% else %}{{ message.sender.username }}: {% endif %} </span>
+                                             {{ message.content|safe }}
+                                        </h5>
                                     </div>
                                     <div class="contacts-add">
                                         <span class="message-time">
@@ -147,72 +150,17 @@
     <script src="{% static 'group_chat/js/config.js' %}"></script>
     <script src="{% static 'group_chat/js/tam-emoji.js' %}"></script>
     <script src="{% static 'group_chat/js/summernote.js' %}"></script>
+    <script src="{% static 'messaging/js/messaging.js' %}"></script>
 
 
 
     <script>     
-        $()
-        $('#messages-list-container').on('click', '.close-messages-btn', function(e){
-            $('.inbox-container').removeClass('d-none')
-            $('#messages-list-container').addClass('d-none')
-            $('#messages-list-container').removeClass('d-flex')
-
-            $('#nav-bar').removeClass('d-none')
-            $('header').removeClass('d-none')
-        })
-
-        $('.message-link').on('click', function(e){
-            e.preventDefault()
-            let url = $(this).data('url')
-
-            ajaxRequest(url, null, 'GET', '#messages-list-container', null, function(response){
-                $('#messages-list-container').html(response)
-                //autoScroll()
-                if(window.innerWidth < 575){
-                    $('.inbox-container').addClass('d-none')
-                    $('#messages-list-container').removeClass('d-none')
-                    $('#messages-list-container').addClass('d-flex')
-                    $('#nav-bar').addClass('d-none')
-                    $('header').addClass('d-none')
-                }
-            })
-        })
+        
         {% if new_message %}
             $('.message-link:last').click()
         {% elif receiver %}
             $('.message-link[data-userid="{{ receiver.id }}"]').click();
         {% endif %}
-
-        
-    //$(document).ready(function() {
-        // check if the id for the channel the user last visited exists
-        // if it does load posts
-            // if(window.innerWidth > 575){
-            //     ajaxRequest(lastViewedurl, null, 'GET', '#channel-posts', null, function(response){
-            //         $('#channel-posts').html(response)
-            //         autoScroll()
-            //     })
-            //     $('#channel-posts').addClass('d-flex');
-            // }
-        //         
-
-        //         ajaxRequest(savedPostChannel, null, 'GET', '#channel-posts', null, function(response){
-        //             $('#channel-posts').html(response)
-        //             autoScroll(null, {{ post_id }})
-
-        //         })
-        //         if(window.innerWidth < 575.5){
-        //             $('#nav-bar').addClass('d-none')
-        //             $('header').addClass('d-none')
-        //             $('#channel-links-container').addClass('d-none');
-        //         }
-               
-        //         $('#channel-posts').addClass('d-flex');
-        //
-        // //url for emojis spritesheet
-        // 
-        // summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl, csrfToken)
-
 
     </script>
 

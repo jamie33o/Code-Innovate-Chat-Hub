@@ -21,7 +21,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
-from group_chat.routing import websocket_urlpatterns
+from .routing import websocket_urlpatterns
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ci_chathub.settings")
 # Initialize Django ASGI application early to ensure the AppRegistry

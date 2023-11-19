@@ -29,7 +29,8 @@
 
 
 <!-- message list populated by Django -->
-<div id="message-list" class="scrollable-div p-3">
+<div id="message-list" class="scrollable-div p-3" data-user="{{ user }}">
+    {% if messages %}
 
     {% for message in messages %}
         {% if message.sender == user %}    
@@ -93,6 +94,7 @@
         {% endif %}
         <!-- Post /////-->
     {% endfor %}
+    {% endif %}
 
 </div>
 
@@ -123,4 +125,8 @@
 `,'{{ csrf_token }}')
        
     });
+
+
+     // Start the WebSocket for channel posts
+     startWebSocket('messaging', {{ conversation_id }})
 </script>
