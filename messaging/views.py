@@ -41,7 +41,7 @@ class InboxView(View):
                 if latest_message:
                     messages_by_conversation.append(latest_message)
 
-                if receiver_id and receiver_id in conversation.participants.values_list('id', flat=True):
+                if receiver_id and receiver_id in conversation.participants.values_list('id', flat=True) and latest_message:
                     message_exists = True
         
         # Add participants to the conversation if not already there
@@ -81,12 +81,16 @@ class MessageListView(View):
         receiver = get_object_or_404(User, id=receiver_id)
 
         # Find the conversation involving both the sender and receiver
-        conversation = Conversation.objects.filter(participants=request.user).filter(participants=receiver).first()
+        conversation = Conversation.objects.filter(participants=sender).filter(participants=receiver).first()
 
         # Check if the conversation exists
         if conversation:
             # Retrieve messages in the conversation and order by timestamp
             messages = conversation.messages.all().order_by('timestamp')
+        
+        if not conversation and receiver_id:
+                conversation = Conversation.objects.create()
+                conversation.participants.add(request.user, receiver)
 
         context = {
             'sender': sender,
@@ -109,9 +113,7 @@ class SendMessageView(View):
         content = request.POST.get('post', '')
         if content:
             conversation = Conversation.objects.filter(participants=request.user).filter(participants=receiver).first()
-            if not conversation:
-                conversation = Conversation.objects.create()
-                conversation.participants.add(request.user, receiver)
+            
             # Create a new message
             message = Message(sender=request.user, receiver=receiver, content=content,conversation=conversation)
             message.save()
