@@ -75,11 +75,6 @@
     border: 1px solid rgba(0,0,0,0.1);
 }
 
-/* .tab-content {
-  border: none;
-  background-color: transparent;
-} */
-
 /* tabs categories */
 .inbox-categories {
   width: 100%;
@@ -176,10 +171,6 @@
   position: relative;
   background-color: rgba(255,255,255,0);
 }
-
-/* .contacts li:first-child {
-  border-top: 1px solid rgba(205,211,237,0.2);
-} */
 
 .contacts li:first-child.active {
   border-top: 1px solid rgba(205,211,237,0.75);
@@ -298,6 +289,7 @@
   height: 100%;
   width: 70%;
   float: right;
+  word-wrap: break-word;
 }
 
 .message {
@@ -354,6 +346,7 @@
   border: 1px solid #dbe3e8;
   margin: 0 5px 20px 15px;
   color: #788288;
+  word-wrap: break-word;
 }
 
 .message.my-message:after {
@@ -399,6 +392,7 @@
   text-align: left;
   padding: 3px 13px 10px 13px;
   font-size: 14px;
+  word-wrap: break-word;
 }
 
 .message .message-body {
