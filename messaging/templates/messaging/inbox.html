@@ -133,7 +133,7 @@
     </div>
 
     <!-- container where posts get loaded into with ajax -->
-    <div id="messages-list-container" class=" w-100 d-flex flex-column justify-content-between"></div>
+    <div id="messages-list-container" class=" w-100 d-none d-sm-flex flex-column justify-content-between"></div>
 
     <!-- container where comments get loaded into with ajax -->
     <div id='message-list-thread' class ="comments-container flex-column justify-content-between"></div>
@@ -151,6 +151,15 @@
 
 
     <script>     
+        $()
+        $('#messages-list-container').on('click', '.close-messages-btn', function(e){
+            $('.inbox-container').removeClass('d-none')
+            $('#messages-list-container').addClass('d-none')
+            $('#messages-list-container').removeClass('d-flex')
+
+            $('#nav-bar').removeClass('d-none')
+            $('header').removeClass('d-none')
+        })
 
         $('.message-link').on('click', function(e){
             e.preventDefault()
@@ -159,6 +168,13 @@
             ajaxRequest(url, null, 'GET', '#messages-list-container', null, function(response){
                 $('#messages-list-container').html(response)
                 //autoScroll()
+                if(window.innerWidth < 575){
+                    $('.inbox-container').addClass('d-none')
+                    $('#messages-list-container').removeClass('d-none')
+                    $('#messages-list-container').addClass('d-flex')
+                    $('#nav-bar').addClass('d-none')
+                    $('header').addClass('d-none')
+                }
             })
         })
         {% if new_message %}
@@ -166,6 +182,8 @@
         {% elif receiver %}
             $('.message-link[data-userid="{{ receiver.id }}"]').click();
         {% endif %}
+
+        
     //$(document).ready(function() {
         // check if the id for the channel the user last visited exists
         // if it does load posts

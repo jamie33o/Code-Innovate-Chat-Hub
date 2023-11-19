@@ -2,29 +2,29 @@
 {% load emoji_tags %}
 
 <!-- Mobile header -->
-<div class="messages-mobile-header border-bottom p-3 custom-box d-flex d-sm-none d-lg-none flex-dir-row">
+<div class="p-2 custom-box d-flex d-sm-none d-lg-none flex-dir-row align-items-center">
     <!-- Close button -->
-    <button class="btn inbox-close-btn position-absolute"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
-    <h4 class="text-center w-100">
-        {%if sender is user %}
-        <img class="rounded-circle profile-pic" src="
+    <button class="btn close-messages-btn position-absolute"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
+    
+        {% if sender == user %}
+        <img class="ml-5 p-1 img-circle medium-image profile-pic" src="
         {% if message.receiver.userprofile and message.receiver.userprofile.profile_picture %}
         {{ receiver.userprofile.profile_picture.url }}
         {% else %}
         {% static 'noimage.png' %}
         {% endif %}
         " alt="Profile Picture">
-        {{ receiver.username }} 
+        <h4 class="ml-3 w-100">{{ receiver.username }} </h4>
         {% else %} 
-        <img class="rounded-circle profile-pic" src="
+        <img class="ml-5 p-1 img-circle medium-image profile-pic" src="
         {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
         {{ sender.userprofile.profile_picture.url }}
         {% else %}
         {% static 'noimage.png' %}
         {% endif %}
         " alt="Profile Picture">
-        {{ sender.username }} 
-        {% endif %} </h4>
+        <h4 class="ml-3 w-100">{{ sender.username }} </h4>
+        {% endif %} 
 </div>
 
 

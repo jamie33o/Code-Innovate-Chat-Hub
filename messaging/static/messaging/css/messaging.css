@@ -10,7 +10,7 @@
 /* ///////////////////////////// inbox //////////////////////////////////// */
 .inbox-container  { 
   border-right: 2px solid var(--ci-orange);
-  min-width: 350px;
+  width: 350px;
   background: #fcfcfc;
 }
 
@@ -296,7 +296,7 @@
 .message-body {
   background-color: #fbfcff;
   height: 100%;
-  width: calc(100% - 305px);
+  width: 70%;
   float: right;
 }
 
@@ -443,5 +443,20 @@
 
 
 
+/* ///////////////////// media queries ////////////////////// */
+/* CSS for small screens (up to the "lg" breakpoint) */
+@media (max-width: 991.98px) {
 
+}
+
+/* CSS for small screens (up to the "sm" breakpoint) */
+@media (max-width: 575.98px) {
+  #messages-list-container {
+    display: none;
+    width: 100vw;
+  }
+  .inbox-container {
+    width: 100vw;
+  }
+}
 
