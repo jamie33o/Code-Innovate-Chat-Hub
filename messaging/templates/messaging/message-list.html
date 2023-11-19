@@ -7,10 +7,22 @@
     <button class="btn inbox-close-btn position-absolute"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     <h4 class="text-center w-100">
         {%if sender is user %}
-        <img class="rounded-circle profile-pic" src="{{ receiver.userprofile.profile_picture.url }}" alt="Profile Picture">
+        <img class="rounded-circle profile-pic" src="
+        {% if message.receiver.userprofile and message.receiver.userprofile.profile_picture %}
+        {{ receiver.userprofile.profile_picture.url }}
+        {% else %}
+        {% static 'noimage.png' %}
+        {% endif %}
+        " alt="Profile Picture">
         {{ receiver.username }} 
         {% else %} 
-        <img class="rounded-circle profile-pic" src="{{ sender.userprofile.profile_picture.url }}" alt="Profile Picture">
+        <img class="rounded-circle profile-pic" src="
+        {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
+        {{ sender.userprofile.profile_picture.url }}
+        {% else %}
+        {% static 'noimage.png' %}
+        {% endif %}
+        " alt="Profile Picture">
         {{ sender.username }} 
         {% endif %} </h4>
 </div>
@@ -20,7 +32,7 @@
 <div id="message-list" class="scrollable-div p-3">
 
     {% for message in messages %}
-        {% if message.sender == request.user %}    
+        {% if message.sender == user %}    
         <div class="message my-message">
             {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
                 <img class="img-circle medium-image" src="{{ message.sender.userprofile.profile_picture.url }}" alt="Profile Picture">
@@ -102,7 +114,13 @@
 
         EmojiPicker.emojiSource = "{% static 'group_chat/tam-emoji/img' %}";
         // Initialize summernote enhancer class
-        summernoteEnhancerPosts.init('#messages-list-container', ` `, '{{ csrf_token }}')
+        summernoteEnhancerPosts.init('#messages-list-container', `{% if sender == user %}
+        {% url 'send_message' receiver.id %}
+    
+{% else %}
+        {% url 'send_message' sender.id %}
+{% endif %}
+`,'{{ csrf_token }}')
        
     });
 </script>

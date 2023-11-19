@@ -28,13 +28,15 @@
                     <div class="contacts-outter">
                         <ul class="list-unstyled contacts">
                             {% for message in messages %}
-                                <li class="message-link active" data-userid="{% if messsage.sender == user %}{{ message.receiver.id}}{% else %}{{ message.sender.id }}{% endif %}" data-toggle="tab" data-target="#inbox-message-1" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}" >
+                                <li class="message-link " data-userid="{% if messsage.sender == user %}{{ message.receiver.id}}{% else %}{{ message.sender.id }}{% endif %}" data-toggle="tab" data-target="#inbox-message-1" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}" >
                                     <div class="img-count">
                                         <div class="message-count"> 1</div>
+                                        {%if message.sender.userprofile.profile_picture %}
                                         <img alt="" class="img-circle medium-image" src="{{ message.sender.userprofile.profile_picture.url }}">
+                                         {% endif %} </h4>
                                     </div>
                                     <div class="vcentered info-combo">
-                                        <h3 class="no-margin-bottom name"> {{ message.sender.username }}</h3>
+                                        <h3 class="no-margin-bottom name"> {% if message.sender == user %}{{ message.receiver.username }}{% else %}{{ message.sender.username }}{% endif %}</h3>
                                         <h5> {{ message.content}}</h5>
                                     </div>
                                     <div class="contacts-add">
@@ -155,7 +157,7 @@
             let url = $(this).data('url')
 
             ajaxRequest(url, null, 'GET', '#messages-list-container', null, function(response){
-                $('#messages-list-container').prepend(response)
+                $('#messages-list-container').html(response)
                 //autoScroll()
             })
         })

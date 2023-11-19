@@ -148,7 +148,7 @@ $(document).on('click', '.delete-btn', function() {
     showModal(header, body)
     });
 
-$('main').on('click', '.profile-pic', function(event){
+$('main').on('click', '.profile-pic', function(){
     
     let header = `
         User Profile
