@@ -11,8 +11,8 @@
                 <!-- Profile picture -->
                 <div class="mr-2">
                     {% if single_post.created_by.userprofile and single_post.created_by.userprofile.profile_picture %}
-                    <img class="rounded-circle" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.userprofile.profile_picture.url }}"
-                        alt="Profile Picture">
+                    <img class="rounded-circle profile-pic" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.userprofile.profile_picture.url }}"
+                        alt="Profile Picture profile-pic">
                     {% else %}
                     <img class="rounded-circle" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                     {% endif %}
@@ -20,8 +20,7 @@
                 <!-- Username and date -->
                 <div class="ml-2 ">
                     <div class="h5 m-2">{{ single_post.created_by }}</div>
-                    <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i,
-                        b j"|upper }}</div>
+                    <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i, b j"|upper }}</div>
                 </div>
             </div>
             <div>

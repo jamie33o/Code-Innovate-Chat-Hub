@@ -28,7 +28,7 @@
                     <div class="contacts-outter">
                         <ul class="list-unstyled contacts">
                             {% for message in messages %}
-                                <li class="message-link " data-userid="{% if messsage.sender == user %}{{ message.receiver.id}}{% else %}{{ message.sender.id }}{% endif %}" data-toggle="tab" data-target="#inbox-message-1" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}" >
+                                <li class="message-link " data-userid="{{ message.receiver.id}}" data-toggle="tab" data-target="#inbox-message-1" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}" >
                                     <div class="img-count">
                                         <div class="message-count"> 1</div>
                                         {%if message.sender.userprofile.profile_picture %}
