@@ -8,7 +8,9 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.http import Http404
+from django.db.models import Max
 from group_chat.models import ChannelModel, ChannelLastViewedModel
+from messaging.models import UnreadMessage, Conversation
 
 # pylint: disable=no-member
 
@@ -51,16 +53,44 @@ class ChannelsView(View):
                 # does not exist for the user and channel
                 user_statuses[channel.id] = None
 
+        unread_messages = self.get_unread_messages(request)
+
+
         context = {
             'channels': channels,
             'last_viewed_channel_id': last_viewed_channel_id,
             'user_statuses': user_statuses,
             'post_id': post_id,
-            'channel_id': channel_id
+            'channel_id': channel_id,
+            'unread_messages': unread_messages
         }
 
-        return render(request, self.template_name, context)
 
+
+        return render(request, self.template_name, context)
+    
+    def get_unread_messages(self, request):
+
+        # Get the latest unread message for each conversation
+        conversations = (
+            UnreadMessage.objects
+            .filter(conversation__participants=request.user)
+            .values('conversation')
+        )
+
+        messages_by_conversation = []
+        if conversations.exists():
+            for conversation in conversations:
+                conv = Conversation.objects.get(id=conversation['conversation'])
+
+                # Retrieve the latest message in the conversation
+                latest_message = conv.messages.order_by('-timestamp').first()
+
+                # Check if there is a latest message before adding it to the list
+                if latest_message:
+                    messages_by_conversation.append(latest_message)
+
+        return messages_by_conversation
 
 @method_decorator(login_required, name='dispatch')
 class AddUserToChannelView(View):

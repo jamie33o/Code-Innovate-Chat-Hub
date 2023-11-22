@@ -38,13 +38,25 @@
                     </ul>
                 </div>
                 <div class="single category">
-                    <h3 class="side-title">Messages<button data-target=".messages" class="btn toggleLinksButton pull-right p-0"><i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
+                    <h3 class="side-title">New Messages<button data-target=".messages" class="btn toggleLinksButton pull-right p-0"><i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
                     <ul class="list-unstyled messages">
-                        {% for channel in channels %}
+                        {% if unread_messages %}
+
+                            {% for message in unread_messages %}
+                                <li>
+                                    <a class="btn-ci" href="{% if message.sender == user %}{% url 'new_message' message.receiver.id %}{% else %}{% url 'new_message' message.sender.id  %}{% endif %}">
+                                        <img class="rounded-circle profile-pic-small" src="{% if message.sender == user %}{{ message.receiver.userprofile.profile_picture.url }}{% else %}{{ message.sender.userprofile.profile_picture.url }}{% endif %}" alt="Profile Picture">
+
+                                    {% if message.sender == user %}{{ message.receiver }}{% else %}{{ message.sender }}{% endif %}<span class="pull-right"> <i class="fa-regular fa-message"></i>13</span></a>
+                                </li>
+                            {% endfor %}  
+                        {% else %}  
                             <li>
-                                <a class="channel-link btn-ci" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}<span class="pull-right"> <i class="fa-regular fa-message"></i>13</span></a>
+                                <h>No New Messages</h>
                             </li>
-                        {% endfor %}                        
+                        {% endif %}  
+
+            
                     </ul>
                 </div>
             </div> 
@@ -72,6 +84,7 @@
     <script>     
 
     $(document).ready(function() {
+        currentUser = '{{ user }}'
         // check if the id for the channel the user last visited exists
         // if it does load posts
         {% if last_viewed_channel_id %}
