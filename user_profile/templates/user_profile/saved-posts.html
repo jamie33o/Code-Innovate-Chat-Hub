@@ -3,16 +3,16 @@
 
 {% for single_post in posts %}
     <!--- Post -->
-    <div class="card post{{ single_post.id }}">
+    <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-between align-items-center">
                     <!-- Profile picture -->
                     <div class="mr-2">
                         {% if single_post.created_by.userprofile and single_post.created_by.userprofile.profile_picture %}
-                            <img class="rounded-circle" width="45" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
+                            <img class="rounded-circle profile-pic-medium profile-pic" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
                         {% else %}
-                            <img class="rounded-circle" width="45" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                            <img class="rounded-circle profile-pic-medium profile-pic" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                         {% endif %}
                     </div>
                     <!-- Username and date -->
@@ -28,7 +28,7 @@
                             <i class="fa fa-ellipsis-h"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
-                            <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Remove</button>
+                            <button class="dropdown-item btn-ci remove-post-btn" data-csrf="{{ csrf_token }}" data-url="{% url 'remove_saved_post' post_id=single_post.id %}">Remove</button>
                         </div>
                     </div>
                 </div>

@@ -12,16 +12,16 @@
 <div id="posts-list" class="scrollable-div">
     {% for single_post in posts %}
     <!-- Post -->
-    <div class="card post{{ single_post.id }}" data-post-id='{{ single_post.id }}' data-post-url="{% url 'channel_posts' channel.id %}">
+    <div class="card" data-post-id='{{ single_post.id }}' data-post-url="{% url 'channel_posts' channel.id %}">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-between align-items-center">
                     <!-- Profile picture -->
                     <div class="mr-2">
                         {% if single_post.created_by.userprofile and single_post.created_by.userprofile.profile_picture %}
-                            <img class="rounded-circle profile-pic" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
+                            <img class="rounded-circle profile-pic profile-pic-medium" data-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
                         {% else %}
-                            <img class="rounded-circle profile-pic" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                            <img class="rounded-circle profile-pic profile-pic-medium" data-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                         {% endif %}
                     </div>
                     <!-- Username and date -->
@@ -210,7 +210,6 @@
        
         // Get the channel id using a Django template literal for use in the JS file and for the websocket
         channel_id = {{ channel.id }}; 
-        currentUser = '{{ request.user.username }}'
         
         // Start the WebSocket for channel posts
         startWebSocket('channel_posts', channel_id)
