@@ -29,17 +29,18 @@ let csrfToken = null;
 // event listener for images 
 $('main').on('click', '.post-images img', function(e) {
     let header =
-        `<div class="buttons">
-            <button type="button" class ="zoom-in">
-                <i class="fa-solid fa-plus"></i>
-            </button>
-            <button type="button" class ="zoom-out">
-                <i class="fa-solid fa-minus"></i>            
-            </button>
+        `<div class="d-flex justify-content-between align-items-center w-100">
+            <div class="buttons text-center mb-0 mx-auto">
+                <button type="button" class ="zoom-in">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button type="button" class ="zoom-out">
+                    <i class="fa-solid fa-minus"></i>            
+                </button>
+            </div>
+       
+        <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
         </div>
-        <button type="button" class="close" data-dismiss="modal" 
-            aria-label="Close"><span aria-hidden="true">×</span>
-        </button>
         `;
     let img = $(e.currentTarget).clone()
     showModal(header, img)
@@ -148,24 +149,13 @@ $(document).on('click', '.delete-btn', function() {
     showModal(header, body)
     });
 
-$('main').on('click', '.profile-pic', function(){
-    
-    let header = `
-        User Profile
-    `;
-    let url = $(this).data('message-url')
-    ajaxRequest(url, csrfToken, 'GET', '#channel-posts', null, function(response){
-        showModal(header, response)
-        showModal()
-    });
-    
-});
+
 
 // event listener for yes-btn on the delete post/comment card modal
 $(document).on('click', '#yes-btn', function(event) {
     event.preventDefault()   
     cardBeingDeleted.remove();
-    ajaxRequest(deleteUrl, csrfToken, 'DELETE', 'main')
+    ajaxRequest(deleteUrl, csrfToken, 'DELETE', '#channel-posts')
     // close comments if user deletes post
     if($(cardBeingDeleted)[0].className.includes('post')){
         $('.comments-close-btn').click()
@@ -186,12 +176,13 @@ $('main').on('click', '.save-post-btn', function(event) {
 
 // listener for edit button on posts and comments dropdown menu
 $('main').on('click', '.edit-btn', function(event) {
+    // cancel any other post that is in edit mode
     if($('.cancel-edit').length > 0){
         $('.cancel-edit').click()
     }else if($('.edit-post').length > 0 ){
         $('.card.edit-post').removeClass('edit-post')
     }
-    // Find the closest ancestor with the class 'card-body'
+    // Find the closest ancestor with the class 'card'
     var card = $(this).closest('.card');
     let carbody = card.find('.card-body').html()
     let cardText = card.find('.card-text').html();
