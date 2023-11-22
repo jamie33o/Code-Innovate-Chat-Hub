@@ -110,6 +110,15 @@
     background-color: var(--peach)
 }
 
+.card-text  {
+    float: left;
+}
+
+.card-text img {
+    width: 30px;
+    height: 30px;
+}
+
 .card-header img, .comments-profile-img {
     width: 45px;
     height: 45px;
@@ -132,12 +141,6 @@
     background-color: var(--background);
     border-radius: 5px;
     box-shadow: var(--sm-box-shadow); 
-}
-
-/* profile pic on the card header */
-.profile-pics {
-    display: flex;
-    gap: -10px;
 }
 
 /* time on posts */
