@@ -29,14 +29,18 @@ function displayMessage(response, divClass){
     } 
     let messageLi = `
     <div class="notification">
-        <ul class="notification-messages">
-            <li class="message-item ${response.status.toLowerCase()}">
-                <h3>${response.status}</h3>
-                <p>${response.message}</p>
-            </li>
-        </ul>
+        <div class="toast-header ${response.status.toLowerCase()}">
+            <img src="..." class="rounded mr-2" alt="...">
+            <strong class="mr-auto">${response.status.toUpperCase()}</strong>
+            <small>11 mins ago</small>
+        </div>
+        <div class="toast-body message-item">
+            
+            <p>${response.message}</p>  
+        </div>
     </div>
     `;
+    
     $(divClass).append(messageLi)
 
     isAnimationInProgress = true;
@@ -84,21 +88,34 @@ function websocketInit(socket) {
             if (data.type === 'post_notification') {
                 if (data.html) {
                     if(data.edit_id){
-                        $(`.post${data.edit_id}`).replaceWith(data.html);
+                        $(`.edit-post`).replaceWith(data.html);
+                        // if its not the user that created it then hide dropdown menu on the edited post
+                        if(data.created_by != currentUser){
+                            $('.post${data.edit_id} .dropdown').addClass('d-none')
+                        }
                     }else{
                         $('#posts-list').append(data.html);
                         
                         if(data.created_by === currentUser){
+                            // auto scroll if its the user that created it
                             autoScroll(true)
                         }else {
+                            // otherwise display message to user that there is a new post
                             displayMessage({status: 'Success', message : data.message}, '#channel-posts');
+                             // if its not the user that created it then hide dropdown menu on the edited post
+                            $('#posts-list .card:last .dropdown').addClass('d-none')
                         } 
                     }                
                 }            
             } else if (data.type === 'comment_notification') {
                 if (data.html) {
                     if(data.edit_id){
-                        $(`.comment${data.edit_id}`).replaceWith(data.html);
+                        $(`.edit-post`).replaceWith(data.html);
+                        //let user = $('#message-list').data('user')
+                        // if its the user that created it then hide dropdown menu on comments
+                        if(data.created_by != currentUser){
+                            $('.comment${data.edit_id} .dropdown').addClass('d-none')
+                        }
                     }else{
                         $('.comments-list').append(data.html);
                         
@@ -106,16 +123,16 @@ function websocketInit(socket) {
                             autoScroll(true)
                         }else {
                             displayMessage({status: 'Success', message : data.message}, '.comments-list');
+                            $('.comment${data.edit_id} .dropdown').addClass('d-none')
                         }
+                       
                     }
                 }
             } else if (data.type === 'messaging_notification') {
-
                     $('#message-list').append(data.html)
                     let user = $('#message-list').data('user')
-                   
+                   // if its the user that created it add the class my-message
                     if(data.created_by === user){
-
                         $('#message-list .new-message').removeClass('new-message').addClass('my-message');
                     }else{
                         $('#message-list .new-message').removeClass('new-message')
@@ -247,3 +264,26 @@ function startWebSocket(type, id){
 
         modal.modal('show');
     }
+
+
+//////////////////////////// show profile ///////////////////////////////////
+// view profile modal shows when profile pic clicked
+
+$(document).ready(function(){
+    $('body').on('click', '.profile-pic', function(){
+        console.log('woring')
+        let header = `
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <h3 class="display-7 text-center mb-0 mx-auto">User Profile</h3>
+            <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
+        </div>
+
+        `;
+        let url = $(this).data('url')
+        ajaxRequest(url, csrfToken, 'GET', '#channel-posts', null, function(response){
+            showModal(header, response)
+            showModal()
+        });
+        
+    });
+})
