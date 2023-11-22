@@ -1,16 +1,18 @@
 # views.py
+from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views import View
+from django.views.generic import DeleteView
+from django.apps import apps
 from django.contrib.auth.models import User
-from .models import Message, UnreadMessage, Conversation
-from django.utils.decorators import method_decorator
-from django.db import models  
-from datetime import datetime
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from .models import Message, UnreadMessage, Conversation
+
 
 
 
@@ -25,10 +27,13 @@ class InboxView(View):
             receiver = get_object_or_404(User, id=receiver_id)
 
 
-        unread_messages = UnreadMessage.objects.filter(user=request.user)
+        #unread_messages = UnreadMessage.objects.filter(user=request.user)
         
         # Retrieve conversations involving the current user
         conversations = Conversation.objects.filter(participants=request.user)
+
+        unread_messages = UnreadMessage.objects.filter(conversation__participants=request.user).values_list('conversation', flat=True)
+
     
         # Retrieve the messages in the conversation
         messages_by_conversation = []
@@ -59,7 +64,7 @@ class InboxView(View):
 
         context = {
             'messages': messages_by_conversation,
-            'unread_messages': unread_messages,
+            'unread_messages': unread_messages
         }
 
         if not message_exists and receiver_id:
@@ -81,12 +86,13 @@ class MessageListView(View):
         receiver = get_object_or_404(User, id=receiver_id)
 
         # Find the conversation involving both the sender and receiver
-        conversation = Conversation.objects.filter(participants=sender).filter(participants=receiver).first()
+        conversation = self.get_conversation(sender, receiver)
 
         # Check if the conversation exists
         if conversation:
             # Retrieve messages in the conversation and order by timestamp
             messages = conversation.messages.all().order_by('timestamp')
+            UnreadMessage.objects.filter(conversation=conversation).delete()
         
         if not conversation and receiver_id:
                 conversation = Conversation.objects.create()
@@ -104,15 +110,11 @@ class MessageListView(View):
         # unread_messages.delete()
         return render(request, self.template_name, context)
 
-
-@method_decorator(login_required, name='dispatch')
-class SendMessageView(View):
-
     def post(self, request, receiver_id):
         receiver = User.objects.get(pk=receiver_id)
         content = request.POST.get('post', '')
         if content:
-            conversation = Conversation.objects.filter(participants=request.user).filter(participants=receiver).first()
+            conversation = self.get_conversation(request.user, receiver)
             
             # Create a new message
             message = Message(sender=request.user, receiver=receiver, content=content,conversation=conversation)
@@ -156,3 +158,75 @@ class SendMessageView(View):
             # Handle unexpected exceptions
             return JsonResponse({'status': 'error', 'message': str(e)})
 
+    def get_conversation(self, user1, user2):
+        conversation = Conversation.objects.filter(participants=user1).filter(participants=user2).first()
+        return conversation
+    
+
+class GenericObjectDeleteView(DeleteView):
+    """
+    View class for deleting a generic object based on the URL parameters.
+    """
+
+    def get_object(self, queryset=None):
+        """
+        Retrieve the object to be deleted based on the URL parameters.
+
+        Args:
+            queryset: The queryset to use for retrieving the object.
+
+        Returns:
+            Model: The object to be deleted.
+        """
+        try:
+            # Get the model class based on the URL parameter
+            model_name = self.kwargs['model']
+            model = apps.get_model(app_label='messaging', model_name=model_name)
+
+            # Get the object to be deleted
+            obj_pk = self.kwargs['pk']
+            obj = get_object_or_404(model, pk=obj_pk)
+            print(obj)
+
+            return obj
+        except (LookupError, ValueError, KeyError) as e:
+            # Handle lookup errors, value errors, or key errors
+            return JsonResponse({'status': 'error',
+                                 'message': f'Error retrieving object: {str(e)}'})
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Handle DELETE requests to delete an object.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            args: Additional positional arguments.
+            kwargs: Additional keyword arguments.
+
+        Returns:
+            JsonResponse: JSON response indicating the status of the operation.
+        """
+        try:
+            # Get the object to be deleted
+            obj = self.get_object()
+            model_name = obj.__class__.__name__
+
+            # Delete the object
+            obj.delete()
+
+            # Override the delete method to return a JSON response
+            return JsonResponse({'status': 'success', 'message': f'{model_name} deleted'})
+        except Exception as e:
+            # Handle other exceptions
+            return JsonResponse({'status': 'error', 'message': f'Error deleting object: {str(e)}'})
+
+    def get_context_data(self, **kwargs):
+        """
+        Get the context data for rendering the template.
+
+        Returns:
+            dict: A dictionary containing context data.
+        """
+        context = super().get_context_data(**kwargs)
+        context['model_name'] = self.kwargs['model']
+        return context

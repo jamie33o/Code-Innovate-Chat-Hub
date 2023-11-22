@@ -29,6 +29,11 @@ class EmojiModel(models.Model):
 class Conversation(models.Model):
     participants = models.ManyToManyField(User)
 
+    def delete(self, *args, **kwargs):
+        # Delete all messages related to this conversation
+        self.messages.all().delete()
+        super(Conversation, self).delete(*args, **kwargs)
+
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
@@ -44,5 +49,4 @@ class Message(models.Model):
 
 
 class UnreadMessage(models.Model):
-    message = models.ForeignKey(Message, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='unread_messages')
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
