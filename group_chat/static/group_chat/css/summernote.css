@@ -7,7 +7,6 @@
     position: relative;
     height: fit-content; 
     width: 100%;
-    z-index: 1;
 }
 
 .summernote-form img {
@@ -98,15 +97,33 @@
     z-index: 2; 
     top: 0; 
     right: 0; 
-    background-color: var(--light-grey);
+    background-color: black;
     border-radius:50%;
     padding: 5px !important;
     color: white;
-    border: 1px solid red;
 }
+
 .delete-img-icon:hover {
-    background-color: white; 
+    background-color: white;
     color: var(--dark-grey);
+    border: 1px solid var(--ci-orange);
+}
+
+.delete-img-icon:hover::after {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    content: 'Remove';
+    width: 100px;
+    background-color: black;
+    position: absolute;
+    top: -20px;
+    left: -30px;
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    padding: 3px;
+    z-index: 1;
 }
 
 
@@ -177,17 +194,22 @@ div.panel-heading.note-toolbar {
     background-color: rgb(203, 202, 202);
 }
 
-/* summernote code field */
-div.note-editing-area > textarea {
-    height: 90% !important;
+.note-editable {
+    padding: 10px !important;
 }
+
 
 /* for summernote text area */
 div.note-editing-area {
     margin-bottom: 40px;
     max-height: 70vh;
+    max-width: 100%;
+    word-wrap: break-word;
 }
 
+div.note-editing-area ul, div.note-editing-area ol {
+    padding: 0 20px;
+}
 
 /* /////////////////////// media queries ///////////////////////// */
 /* CSS for small screens (up to the "lg" breakpoint) */
