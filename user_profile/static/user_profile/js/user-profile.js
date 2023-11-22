@@ -32,6 +32,17 @@ $(document).ready(function () {
         }
     });
 
+    $('.saved-posts-container').on('click', '.remove-post-btn', function(e){
+        e.preventDefault()
+        let url = $(this).data('url')
+        let csrf = $(this).data('csrf')
+        let post = $(this).closest('.card')
+        ajaxRequest(url, csrf, 'POST', '.saved-posts-container', null, function(response){
+            displayMessage(response, '.saved-posts-container')
+            post.remove()
+
+        })
+    })
 
     $('body').on('change', '#id_profile_picture', function () {
         console.log("Event triggered!");

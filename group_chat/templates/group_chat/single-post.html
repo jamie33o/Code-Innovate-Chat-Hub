@@ -7,9 +7,9 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="mr-2">
                     {% if single_post.created_by.user_profile and single_post.created_by.user_profile.profile_picture %}
-                        <img  class="rounded-circle" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
+                        <img  class="rounded-circle profile-pic profile-pic-medium" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.user_profile.profile_picture.url }}" alt="Profile Picture">
                     {% else %}
-                        <img  class="rounded-circle" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                        <img  class="rounded-circle profile-pic profile-pic-medium" data-message-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
                     {% endif %}                    
                 </div>
                 <div class="ml-2 ">
@@ -22,8 +22,15 @@
                     <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-ellipsis-h"></i>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right custom-box" aria-labelledby="gedf-drop1">
-                        <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
+                    <div class="dropdown-menu dropdown-menu-right p-0">
+                        <div class="links-container m-0 p-0">
+                            <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
+                            <div class="links-body pb-2">
+                                <button class="dropdown-item btn-ci save-post-btn" data-save-post-url="{% url 'save_post' single_post.id %}">Save</button>
+                                    <button class="dropdown-item btn-ci edit-btn">Edit</button>
+                                    <button class="dropdown-item btn-ci delete-btn" data-delete-url="{% url 'delete_object' model='PostsModel' pk=single_post.id %}">Delete</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -31,7 +38,7 @@
     </div>
     <div class="card-body">
         <div class="card-text">
-            {{ single_post.post|safe }}
+            {{ single_post.post|safe|emoji_replace }}
         </div>
         {% if single_post.images %}
             <div class="post-images">

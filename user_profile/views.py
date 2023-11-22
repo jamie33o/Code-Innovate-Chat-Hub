@@ -6,7 +6,7 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
-from group_chat.models import SavedPost
+from group_chat.models import SavedPost, PostsModel
 from .models import UserProfile
 from .forms import ProfileImageForm, EditProfileForm, StatusForm
 
@@ -120,3 +120,33 @@ def update_status(request):
                              'errors': form.errors})
     form = StatusForm(instance=request.user.userprofile)
     return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+
+@login_required
+def remove_saved_post(request, post_id):
+    """
+    Remove a saved post for the currently logged-in user.
+
+    Args:
+        post_id (int): The ID of the post to be removed from saved posts.
+
+    Returns:
+        JsonResponse: A JSON response indicating success or failure.
+    """
+    if request.method == 'POST':
+        # Retrieve the post instance
+        post = get_object_or_404(PostsModel, id=post_id)
+
+        # Check if the post is saved by the user
+        saved_posts = SavedPost.objects.filter(user=request.user, post=post)
+
+        if saved_posts.exists():
+            # If the post is saved, remove it
+            saved_posts.delete()
+            return JsonResponse({'status': 'Success', 'message': 'Post removed'})
+       
+        # If the post is not saved, return an error
+        return JsonResponse({'status': 'Error', 'message': 'Post is not saved'})
+
+    # Return an error for non-POST requests
+    return JsonResponse({'status': 'Error', 'message': 'Invalid request method'})

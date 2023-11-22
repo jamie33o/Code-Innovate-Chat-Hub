@@ -125,8 +125,6 @@ class GenericObjectDeleteView(DeleteView):
                                  'message': f'Error retrieving object: {str(e)}'})
 
     def delete(self, request, *args, **kwargs):
-        # NOTE: request, *args, **kwargs are not used in this function
-        # but django needs them
         """
         Handle DELETE requests to delete an object.
 
@@ -141,7 +139,6 @@ class GenericObjectDeleteView(DeleteView):
         try:
             # Get the object to be deleted
             obj = self.get_object()
-
             model_name = obj.__class__.__name__
 
             # Delete the object
