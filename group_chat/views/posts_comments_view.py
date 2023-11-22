@@ -38,9 +38,9 @@ class BaseChatView(View):
             instance = form.save(commit=False)
             url_list = request.POST.getlist('urls[]')
             instance.images = ",".join(url_list)
-            # allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
-            # allowed_attributes = {'*': ['style', 'src', 'href']}
-            # instance.post = bleach.clean(instance.post, tags=allowed_tags, attributes=allowed_attributes)
+            allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
+            allowed_attributes = ['src', 'href','class']
+            instance.post = bleach.clean(instance.post, tags=allowed_tags, attributes=allowed_attributes)
             instance.created_by = request.user
             instance.save()
 
@@ -91,81 +91,7 @@ class PostsView(BaseChatView):
     posts_per_page = 10
     single_post_template = 'group_chat/single-post.html'
 
-    def get_channel(self, channel_id):
-        """
-        Retrieve the channel based on the channel ID.
-
-        Args:
-            channel_id (int): The ID of the channel.
-
-        Returns:
-            ChannelModel: The channel instance.
-        """
-        return get_object_or_404(ChannelModel, id=channel_id)
-
-    def get_posts(self, channel):
-        """
-        Retrieve posts for a specific channel.
-
-        Args:
-            channel (ChannelModel): The channel instance.
-
-        Returns:
-            QuerySet: Queryset of posts for the channel.
-        """
-        return PostsModel.objects.filter(post_channel=channel).order_by('created_date')
-
-    def get_paginated_posts(self, posts, page):
-        """
-        Paginate the list of posts.
-
-        Args:
-            posts (QuerySet): Queryset of posts.
-            page (int): The requested page number.
-
-        Returns:
-            tuple: Paginated posts and the previous page number.
-        """
-        paginator = Paginator(posts, self.posts_per_page)
-        total_pages = paginator.num_pages
-
-        page = total_pages if not page else page
-
-        try:
-            # Start from the last page and go backward
-            paginated_posts = paginator.page(page)
-        except (PageNotAnInteger, EmptyPage):
-             # If the page is not an integer, show the last page
-            paginated_posts = paginator.page(total_pages)
-
-        prev_page_number = (
-            paginated_posts.previous_page_number()
-            if paginated_posts.has_previous()
-            else None
-        )
-        next_page_number = (
-            paginated_posts.next_page_number()
-            if paginated_posts.has_next()
-            else None
-        )
-        return paginated_posts, prev_page_number
-
-
-    def update_user_status(self, request, channel):
-        """
-        Update the user's last viewed status for a specific channel.
-
-        Args:
-            request (HttpRequest): The HTTP request object.
-            channel (ChannelModel): The channel instance.
-        """
-        user_status, _ = ChannelLastViewedModel.objects.get_or_create(
-            user=request.user,
-            channel=channel
-        )
-        user_status.last_visit = timezone.now()
-        user_status.save()
-
+  
     def get(self, request, channel_id, post_id=None):
         """
         Handle GET requests to display posts in a channel.
@@ -187,8 +113,6 @@ class PostsView(BaseChatView):
                 try:
                     post_index = next((index for index, post in enumerate(posts) if post.id == post_id), None)
                     page_number = post_index // self.posts_per_page + 1
-                    print(page_number)
-                    print(post_index)
                 except Exception as e:
                     print(e)
             page = int(request.GET.get('page')) if request.GET.get('page') else (page_number if page_number is not None else None)
@@ -283,6 +207,84 @@ class PostsView(BaseChatView):
         except Exception as e:
             # Handle unexpected exceptions
             return JsonResponse({'status': 'Error', 'message': str(e)}, status=500)
+
+
+
+    def get_channel(self, channel_id):
+        """
+        Retrieve the channel based on the channel ID.
+
+        Args:
+            channel_id (int): The ID of the channel.
+
+        Returns:
+            ChannelModel: The channel instance.
+        """
+        return get_object_or_404(ChannelModel, id=channel_id)
+
+    def get_posts(self, channel):
+        """
+        Retrieve posts for a specific channel.
+
+        Args:
+            channel (ChannelModel): The channel instance.
+
+        Returns:
+            QuerySet: Queryset of posts for the channel.
+        """
+        return PostsModel.objects.filter(post_channel=channel).order_by('created_date')
+
+    def get_paginated_posts(self, posts, page):
+        """
+        Paginate the list of posts.
+
+        Args:
+            posts (QuerySet): Queryset of posts.
+            page (int): The requested page number.
+
+        Returns:
+            tuple: Paginated posts and the previous page number.
+        """
+        paginator = Paginator(posts, self.posts_per_page)
+        total_pages = paginator.num_pages
+
+        page = total_pages if not page else page
+
+        try:
+            # Start from the last page and go backward
+            paginated_posts = paginator.page(page)
+        except (PageNotAnInteger, EmptyPage):
+             # If the page is not an integer, show the last page
+            paginated_posts = paginator.page(total_pages)
+
+        prev_page_number = (
+            paginated_posts.previous_page_number()
+            if paginated_posts.has_previous()
+            else None
+        )
+        next_page_number = (
+            paginated_posts.next_page_number()
+            if paginated_posts.has_next()
+            else None
+        )
+        return paginated_posts, prev_page_number
+
+
+    def update_user_status(self, request, channel):
+        """
+        Update the user's last viewed status for a specific channel.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            channel (ChannelModel): The channel instance.
+        """
+        user_status, _ = ChannelLastViewedModel.objects.get_or_create(
+            user=request.user,
+            channel=channel
+        )
+        user_status.last_visit = timezone.now()
+        user_status.save()
+
 
     def update_last_viewed_channel(self, request, channel_id):
         """
