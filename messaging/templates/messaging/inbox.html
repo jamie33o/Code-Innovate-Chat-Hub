@@ -14,13 +14,13 @@
 <div class="w-100 h-100 d-flex flex-dir-row messaging">
     <div class="inbox-container">
         <form class="panel-search-form info form-group has-feedback no-margin-bottom">
-            <input type="text" class="form-control" name="search" placeholder="Search">
+            <input type="text" class="form-control " name="search" placeholder="Search">
             <span class="fa fa-search form-control-feedback"></span>
         </form>
-        <div class="contacts-outter">
-            <ul class="list-unstyled contacts">
+        <div class="message-list-links-outter">
+            <ul class="list-unstyled">
                 {% for message in messages %}
-                    <li class="message-link " data-userid="{{ message.receiver.id}}" data-toggle="tab" data-target="#inbox-message-1" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}" >
+                    <li class="message-link " data-userid="{{ message.receiver.id}}" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}">
                         <div class="img-count">
                             {% if message.conversation.id in unread_messages %}<div class="message-count">NEW</div>{% endif %} 
                             {%if message.sender.userprofile.profile_picture %}
@@ -29,14 +29,14 @@
                             <img alt="profile picture" class="img-circle medium-image" src="{% static 'noimage.png'}">
                             {% endif %}
                         </div>
-                        <div class="vcentered info-combo">
+                        <div class="info-combo">
                             <h3 class="no-margin-bottom name"> {% if message.sender == user %}{{ message.receiver.username }}{% else %}{{ message.sender.username }}{% endif %}</h3>
                             <h5 class="d-flex flex-dir-row">
                                 <span class="mr-1">{% if message.sender == user %}You: {% else %}{{ message.sender.username }}: {% endif %} </span>
-                                    {{ message.content|safe|emoji_replace }}
+                                    <p>{{ message.content|safe|emoji_replace }}</p>
                             </h5>
                         </div>
-                        <div class="contacts-add">
+                        <div class="time-del-icon">
                             <span class="message-time">
                                 {% now "Y-m-d" as current_datetime %}             
                                 {% with message_date=message.timestamp%}

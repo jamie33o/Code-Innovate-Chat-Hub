@@ -1,35 +1,34 @@
-/* //////////////////////////////////// messages list /////////////////////////////////// */
-#messages-list-container {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    background-color: var(--background);
-    /* display: none; */
-}
-
 /* ///////////////////////////// inbox //////////////////////////////////// */
 .inbox-container  { 
   border-right: 2px solid var(--ci-orange);
-  width: 350px;
+  width: 450px;
   background: #fcfcfc;
 }
 
-/* inbox message time */
-.contacts li .message-time {
-    position: absolute;
-    top: 0;
-    width: 70px;
-    height: 25px;
-    font-size: 14px;
-    font-weight: 600;
+/* search bar input */
+.panel-search > input {
+  margin-left: 5px;
+  width: 70%;
+  background-color: rgba(0,0,0,0);
+}
+
+/* inbox message list container */
+.message-list-links-outter {
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 /* inbox message info name, last message */
-
 .message-link {
   display: flex;
   flex-direction: row;
   cursor: pointer;
+  width: 100%;
+  border-top: 1px solid rgba(205,211,237,.9);
+  border-bottom: 1px solid rgba(205,211,237,.9);
+  border-left: 4px solid rgba(255,255,255,0);
+  padding: 8px 12px;
 }
 
 /* inbox list message text */
@@ -50,9 +49,6 @@
     width: 167px;
     height: 20px;
     font-size: 1.2em;
-    /* overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis; */
     margin: 3px 0;
 }
 
@@ -75,199 +71,99 @@
     border: 1px solid rgba(0,0,0,0.1);
 }
 
-/* tabs categories */
-.inbox-categories {
-  width: 100%;
-  padding: 0;
-  margin-left: 0;
-  display: flex;
-  flex-direction: row;
-}
-
-.inbox-categories > div {
-  width: 25%;
-  padding: 15px 5px;
-  font-size: 14px;
-  text-align: center;
-  border-right: 1px solid rgb(0, 0, 0);
-  background-color: rgba(255,255,255,0.75);
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.inbox-categories > div:nth-child(1) {
-  color: #2da9e9;
-  border-right-color: rgba(45,129,233,0.06);
-  border-bottom: 4px solid #2da9e9;
-}
-
-.inbox-categories > div:nth-child(1).active {
-  color: #fff;
-  background-color: #2da9e9;
-  border-bottom: 4px solid rgba(0,0,0,0.15);
-}
-
-.inbox-categories > div:nth-child(2) {
-  color: #0ec8a2;
-  border-right-color: rgba(14,200,162,0.06);
-  border-bottom: 4px solid #0ec8a2;
-}
-
-.inbox-categories > div:nth-child(2).active {
-  color: #fff;
-  background-color: #0ec8a2;
-  border-bottom: 4px solid rgba(0,0,0,0.15);
-}
-
-.inbox-categories > div:nth-child(3) {
-  color: #ff9e2a;
-  border-right-color: rgba(255,152,14,0.06);
-  border-bottom: 4px solid #ff9e2a;
-}
-
-.inbox-categories > div:nth-child(3).active {
-  color: #fff;
-  background-color: #ff9e2a;
-  border-bottom: 4px solid rgba(0,0,0,0.15);
-}
-
-.inbox-categories > div:nth-child(4) {
-  color: #314557;
-  border-bottom: 4px solid #314557;
-  border-right-color: transparent;
-}
-
-.inbox-categories > div:nth-child(4).active {
-  color: #fff;
-  background-color: #314557;
-  border-bottom: 4px solid rgba(0,0,0,0.35);
-}
-
-/* search bar input */
-.panel-search > input {
-  margin-left: 5px;
-  
-  background-color: rgba(0,0,0,0);
-}
-
-/* inbox message list container */
-.contacts-outter {
-  position: relative;
-  height: 100%;
-  width: 100%;
-}
 /*message ul*/
-.contacts {
+.message-list-links-outter ul {
   width: 100%;
   margin-top: 0px;
 }
 
-.contacts li {
-  width: 100%;
-  border-top: 1px solid rgba(205,211,237,.9);
-  border-bottom: 1px solid rgba(205,211,237,.9);
-  border-left: 4px solid rgba(255,255,255,0);
-  padding: 8px 12px;
+.message-list-links .active {
+  border-left: 5px solid var(--ci-orange);
+}
+
+.message-list-links li:hover {
+  background-color: var(--background);
+}
+
+/* search bar */
+.info  {
   position: relative;
-  background-color: rgba(255,255,255,0);
 }
 
-.contacts li:first-child.active {
-  border-top: 1px solid rgba(205,211,237,0.75);
+.info span{
+  background-color: #a2b8c5;
+  position: absolute;
+  top:0;
+  right: 0;
+  height: 100%;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--background);
+  border-radius: 5px;
 }
 
-.contacts li:hover {
-  background-color: rgba(255,255,255,0.9);
+.info span:hover {
+  color: var(--background);
+  cursor: pointer;
 }
 
-.contacts li.active, .contacts.info li.active {
-  border-left: 4px solid #2da9e9;
-  border-top-color: rgba(205,211,237,0.75);
-  border-bottom-color: rgba(205,211,237,0.75);
-  background-color: #fbfcff;
+.time-del-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.contacts.success li.active {
-  border-left: 4px solid #0ec8a2;
+.message-time {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  width: 50px;
+  text-align: end;
 }
 
-.contacts.warning li.active {
-  border-left: 4px solid #ff9e2a;
+.fa-trash-o {
+  font-size: 14px;
+  color: #a6a6a6;
+  cursor: pointer;
+  text-align: end;
+  width: fit-content;
 }
 
-.contacts.danger li.active {
-  border-left: 4px solid #f95858;
+.fa-trash-o:hover {
+  color: #f95858;
 }
 
-.contacts.dark li.active {
-  border-left: 4px solid #314557;
+.info-combo {
+  width: fit-content;
 }
 
-
-
-.contacts li > .info-combo > h3 {
-  width: 167px;
+.info-combo > h3 {
   height: 20px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  width: fit-content;
 }
 
-.contacts li .contacts-add {
-  width: 50px;
-  float: right;
-  z-index: 23299;
-}
-
-.contacts li .message-time {
-  text-align: right;
-  display: block;
-  margin-left: -15px;
-  width: 70px;
-  height: 25px;
-  line-height: 28px;
-  font-size: 14px;
-  font-weight: 600;
-  padding-right: 5px;
-}
-
-.contacts li .contacts-add .fa-trash-o {
-  position: absolute;
-  font-size: 14px;
-  right: 12px;
-  bottom: 15px;
-  color: #a6a6a6;
-  cursor: pointer;
-}
-
-.contacts li .contacts-add .fa-paperclip {
-  position: absolute;
-  font-size: 14px;
-  right: 34px;
-  bottom: 15px;
-  color: #a6a6a6;
-  cursor: pointer;
-}
-
-.contacts li .contacts-add .fa-trash-o:hover {
-  color: #f95858;
-}
-
-.contacts li .contacts-add .fa-paperclip:hover {
-  color: #ff9e2a;
-}
-
-.contacts li > .info-combo > h5 {
-  width: 180px;
+.info-combo > h5 {
   font-size: 12px;
   height: 28px;
   font-weight: 500;
   overflow: hidden;
   white-space: normal;
   text-overflow: ellipsis;
+  width: 200px;
 }
 
-.contacts li .message-count {
+.info-combo > h5 >p {
+  word-break: break-all;
+}
+
+.message-count {
   position: absolute;
   top: 8px;
   left: 5px;
@@ -282,8 +178,14 @@
   font-size: 10px;
 }
 
+/* //////////////////////////////////// messages list /////////////////////////////////// */
+#messages-list-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-color: var(--background);
+}
 
-/* ////////////////////////// message list //////////////////// */
 .message-body {
   background-color: #fbfcff;
   height: 100%;
@@ -433,9 +335,6 @@
   margin-left: 5px;
   margin-right: 10px;
 }
-
-
-
 
 /* ///////////////////// media queries ////////////////////// */
 /* CSS for small screens (up to the "lg" breakpoint) */
