@@ -38,6 +38,7 @@ class SummernoteEnhancer {
     this.divsection = null;
     this.$storeText = null;
     this.uploadImageUrls = [];
+    this.parentDiv = '';
   }
 
   /**
@@ -52,6 +53,7 @@ class SummernoteEnhancer {
     this.divToLoadIn = divToLoadIn
     this.djangoUrl = djangoUrl
     let emojiPicker = new EmojiPicker()
+    let counter = 0
 
     this.createForm(csrf_token)
 
@@ -71,9 +73,13 @@ class SummernoteEnhancer {
       callbacks: {
           onInit: function () {
               // Attach an input event handler to the Summernote editor
-              self.$sn.next().find('.note-editable').on('input', function () {
-                  self.tagUser(false);
-              });
+              self.$sn.next().find('.note-editable').on('input', self.throttle(function (e) {
+                // event Throttling function so function doesnt get called every time there is an input
+                self.tagUser(false);
+                self.parentDiv = $(e.target.lastChild.classList)                
+            }, 300)); 
+          
+            
           },
           // image upload callback 
           onImageUpload: function(files) {
@@ -96,6 +102,19 @@ class SummernoteEnhancer {
       let tempDiv = $('<div>');
       tempDiv.html($summernoteContent);
       
+      tempDiv.find('img').each(function() {
+
+        let altText = $(this).attr('alt');
+
+        if (!altText.endsWith(":")) {
+            altText = ":" + altText + ":";
+            $(this).replaceWith(altText);
+        }else{
+          $(this).replaceWith($(this).attr('alt'));
+        }
+      });
+      self.$sn.summernote('code', tempDiv.html());
+    
       let plainText = tempDiv.text().trim();
       if (!plainText) {
         displayMessage({'status': 'summernote-error'})
@@ -114,16 +133,6 @@ class SummernoteEnhancer {
       this.tagUser();      
     });
 
-    // fading summerote buttons
-    $(`${divToLoadIn} .note-editable`).on('focus', function() {
-        $(`${divToLoadIn} .btn-group button, ${divToLoadIn} .note-placeholder, ${divToLoadIn} .note-toolbar`).removeClass('faded');
-    });
-
-    $(`${this.divToLoadIn} .note-editable`).on('blur', function() {
-        $(`${divToLoadIn} .btn-group button, ${divToLoadIn} .note-placeholder, ${divToLoadIn} .note-toolbar`).addClass('faded');
-
-    });
-
     $(`${this.divToLoadIn} .add-image`).click(() => {
       $(`${this.divToLoadIn} .note-insert button`)[1].click();
     });
@@ -131,6 +140,34 @@ class SummernoteEnhancer {
     $(`${this.divToLoadIn} .note-resizebar`).on('mousedown',() => {
       this.resizeEditor()
     });
+
+    $(`${this.divToLoadIn} .note-toolbar button`).on('click',(e) => {
+      e.preventDefault()
+      $(e.currentTarget).addClass('btn-info');
+    })
+
+    $(`${this.divToLoadIn} .note-toolbar .note-misc button:first`).off().addClass('codeview')
+
+    $(`${this.divToLoadIn}`).on('click', `.codeview`, function(e) {
+      e.preventDefault()
+      let txt = self.$sn.summernote('code')
+      let txtContent = $(txt).text()
+      let pElement = null
+      if(self.parentDiv[0] === 'codeview-div'){
+        pElement = $(`<p class="p-1"></p>`)[0]
+        self.$sn.summernote('editor.insertNode', pElement);
+        self.parentDiv = ''
+      }else{
+        if(txtContent.length === 0){
+          pElement = $(`<p class="codeview-div p-2">${txtContent}</p>`)[0]
+          self.$sn.summernote(`code`, pElement );
+        }else{
+          pElement = $(`<p class="codeview-div p-2"></p>`)[0]
+          self.$sn.summernote(`editor.insertNode`, pElement );
+        }
+      }
+      self.$sn.summernote(`focus`)
+  })
 
     //overlay event listener to close modals
     $(`.hide-modal`).click(() => {
@@ -280,7 +317,7 @@ class SummernoteEnhancer {
 
   /**
    * Adjusts the height of the editor.
-   */t
+   */
   resizeEditor() {
       const fullScreen = 400
       if($('.note-editable').height() < fullScreen-30){
@@ -377,6 +414,23 @@ class SummernoteEnhancer {
         $('.add-image').removeClass("d-none")
        }
     }
+
+
+    throttle(func, delay) {
+      let timer = null;
+  
+      return function () {
+          const context = this;
+          const args = arguments;
+  
+          if (!timer) {
+              func.apply(context, args);
+              timer = setTimeout(() => {
+                  timer = null;
+              }, delay);
+          }
+      };
+  }
 }
 /**
  * Instance for handling Summernote editors in posts.
