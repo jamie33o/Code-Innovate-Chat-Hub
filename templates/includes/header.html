@@ -3,7 +3,7 @@
 
     <!-- search icon  -->
     {% if user.is_authenticated %}
-    <div class="col-lg-4">
+    <div class="col-lg-3">
         <div class="d-flex justify-content-start h-100">
             <div class="searchbar my-auto ml-2">
                 <input class="search_input" type="text" name="" placeholder="Search...">
@@ -14,7 +14,7 @@
     {% endif %}
 
 
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <a href="{% url 'channels' %}" class="nav-link logo">
             <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong> Chat Hub</h1>
         </a>
@@ -22,13 +22,13 @@
     {% if user.is_authenticated %}
 
     <!-- settings button -->
-    <div class="col-lg-4">
+    <div class="col-lg-3">
         <ul class=" list-unstyled d-flex justify-content-end h-100 ">
             <li class="list-inline-item dropdown my-auto mr-2">
                 <a class="text-black" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
                     <div class="settings-cog ">
-                        <div><i class="fas fa-cog fa-xl"></i></div>
+                        <i class="fas fa-cog fa-xl"></i>
                     </div>
                 </a>
                 <!-- settings drop down -->
