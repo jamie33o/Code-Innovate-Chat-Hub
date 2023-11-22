@@ -11,6 +11,8 @@ $('#messages-list-container').on('click', '.close-messages-btn', function(e){
 $('.inbox-container').on('click', '.message-link', function(e){
     e.preventDefault()
     let url = $(this).closest('.message-link').data('url')
+    $('.message-link').removeClass('active')
+    $(this).addClass('active')
 
     ajaxRequest(url, null, 'GET', '#messages-list-container', null, function(response){
         $('#messages-list-container').html(response)

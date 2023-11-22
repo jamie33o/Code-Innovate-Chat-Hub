@@ -395,7 +395,6 @@ nav > div a.nav-item.nav-link:focus
 
 .logo {
     color: var(--white) !important;
-    width: 130%;
 }
 
 .logo:hover {
@@ -423,6 +422,7 @@ nav > div a.nav-item.nav-link:focus
     outline: 0;
     background: none;
     width: 0;
+    max-width: 80%;
     caret-color:transparent;
     line-height: 30px;
     transition: width 0.4s linear;
