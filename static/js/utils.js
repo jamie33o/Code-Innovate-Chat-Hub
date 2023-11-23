@@ -287,3 +287,44 @@ $(document).ready(function(){
         
     });
 })
+
+
+///////////////////////// delete object e.g post, comment, message //////////////////////////
+
+function deleteObject(url, object, objectName, msgLocation){
+    // Get the URL of the image
+    // get card to be deleted
+
+    let header =
+        `<h5 class="modal-title text-center">
+        Are you sure you want to delete this ${objectName}?
+        </h5>`;
+    
+    // Clone object to be deleted
+    let clonedObject = object.clone();
+    // remove buttons and links
+    clonedObject.find('button').parent().remove()
+    clonedObject.find('a').remove()
+
+    let deleteModelBody = `
+    <form>
+        <div class="input-group text-center d-flex justify-content-between">
+            <button type="button" class="btn-oval btn btn-info" 
+            data-dismiss="modal" aria-label="Close">No</button>
+
+            <button id="yes-btn" 
+            class="btn btn-oval btn-info" data-dismiss="modal" 
+            type="button">Yes</button>
+        </div>
+    </form>`;
+    let body = $(deleteModelBody).prepend(clonedObject)
+            
+    showModal(header, body)
+    // event listener for yes-btn on the delete post/comment card modal
+    $(document).on('click', '#yes-btn', function(event) {
+        event.preventDefault()   
+        object.remove();
+        ajaxRequest(url, csrfToken, 'DELETE', `${msgLocation}`)
+
+    })
+}

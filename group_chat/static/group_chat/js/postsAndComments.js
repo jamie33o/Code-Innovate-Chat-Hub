@@ -105,62 +105,15 @@ $('main').on('submit', '#add-user-form', function(event) {
 // event listener for the delete button on post and comments
 $(document).on('click', '.delete-btn', function() {
     // Get the URL of the image
-    deleteUrl = $(this).data('delete-url')
+    let deleteUrl = $(this).data('delete-url')
     // get card to be deleted
-    cardBeingDeleted = $(this).closest('.card');
+    let cardBeingDeleted = $(this).closest('.card');
+    deleteObject(deleteUrl, cardBeingDeleted, 'post', '#channel-posts')
 
-    let header =
-        `<h5 class="modal-title text-center">
-        Are you sure you want to delete this post?
-        </h5>`;
-    
-    // Clone cardBeingDeleted
-    const clonedCard = cardBeingDeleted.clone();
-    clonedCard.find('.dropdown-menu').removeClass('show')
-
-    // Create an overlay div
-    const overlay = $('<div id="cover"></div>');
-
-    // Set its CSS properties
-    overlay.css({
-        'position': 'absolute',
-        'top': '0',
-        'left': '0',
-        'width': '100%',
-        'height': '100%',
-        'z-index': '3', 
-    });
-
-    // Append the overlay to the body
-    clonedCard.append(overlay);
-    deleteModelBody = `
-    <form>
-        <div class="input-group text-center d-flex justify-content-between">
-            <button type="button" class="btn-oval" 
-            data-dismiss="modal" aria-label="Close">No</button>
-
-            <button id="yes-btn" 
-            class="btn btn-oval" data-dismiss="modal" 
-            type="button">Yes</button>
-        </div>
-    </form>`;
-    let body = $(deleteModelBody).prepend(clonedCard)
-            
-    showModal(header, body)
-    });
-
-
-
-// event listener for yes-btn on the delete post/comment card modal
-$(document).on('click', '#yes-btn', function(event) {
-    event.preventDefault()   
-    cardBeingDeleted.remove();
-    ajaxRequest(deleteUrl, csrfToken, 'DELETE', '#channel-posts')
-    // close comments if user deletes post
     if($(cardBeingDeleted)[0].className.includes('post')){
         $('.comments-close-btn').click()
     }
-})
+});
 
 // Attach a click event handler to the 'main' element, specifically for elements with the class 'save-post-btn'
 $('main').on('click', '.save-post-btn', function(event) {
