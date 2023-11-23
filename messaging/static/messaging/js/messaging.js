@@ -1,3 +1,7 @@
+let csrfToken = null;
+let msgToBeDel = null;
+let deleteUrl = null;
+let deleteModelBody = null;
 // ////////////////////////////// inbox functionality ////////////////////////////
 
 $('#messages-list-container').on('click', '.close-messages-btn', function(e){
@@ -53,3 +57,55 @@ $('.inbox-container').on('click', '.delete-conversation', function(e){
     })
 
 })
+
+// // event listener for the delete button on post and comments
+// $(document).on('click', '.delete-btn', function() {
+//     let deleteUrl = $(this).data('delete-url')
+//     let msgToBeDel = $(this).closest('.message');
+//     deleteObject(deleteUrl, msgToBeDel, 'message', '.messaging')
+// });
+
+// // listener for edit button on posts and comments dropdown menu
+// $('main').on('click', '.edit-btn', function(event) {
+//     // cancel any other post that is in edit mode
+//     if($('.cancel-edit').length > 0){
+//         $('.cancel-edit').click()
+//     }else if($('.edit-post').length > 0 ){
+//         $('.card.edit-post').removeClass('edit-post')
+//     }
+//     // Find the closest ancestor with the class 'card'
+//     var card = $(this).closest('.card');
+//     let carbody = card.find('.card-body').html()
+//     let cardText = card.find('.card-text').html();
+//     let cardImages = card.find('.post-images').html()
+//     card.addClass('edit-post')
+//     let postId = card.data("post-id")
+//     let editPostUrl = card.data('post-url')
+//     card.find('.card-body').html('')
+//     // Append the HTML structure to the body
+//     editPostUrl += postId + '/'
+//     summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl, csrfToken)
+    
+
+//     summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
+
+//     $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button class="cancel-edit">Cancel</button>');
+    
+//     $('main').on('click', '.cancel-edit', function(event) {
+//         event.preventDefault()
+//         $('.edit-post .card-body').html(carbody)
+//         $('.card.edit-post').removeClass('edit-post')
+//     })
+
+//     if(cardImages){
+//         $(cardImages).each(function () {
+//         let src = $(this).attr('src');
+//         if(src != undefined){
+//             summernoteEnhancerEditPost.addimageToSummernote(src)
+//         }
+//         }); 
+//     }
+// });
+
+
+

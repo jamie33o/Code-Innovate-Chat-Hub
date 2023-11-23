@@ -46,25 +46,21 @@
                 <div class="message-body-inner">
                     <div class="message-info">
                         <h4>{{ message.sender.username }} </h4>
-                        <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>
-                     
-                        <div class="dropdown">
-                            <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-ellipsis-h"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right p-0">
-                                <div class="links-container m-0 p-0">
-                                    <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
-                                    <div class="links-body pb-2">
-                                
-                                        <button class="dropdown-item btn-ci edit-btn">Edit</button>
-                                        <button class="dropdown-item btn-ci delete-btn" data-delete-url="{% url 'delete_object' model='Message' pk=message.id %}">Delete</button>
-                                    
-                                    </div>
+                        <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>                     
+                    </div>
+                    <div class="dropdown message-dropdown">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right p-0">
+                            <div class="links-container m-0 p-0">
+                                <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
+                                <div class="links-body pb-2">
+                                    <button class="dropdown-item btn-ci edit-btn">Edit</button>
+                                    <button class="dropdown-item btn-ci delete-btn" data-delete-url="{% url 'delete_obj' model='Message' pk=message.id %}">Delete</button>
                                 </div>
                             </div>
                         </div>
-                       
                     </div>
                     <hr>
                     <div class="message-text">
@@ -73,6 +69,7 @@
                 </div>
             </div>
             <br>
+
         </div>      
             
         {% else %}

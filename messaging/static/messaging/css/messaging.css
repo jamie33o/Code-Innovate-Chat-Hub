@@ -212,6 +212,20 @@
   padding: 5px 15px;
 }
 
+.message-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: -50px;
+  top: 0;
+  height: 20px;
+  width: 40px;
+  border-radius: 30px;
+  background-color: var(--light-grey);
+  border: 1px solid rgba(128, 128, 128, 0.277);
+}
+
 .message-info > h5 {
   color: #a2b8c5;
   font-size: 12px;
