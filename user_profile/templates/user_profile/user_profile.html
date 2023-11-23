@@ -37,12 +37,13 @@
     </div>
     <!-- </div> -->
     {% endif %}
-
-    <div class="links-container">
-        <div class="links-heading">Bio</div>
-        <div class="links-body"><p>{{ user_profile.bio }}</p>
+    {% if user_profile.bio %}
+        <div class="links-container">
+            <div class="links-heading">Bio</div>
+            <div class="links-body"><p>{{ user_profile.bio }}</p>
+            </div>
         </div>
-    </div>
+    {% endif %}
     {% if user_profile.website %}
         <div class="links-container">
             <div class="links-heading">Website <i class="fa fa-link fa-1x"></i></div>
