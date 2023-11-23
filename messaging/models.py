@@ -1,6 +1,9 @@
 # models.py
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+
+user = get_user_model()
 
 class ImageModel(models.Model):
     """
@@ -25,9 +28,17 @@ class EmojiModel(models.Model):
 
     """
     emoji_colon_name = models.TextField(unique=False)
+    incremented_by = models.ManyToManyField(user, related_name='%(class)s_incremented_by', blank=True)
+
+    def get_incremented_users(self):
+        """
+        - get_incremented_users: Returns the users who incremented the emoji.
+
+        """
+        return self.users_who_incremented.all()
 
 class Conversation(models.Model):
-    participants = models.ManyToManyField(User)
+    participants = models.ManyToManyField(user)
 
     def delete(self, *args, **kwargs):
         # Delete all messages related to this conversation
@@ -35,11 +46,11 @@ class Conversation(models.Model):
         super(Conversation, self).delete(*args, **kwargs)
 
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey(user, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(user, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    images = models.ManyToManyField(ImageModel, blank=True)
+    images = models.TextField(blank=True, default="")
     emojis = models.ManyToManyField(EmojiModel, blank=True)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
 
