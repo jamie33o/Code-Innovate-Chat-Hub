@@ -57,6 +57,13 @@ class Message(models.Model):
     def __str__(self):
         return f"{self.sender} to {self.receiver} - {self.timestamp}"
     
+    def get_image_urls(self):
+        """
+        - get_image_urls: Returns a list of image URLs.
+
+        """
+        return [url.strip() for url in self.images.split(',') if url.strip()]
+    
 
 
 class UnreadMessage(models.Model):
