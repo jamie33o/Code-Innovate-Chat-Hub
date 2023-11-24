@@ -17,6 +17,15 @@
             <div class="message-text">
                 {{ message.content|safe|emoji_replace }}
             </div>
+            {% if message.images %}
+                <div class="message-img">
+                    {% for image_url in message.get_image_urls %}
+                        {% if image_url %}
+                            <img src="{{ image_url }}">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
     <br>
