@@ -11,8 +11,10 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from .models import Message, UnreadMessage, Conversation
-
+from .models import Message, UnreadMessage, Conversation, ImageModel, EmojiModel
+import boto3
+from botocore.exceptions import NoCredentialsError
+from django.conf import settings
 
 
 
@@ -110,21 +112,26 @@ class MessageListView(View):
         # unread_messages.delete()
         return render(request, self.template_name, context)
 
-    def post(self, request, receiver_id):
-        receiver = User.objects.get(pk=receiver_id)
+    def post(self, request, receiver_id=None, message_id=None):
         content = request.POST.get('post', '')
-        if content:
+        url_list = request.POST.getlist('urls[]')
+        images = ",".join(url_list)
+        if content and receiver_id:
+            receiver = User.objects.get(pk=receiver_id)
             conversation = self.get_conversation(request.user, receiver)
             
+            if message_id is None:
+                message = Message(sender=request.user, receiver=receiver, content=content, images=images, conversation=conversation)
+            else:
+                message = get_object_or_404(Message, id=message_id)
+                message.content = content
+                message.images = images
+
             # Create a new message
-            message = Message(sender=request.user, receiver=receiver, content=content,conversation=conversation)
             message.save()
 
             html_content = render_to_string('messaging/single-message.html', {'message': message})
             self.broadcast_message(request, html_content, conversation.id, None)
-
-         
-        return redirect('inbox')
 
 
     def broadcast_message(self, request, instance_html, conversation_id, edit_id):
@@ -186,7 +193,6 @@ class GenericObjectDeleteView(DeleteView):
             # Get the object to be deleted
             obj_pk = self.kwargs['pk']
             obj = get_object_or_404(model, pk=obj_pk)
-            print(obj)
 
             return obj
         except (LookupError, ValueError, KeyError) as e:
@@ -210,6 +216,10 @@ class GenericObjectDeleteView(DeleteView):
             # Get the object to be deleted
             obj = self.get_object()
             model_name = obj.__class__.__name__
+            if obj.images:
+                url_list = obj.images.split(",")
+                for image in url_list:
+                    delete_image_from_s3(image)
 
             # Delete the object
             obj.delete()
@@ -230,3 +240,100 @@ class GenericObjectDeleteView(DeleteView):
         context = super().get_context_data(**kwargs)
         context['model_name'] = self.kwargs['model']
         return context
+    
+def delete_image_from_s3(image_key):
+    try:
+        s3 = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+
+        s3.delete_object(Bucket=bucket_name, Key=image_key)
+        return True
+    except NoCredentialsError:
+        print('Credentials not available')
+        return False
+    
+class ImageUploadView(View):
+    """
+    View class for handling image uploads.
+    """
+    def post(self, request):
+        """
+        Handle POST requests to upload an image.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            args: Additional positional arguments.
+            kwargs: Additional keyword arguments.
+
+        Returns:
+            JsonResponse: JSON response indicating the status of the image upload.
+        """
+        try:
+            if request.FILES.get('file'):
+                image_file = request.FILES['file']
+
+                # Create a new ImageModel instance
+                new_image = ImageModel.objects.create(image=image_file)
+
+                # Return the URL
+                return JsonResponse({'url': new_image.image.url})
+
+            return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'})
+        except Exception as e:
+            # Handle exceptions (e.g., database error, unexpected error)
+            return JsonResponse({'status': 'Error', 'message': f'Error uploading image: {str(e)}'})
+        
+
+class AddOrUpdateEmojiView(View):
+    """
+    View class for adding or updating an emoji in a post or comments model instance. 
+    """
+    def post(self, request, instance_id, *args, **kwargs):
+        """
+        Handle POST requests to add or update an emoji in a post or comments model instance.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            instance_id (int): The ID of the model instance.
+            args: Additional positional arguments.
+            kwargs: Additional keyword arguments.
+
+        Returns:
+            JsonResponse: JSON response indicating the status of the operation.
+        """
+        try:
+            user = request.user
+            emoji_colon_name = request.POST.get('emoji_colon_name')
+
+            # Get the model class based on the URL parameter
+            model_name = self.kwargs['model']
+            model = apps.get_model(app_label='messaging', model_name=model_name)
+
+            obj = get_object_or_404(model, pk=instance_id)
+
+            # If it exists, increment the count and add the user
+            instance, created = obj.emojis.get_or_create(
+                emoji_colon_name=emoji_colon_name,
+                defaults={'emoji_colon_name': emoji_colon_name}
+            )
+
+            if created:
+                # If a new instance is created, add the user
+                instance.incremented_by.add(user)
+                return JsonResponse({'status': 'added'})
+
+            # Check if the EmojiModel exists
+            if request.user in instance.incremented_by.all():
+                instance.incremented_by.remove(user)
+                # Check if there are no more users and remove the instance if true
+                if instance.incremented_by.count() == 0:
+                    obj.emojis.remove(instance)
+                    return JsonResponse({'status': 'removed'})
+                return JsonResponse({'status': 'decremented'})
+
+            # If it exists, increment the count and add the user
+            instance.incremented_by.add(user)
+            return JsonResponse({'status': 'incremented'})
+        except Exception as e:
+            # Handle exceptions (e.g., model not found, database error)
+            return JsonResponse({'status': 'error', 'message': str(e)})
