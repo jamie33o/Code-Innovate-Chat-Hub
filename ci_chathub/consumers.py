@@ -10,20 +10,20 @@ Classes:
 - CommentConsumer: Handles WebSocket connections and events related to comments.
 
 """
-
-import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
 import os
+import json
+from django import setup
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from django import setup
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
 from group_chat.models import ChannelModel, CommentsModel, PostsModel
 from messaging.models import Conversation
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ci_chathub.settings')
 setup()
+
 
 class GlobalConsumer(AsyncWebsocketConsumer):
     """
