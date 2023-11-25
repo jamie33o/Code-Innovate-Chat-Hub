@@ -7,24 +7,28 @@
     <button class="btn close-messages-btn position-absolute d-lg-none "><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     
         {% if sender == user %}
-        <img class="ml-5 p-1 img-circle profile-pic-medium profile-pic" src="
-        {% if message.receiver.userprofile and message.receiver.userprofile.profile_picture %}
-        {{ receiver.userprofile.profile_picture.url }}
-        {% else %}
-        {% static 'noimage.png' %}
-        {% endif %}
-        " alt="Profile Picture"
-        data-url="{% url 'view_user_profile' receiver.userprofile.id %}">
+        <div class="{% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
+            <img class="ml-5 p-1 img-circle profile-pic-medium profile-pic" src="
+            {% if message.receiver.userprofile and message.receiver.userprofile.profile_picture %}
+            {{ receiver.userprofile.profile_picture.url }}
+            {% else %}
+            {% static 'noimage.png' %}
+            {% endif %}
+            " alt="Profile Picture"
+            data-url="{% url 'view_user_profile' receiver.userprofile.id %}">
+        </div>
         <h4 class="ml-3 w-100">{{ receiver.username }} </h4>
         {% else %} 
-        <img class="ml-5 p-1 img-circle profile-pic-medium  profile-pic" src="
-        {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
-        {{ sender.userprofile.profile_picture.url }}
-        {% else %}
-        {% static 'noimage.png' %}
-        {% endif %}
-        " alt="Profile Picture"
-        data-url="{% url 'view_user_profile' sender.userprofile.id %}">
+        <div class="{% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
+            <img class="ml-5 p-1 img-circle profile-pic-medium  profile-pic" src="
+            {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
+            {{ sender.userprofile.profile_picture.url }}
+            {% else %}
+            {% static 'noimage.png' %}
+            {% endif %}
+            " alt="Profile Picture"
+            data-url="{% url 'view_user_profile' sender.userprofile.id %}">
+        </div>
         <h4 class="ml-3 w-100">{{ sender.username }} </h4>
         {% endif %} 
 </div>

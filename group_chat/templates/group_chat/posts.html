@@ -19,14 +19,18 @@
                     <!-- Profile picture -->
                     <div class="mr-2">
                         {% if single_post.created_by.userprofile and single_post.created_by.userprofile.profile_picture %}
-                            <img class="rounded-circle profile-pic profile-pic-medium" data-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
-                        {% else %}
-                            <img class="rounded-circle profile-pic profile-pic-medium" data-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
-                        {% endif %}
+                                <div class="{% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
+                                    <img class="rounded-circle profile-pic profile-pic-medium" data-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{{ single_post.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
+                                </div>
+                            {% else %}
+                                <div class="{% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
+                                    <img class="rounded-circle profile-pic profile-pic-medium" data-url="{% url 'view_user_profile' single_post.created_by.userprofile.id %}" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                                </div>
+                            {% endif %}
                     </div>
                     <!-- Username and date -->
                     <div class="ml-2">
-                        <div class="h5 m-2">{{ single_post.created_by }}</div>
+                        <div class="h5 m-2">{{ single_post.created_by }} </div>
                         <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i, b j"|upper }}</div>
                     </div>
                 </div>
@@ -70,14 +74,14 @@
             <div id="post-emoji" class="card-link">
                 <ul class="list-inline m-0 p-0 emoji-list{{ single_post.id }}">
                     <!-- Emoji button -->
-                    <a data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}" href="" class="card-emoji-btn">
+                    <a data-emoji-url="{% url 'emoji_home' model='PostsModel' instance_id=single_post.id %}" href="" class="card-emoji-btn">
                         <i class="fa-regular fa-face-smile fa-lg" style="color: #f58a32;"></i>
                     </a>
                     <!-- Loop through emojis and generate list items -->
                     {% for emoji in single_post.emojis.all %}
                         <li class="list-inline-item mr-2">
                             <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}" 
-                                    data-emoji-url="{% url 'emoji' model='PostsModel' instance_id=single_post.id %}"  
+                                    data-emoji-url="{% url 'emoji_home' model='PostsModel' instance_id=single_post.id %}"  
                                     data-target="#emojiModal{{ emoji.id }}" 
                                     data-emoji-code="{{ emoji.emoji_colon_name }}">
                                 {{ emoji.emoji_colon_name|emoji_replace }}

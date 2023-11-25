@@ -41,7 +41,7 @@
             {% endif %}
         </div>
         <div class="d-flex px-2">
-            <a data-emoji-url="{% url 'emoji' model='CommentsModel' instance_id=comment.id %}"  
+            <a data-emoji-url="{% url 'emoji_home' model='CommentsModel' instance_id=comment.id %}"  
             href="" class="card-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" 
             style="color: #f58a32;"></i></a>
 
@@ -51,7 +51,7 @@
             {% for emoji in comment.emojis.all %}
                 <li class="list-inline-item mr-2">
                     <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}" 
-                            data-emoji-url="{% url 'emoji' model='CommentsModel' instance_id=comment.id %}" 
+                            data-emoji-url="{% url 'emoji_home' model='CommentsModel' instance_id=comment.id %}" 
                             data-post-emoji-list=".emoji-list{{ comment.id }}" 
                             data-target="#emojiModal{{ emoji.id }}" 
                             data-emoji-code="{{ emoji.emoji_colon_name }}">

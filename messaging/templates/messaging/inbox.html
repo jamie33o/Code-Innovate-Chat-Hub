@@ -24,7 +24,9 @@
                         <div class="img-count">
                             {% if message.conversation.id in unread_messages %}<div class="message-count">NEW</div>{% endif %} 
                             {%if message.sender.userprofile.profile_picture %}
-                            <img alt="profile picture" class="img-circle medium-image " src="{% if message.sender == user %}{{ message.receiver.userprofile.profile_picture.url }}{% else %}{{ message.sender.userprofile.profile_picture.url }}{% endif %}">
+                            <div class="{% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
+                                <img alt="profile picture" class="img-circle medium-image" src="{% if message.sender == user %}{{ message.receiver.userprofile.profile_picture.url }}{% else %}{{ message.sender.userprofile.profile_picture.url }}{% endif %}">
+                            </div>
                             {% else %}
                             <img alt="profile picture" class="img-circle medium-image" src="{% static 'noimage.png'}">
                             {% endif %}
