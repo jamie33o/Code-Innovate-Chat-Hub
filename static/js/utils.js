@@ -12,6 +12,8 @@ let currentUser = null;
 let postsWebSocket = null;
 let commentsWebSocket = null;
 let messageWebsocket = null;
+let unseenPostsWebsocket = null;
+let userId = null;
 
 
 /////////////////////// function for notification messages ///////////////////////////////
@@ -27,21 +29,38 @@ function displayMessage(response, divClass){
     if (isAnimationInProgress) {
         return;
     } 
+    let time = null;
+    if(response.timestamp){
+        time = response.timestamp
+    }else{
+        time = 'Just Now'
+    }
+    let headerMsg = null;
+    if(response.status){
+        headerMsg = response.status.toLowerCase()
+        headerClass = response.status.toLowerCase()
+    }else{
+        headerMsg = response.created_by
+        headerClass = 'success'
+    }
     let messageLi = `
     <div class="notification">
-        <div class="toast-header ${response.status.toLowerCase()}">
-            <img src="..." class="rounded mr-2" alt="...">
-            <strong class="mr-auto">${response.status.toUpperCase()}</strong>
-            <small>11 mins ago</small>
+        <div class="toast-header ${headerClass}">
+            <strong class="mr-auto">${headerMsg}</strong>
+            <small>${time}</small>
         </div>
         <div class="toast-body message-item">
-            
             <p>${response.message}</p>  
         </div>
     </div>
     `;
-    
+   
+
     $(divClass).append(messageLi)
+    if(response.img_url){
+        let imgSrc = `<img src="${response.img_url}" class="rounded mr-2 profile-pic-small" alt="...">`
+            $(divClass).find('.toast-header').prepend(imgSrc)
+        }
 
     isAnimationInProgress = true;
     let notification = $('.notification')
@@ -129,6 +148,7 @@ function websocketInit(socket) {
                     }
                 }
             } else if (data.type === 'messaging_notification') {
+                
                     $('#message-list').append(data.html)
                     let user = $('#message-list').data('user')
                    // if its the user that created it add the class my-message
@@ -138,9 +158,15 @@ function websocketInit(socket) {
                         $('#message-list .new-message').removeClass('new-message')
                     }
 
+            } else if (data.type === 'global_consumer') {
+                if(data.created_by != currentUser){
+                    console.log(currentUser)
+                    displayMessage(data, 'body')
+                }
+
             }else {
-                console.error('Unknown notification type:', data.type);
-            }
+                    console.error('Unknown notification type:', data.type);
+                }
             
         });
 
@@ -207,7 +233,8 @@ function startWebSocket(type, id){
         url = `ws://${window.location.host}/ws/${type}/${id}/`
     } else if (window.location.protocol === 'https:') {
         url = `wss://${window.location.host}/ws/${type}/${id}/`
-    } 
+    }
+
 
     if(type === 'channel_posts'){
         if(postsWebSocket){
@@ -222,6 +249,13 @@ function startWebSocket(type, id){
         messageWebsocket = new WebSocket(url)
         websocketInit(messageWebsocket); 
     
+    }else if(type === 'global_consumer'){
+        if(unseenPostsWebsocket){
+            unseenPostsWebsocket.close()
+        }
+        unseenPostsWebsocket = new WebSocket(url)
+        websocketInit(unseenPostsWebsocket); 
+    
     }else{
         if(commentsWebSocket){
             commentsWebSocket.close()
@@ -231,6 +265,10 @@ function startWebSocket(type, id){
     }
 }
 
+$(document).ready(function(){
+    startWebSocket('global_consumer', userId)
+
+})
 
     /**
  * Display a modal with the specified header and body content.
