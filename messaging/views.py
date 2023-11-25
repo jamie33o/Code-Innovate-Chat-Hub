@@ -132,6 +132,10 @@ class MessageListView(View):
 
             html_content = render_to_string('messaging/single-message.html', {'message': message})
             self.broadcast_message(request, html_content, conversation.id, None)
+            self.notification_msg(request, message.timestamp, message.content, 'conversation', conversation.id)
+
+        return JsonResponse({'status': 200})
+
 
 
     def broadcast_message(self, request, instance_html, conversation_id, edit_id):
@@ -169,6 +173,42 @@ class MessageListView(View):
         conversation = Conversation.objects.filter(participants=user1).filter(participants=user2).first()
         return conversation
     
+
+    def notification_msg(self, request, timestamp, message, model_name, model_id):
+        """
+        Broadcast a message to the channel layer.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            message_type (str): The type of message.
+            message_content (str): The content of the message.
+            instance_id (int): The ID of the instance.
+
+        Returns:
+            JsonResponse: JSON response indicating the status of the broadcast.
+        """
+        formatted_time = timestamp.strftime('%H:%M')
+        try:
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                    "global_consumer",
+                {
+                    'type': 'global_consumer',
+                    'timestamp': formatted_time,
+                    'message': message,
+                    'created_by': request.user.username,
+                    'img_url': request.user.userprofile.profile_picture.url,
+                    'model_id': model_id,
+                    'model_name': model_name,
+                }
+            )
+            return JsonResponse({'status': 'success', 'message': 'message sent'})
+        except Exception as e:
+            print(e)
+            # Handle unexpected exceptions
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+
 
 class GenericObjectDeleteView(DeleteView):
     """

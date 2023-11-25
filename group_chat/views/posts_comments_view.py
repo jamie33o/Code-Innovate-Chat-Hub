@@ -12,7 +12,11 @@ from django.contrib.auth import get_user_model
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from user_profile.models import UserProfile
-from group_chat.models import ChannelModel, PostsModel, ChannelLastViewedModel, CommentsModel
+from group_chat.models import (ChannelModel, 
+                               PostsModel, 
+                               ChannelLastViewedModel, 
+                               CommentsModel,
+                               UnseenPost)
 from group_chat.forms import PostsForm, CommentsForm
 
 
@@ -79,6 +83,42 @@ class BaseChatView(View):
         except Exception as e:
             # Handle unexpected exceptions
             return JsonResponse({'status': 'error', 'message': str(e)})
+        
+
+
+    def notification_msg(self, request, timestamp, message, model_name, model_id):
+        """
+        Broadcast a message to the channel layer.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            message_type (str): The type of message.
+            message_content (str): The content of the message.
+            instance_id (int): The ID of the instance.
+
+        Returns:
+            JsonResponse: JSON response indicating the status of the broadcast.
+        """
+        formatted_time = timestamp.strftime('%H:%M')
+        try:
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                    "global_consumer",
+                {
+                    'type': 'global_consumer',
+                    'timestamp': formatted_time,
+                    'message': message,
+                    'created_by': request.user.username,
+                    'img_url': request.user.userprofile.profile_picture.url,
+                    'model_id': model_id,
+                    'model_name': model_name,
+                }
+            )
+            return JsonResponse({'status': 'success', 'message': 'message sent'})
+        except Exception as e:
+            print(e)
+            # Handle unexpected exceptions
+            return JsonResponse({'status': 'error', 'message': str(e)})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -124,6 +164,13 @@ class PostsView(BaseChatView):
             if request.user in channel.users.all():
                 self.update_user_status(request, channel_id)
 
+            unseen_post, created = UnseenPost.objects.get_or_create(
+                channel=channel,
+            )
+
+            if request.user in unseen_post.unseen_users.all():
+                unseen_post.unseen_users.remove(request.user)
+
             form = PostsForm()
 
             context = {
@@ -161,6 +208,7 @@ class PostsView(BaseChatView):
             based on the success or failure of the operation.
         """
         try:
+            channel = get_object_or_404(ChannelModel, id=channel_id)
             # If post_id is None, it's a new post; otherwise, it's an edit
             if post_id is None:
                 form = PostsForm(request.POST)
@@ -169,7 +217,7 @@ class PostsView(BaseChatView):
                 form = PostsForm(request.POST, instance=post)
 
             if form.is_valid():
-                form.instance.post_channel = get_object_or_404(ChannelModel, id=channel_id)
+                form.instance.post_channel = channel
                 post = self.process_and_save(request, form)
                 context = {
                     'channel': form.instance.post_channel,
@@ -177,12 +225,21 @@ class PostsView(BaseChatView):
                     'form': form,
                 }
 
+                unseen_post, created = UnseenPost.objects.get_or_create(
+                    channel= channel,
+                )
+                users_in_channel = channel.users.all()
+
+                # Add users to the unseen_post's unseen_users field
+                unseen_post.unseen_users.add(*users_in_channel)
+
                 try:
                     html_content = render_to_string(self.single_post_template, context)
                 except Exception as e:
                     print(f"Error rendering template: {e}")
 
                 self.broadcast_message(request, 'post', html_content, channel_id, post_id)
+                self.notification_msg(request, post.created_date, post.post, 'channel', channel.id)
 
                 if post_id is None:
                     redirect_url = reverse('channel_posts', args=[channel_id])
@@ -379,6 +436,8 @@ class CommentsView(BaseChatView):
             HttpResponse: Redirect or JSON response based on the success or failure 
             of the operation.
         """
+        post_model = get_object_or_404(PostsModel, id=post_id)
+
         try:
             if comment_id is None:
                 form = CommentsForm(request.POST)
@@ -387,7 +446,7 @@ class CommentsView(BaseChatView):
                 form = CommentsForm(request.POST, instance=comment_model)
 
             if form.is_valid():
-                form.instance.comment_post = get_object_or_404(PostsModel, id=post_id)
+                form.instance.comment_post = post_model
 
                 comment = self.process_and_save(request, form)
                 context = {
@@ -398,6 +457,7 @@ class CommentsView(BaseChatView):
                 html_content = render_to_string(self.single_comment_template, context)
 
                 self.broadcast_message(request, 'comment', html_content, post_id, comment_id)
+                self.notification_msg(request, comment.created_date, comment.post,'post', post_model.id)
 
                 if comment_id is None:
                     redirect_url = reverse('post_comments', args=[post_id])
