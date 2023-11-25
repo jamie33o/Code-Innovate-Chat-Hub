@@ -4,6 +4,11 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import DeleteView
 from django.apps import apps
 from group_chat.models import PostsModel, ImageModel, SavedPost
+import boto3
+from botocore.exceptions import NoCredentialsError
+from django.conf import settings
+
+
 
 # pylint: disable=no-member
 
@@ -199,3 +204,15 @@ class SavePostView(View):
         except Exception as e:
             # Handle other exceptions
             return JsonResponse({'status': 'Error', 'message': f'Error: {str(e)}'})
+
+
+def delete_image_from_s3(image_key):
+    try:
+        s3 = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+
+        s3.delete_object(Bucket=bucket_name, Key=image_key)
+        return True
+    except NoCredentialsError:
+        print('Credentials not available')
+        return False
