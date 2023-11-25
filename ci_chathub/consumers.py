@@ -15,8 +15,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from group_chat.models import ChannelModel, CommentsModel, PostsModel
-from messaging.models import Conversation
+
 
 
 
@@ -77,6 +76,8 @@ class GlobalConsumer(AsyncWebsocketConsumer):
     
 
     async def is_user_allowed(self, model_name, model_id):
+        from group_chat.models import ChannelModel, PostsModel
+        from messaging.models import Conversation
         model_mapping = {
             'channel': ChannelModel,
             'post': PostsModel,
@@ -121,6 +122,8 @@ class GlobalConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def get_commented_users(self, posts_model):
+        from group_chat.models import  CommentsModel
+
         return list(
             CommentsModel.objects.filter(comment_post=posts_model).values('created_by').distinct()
         )
