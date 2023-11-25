@@ -12,11 +12,10 @@ WebSocket URL Patterns:
 from django.urls import re_path
 from group_chat import consumers as gc_consumer
 from messaging import consumers as msg_consumer
-from ci_chathub import consumers as g_consumer
+from .consumers import GlobalConsumer
 websocket_urlpatterns = [
     re_path(r'ws/channel_posts/(?P<channel_id>\d+)/$', gc_consumer.PostConsumer.as_asgi()),
     re_path(r'ws/post_comments/(?P<post_id>\d+)/$', gc_consumer.CommentConsumer.as_asgi()),
     re_path(r'ws/messaging/(?P<conversation_id>\d+)/$', msg_consumer.MessageConsumer.as_asgi()),
-    re_path(r'ws/global_consumer/(?P<user_id>\d+)/$', g_consumer.GlobalConsumer.as_asgi()),
-
+    re_path(r'ws/global_consumer/(?P<user_id>\d+)/$', GlobalConsumer.as_asgi()),
 ]
