@@ -196,3 +196,13 @@ class SavedPost(models.Model):
         preventing duplicate entries for the same saved post.
         """
         unique_together = ['user', 'post']
+
+
+class UnseenPost(models.Model):
+    channel = models.ForeignKey(ChannelModel, on_delete=models.CASCADE)
+    unseen_users = models.ManyToManyField(get_user_model(), related_name='unseen_posts')
+
+    def __str__(self):
+        return f"{self.channel.name} - {self.last_seen_post_id}"
+
+
