@@ -85,6 +85,37 @@ p {
     height: 45px;
 }
 
+.user-online {
+    position: relative;
+}
+
+.user-online::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 10px; 
+    height: 10px;
+    background-color: green;
+    border-radius: 50%;
+  }
+
+.user-offline {
+    position: relative;
+}
+
+.user-offline::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 10px; 
+    height: 10px;
+    background-color: rgba(128, 128, 128, 0.263);
+    border: 1px solid grey;
+    border-radius: 50%;
+  }
+
 .profile-pic-medium:hover {
     border: 1px solid var(--ci-orange);
     box-shadow: var(--sm-box-shadow);
