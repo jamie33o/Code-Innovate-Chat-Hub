@@ -22,7 +22,7 @@ from group_chat.models import ChannelModel, CommentsModel, PostsModel
 from messaging.models import Conversation
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ci_chathub.settings')  
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ci_chathub.settings')
 setup()
 
 class GlobalConsumer(AsyncWebsocketConsumer):
