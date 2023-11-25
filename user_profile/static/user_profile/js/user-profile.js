@@ -47,14 +47,10 @@ $(document).ready(function () {
     $('body').on('change', '#id_profile_picture', function () {
         console.log("Event triggered!");
         var selectedFile = event.target.files[0];
-
         if (selectedFile) {
             // Get a temporary URL for the selected file
             var imageURL = URL.createObjectURL(selectedFile);
             $('.modal-body .profile_pic').attr('src', imageURL)
-
-            // Log or use the imageURL as needed
-            console.log("Image URL:", imageURL);
         }
     })
     $('body').on('click', '.sub-form', function () {
