@@ -2,7 +2,8 @@ let csrfToken = null;
 let msgToBeDel = null;
 let deleteUrl = null;
 let deleteModelBody = null;
-let emojiPicker = new EmojiPicker()
+const emojiPicker = new EmojiPicker()
+
 // ////////////////////////////// inbox functionality ////////////////////////////
 
 $('#messages-list-container').on('click', '.close-messages-btn', function(e){
@@ -258,3 +259,11 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
     }
     
 }
+$(".panel-search-form").on('click', function(){
+    autoComplete(".panel-search-form", messageTags, ".msg-input", function(tag){
+        let targetDiv = $(`[data-userId="${tag.id}"]`)
+        targetDiv.click()
+        targetDiv.addClass('active')
+    })
+})
+
