@@ -10,7 +10,7 @@ urlpatterns = [
           MessageListView.as_view(), name='send_message'),
      path('message_list/<int:sender_id>/<int:receiver_id>/',
           MessageListView.as_view(), name='message_list'),
-     path('edit_message/<int:message_id>/',
+     path('edit_message/<int:receiver_id>/<int:message_id>/',
           MessageListView.as_view(), name='edit_message'),
      path('delete_obj/<str:model>/<int:pk>/',
           GenericObjectDeleteView.as_view(), name='delete_obj'),

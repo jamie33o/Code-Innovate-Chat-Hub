@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from .models import Message, UnreadMessage, Conversation, ImageModel, EmojiModel
+from user_profile.models import UserProfile
 import boto3
 from botocore.exceptions import NoCredentialsError
 from django.conf import settings
@@ -33,6 +34,9 @@ class InboxView(View):
         
         # Retrieve conversations involving the current user
         conversations = Conversation.objects.filter(participants=request.user)
+
+        conversations = Conversation.objects.filter(participants=request.user)
+        conversation_users = User.objects.filter(conversation__in=conversations).distinct()
 
         unread_messages = UnreadMessage.objects.filter(conversation__participants=request.user).values_list('conversation', flat=True)
 
@@ -66,7 +70,8 @@ class InboxView(View):
 
         context = {
             'messages': messages_by_conversation,
-            'unread_messages': unread_messages
+            'unread_messages': unread_messages,
+            'conversation_users': conversation_users
         }
 
         if not message_exists and receiver_id:
@@ -116,24 +121,23 @@ class MessageListView(View):
         content = request.POST.get('post', '')
         url_list = request.POST.getlist('urls[]')
         images = ",".join(url_list)
-        if content and receiver_id:
-            receiver = User.objects.get(pk=receiver_id)
-            conversation = self.get_conversation(request.user, receiver)
-            
-            if message_id is None:
-                message = Message(sender=request.user, receiver=receiver, content=content, images=images, conversation=conversation)
-            else:
-                message = get_object_or_404(Message, id=message_id)
-                message.content = content
-                message.images = images
+        receiver = User.objects.get(pk=receiver_id)
+        conversation = self.get_conversation(request.user, receiver)
+        if not message_id and receiver_id:
+            message = Message(sender=request.user, receiver=receiver, content=content, images=images, conversation=conversation)
+        else:
+            message = get_object_or_404(Message, id=message_id)
+            message.content = content
+            message.images = images
 
             # Create a new message
-            message.save()
+        
+        message.save()
 
-            html_content = render_to_string('messaging/single-message.html', {'message': message})
-            self.broadcast_message(request, html_content, conversation.id, None)
-            self.notification_msg(request, message.timestamp, message.content, 'conversation', conversation.id)
-
+        html_content = render_to_string('messaging/single-message.html', {'message': message})
+        self.broadcast_message(request, html_content, conversation.id, message_id)
+        self.notification_msg(request, message.timestamp, message.content, 'conversation', conversation.id)
+        
         return JsonResponse({'status': 200})
 
 
