@@ -200,7 +200,7 @@ class SummernoteEnhancer {
         // Remove the parent element
       $(this).parent().remove();
     });
-
+  
   }
 
   /**
