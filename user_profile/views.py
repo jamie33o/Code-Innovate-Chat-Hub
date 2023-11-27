@@ -150,3 +150,8 @@ def remove_saved_post(request, post_id):
 
     # Return an error for non-POST requests
     return JsonResponse({'status': 'Error', 'message': 'Invalid request method'})
+
+
+def get_all_users_profiles(request):
+    user_profiles = UserProfile.objects.all().values('username', 'id', 'profile_picture')
+    return JsonResponse(list(user_profiles), safe=False)
