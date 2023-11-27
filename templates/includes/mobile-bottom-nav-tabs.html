@@ -1,4 +1,5 @@
    <!-- Bottom Navigation -->
+{% if request.user.is_authenticated %}
 
 {% with request.resolver_match.url_name as url_name %}
     <div class="w-100 m-0">
@@ -12,4 +13,5 @@
     </div>
 {% endwith %}
   
+{% endif %}
 

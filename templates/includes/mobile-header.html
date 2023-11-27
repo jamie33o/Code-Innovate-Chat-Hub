@@ -1,3 +1,4 @@
+{% if user.is_authenticated %}
 <!-- logo on large screen -->  
 <div id="topnav" class="d-flex d-sm-flex d-lg-none flex-column">
     <div class="d-flex justify-content-center w-100">
@@ -7,7 +8,7 @@
     </div>
 
     <!-- search icon  -->
-    {% if user.is_authenticated %}
+    
         <div class="d-flex flex-dir-row w-100">
             <div class="w-100  d-flex justify-content-center">
                 <div class="searchbar my-2">
@@ -44,7 +45,5 @@
                 </ul>
             </div>
         </div>
-    
-    {% endif %}
-
 </div>  
+{% endif %}
