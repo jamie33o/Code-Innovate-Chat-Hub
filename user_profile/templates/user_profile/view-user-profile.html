@@ -14,6 +14,7 @@
     <h5 class="status ">Current Status: {{ user_profile.status }}</h5>
 
     <hr>
+    {% if not user_profile.user == user %}
     <div class="links-container">
         <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
         <div class="links-body pb-2">
@@ -21,6 +22,8 @@
                 Message</a>
         </div>
     </div>
+    {% endif %}
+
     <!-- </div> -->
     {% if user_profile.bio %}
         <div class="links-container">
