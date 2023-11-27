@@ -13,14 +13,15 @@
 {% block content %}
 <div class="w-100 h-100 d-flex flex-dir-row messaging">
     <div class="inbox-container">
-        <form class="panel-search-form info form-group has-feedback no-margin-bottom">
-            <input type="text" class="form-control " name="search" placeholder="Search">
+        <form class="panel-search-form info no-margin-bottom">
+            <input type="text" class="form-control msg-input" id="searchInput" name="search" placeholder="Search" autocomplete="off">
             <span class="fa fa-search form-control-feedback"></span>
         </form>
+        
         <div class="message-list-links-outter">
             <ul class="list-unstyled">
                 {% for message in messages %}
-                    <li class="message-link " data-userid="{{ message.receiver.id}}" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}">
+                    <li class="message-link" data-userid="{{ message.receiver.id}}" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}">
                         <div class="img-count">
                             {% if message.conversation.id in unread_messages %}<div class="message-count">NEW</div>{% endif %} 
                             {%if message.sender.userprofile.profile_picture %}
@@ -49,9 +50,11 @@
                                     {% endif %}
                                 {% endwith %}
                             </span>
+                            {% if not new_message %}
                             <span class="fa fa-trash-o delete-conversation" 
                             data-url="{% url 'delete_obj' model='Conversation' pk=message.conversation.id %}"
                             data-csrf-token="{{ csrf_token }}"></span>
+                            {% endif %}
                         </div>
                     </li>
                 {% endfor %}  
@@ -87,6 +90,21 @@
             $('.message-link[data-userid="{{ receiver.id }}"]').click();
         {% endif %}
 
+
+    var messageTags = [
+        {% for user in conversation_users %}
+            {% if user != request.user %}
+                {
+                    label: '{{ user.username }}',
+                    value: '{{ user.username }}',
+                    profile_img: '{{ user.userprofile.profile_picture.url }}',
+                    id: {{ user.id }}
+                },
+            {% endif %}
+        {% endfor %}
+    ];
+
+  
     </script>
 
 {% endblock %}

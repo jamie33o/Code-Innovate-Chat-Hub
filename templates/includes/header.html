@@ -1,17 +1,21 @@
 <!-- logo on large screen -->
+{% if user.is_authenticated %}
+
 <div id="topnav" class="row d-none d-lg-flex">
 
     <!-- search icon  -->
-    {% if user.is_authenticated %}
     <div class="col-lg-3">
         <div class="d-flex justify-content-start h-100">
-            <div class="searchbar my-auto ml-2">
-                <input class="search_input" type="text" name="" placeholder="Search...">
+            <form class="searchbar my-auto ml-2 header-search-form">
+                <input class="search_input header-search" type="text"]
+                placeholder="Search..." 
+                data-csrf-token="{{ csrf_token }}" 
+                data-profiles="{% url 'get_all_user_profiles' %}"
+                data-view-profile-url="{% url 'view_user_profile' 0 %}">
                 <a href="#" class="search_icon"><i class="fas fa-search"></i></a>
-            </div>
+            </form>
         </div>
     </div>
-    {% endif %}
 
 
     <div class="col-lg-6">
@@ -19,7 +23,6 @@
             <h1 class="logo-font text-black my-0 text-center"><strong>Code Institute</strong> Chat Hub</h1>
         </a>
     </div>
-    {% if user.is_authenticated %}
 
     <!-- settings button -->
     <div class="col-lg-3">
@@ -51,8 +54,6 @@
             </li>
         </ul>
     </div>
-
-    {% endif %}
-
-
 </div>
+
+{% endif %}

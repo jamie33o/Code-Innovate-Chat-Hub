@@ -108,7 +108,7 @@ function websocketInit(socket) {
                 if (data.html) {
                     if(data.edit_id){
                         $(`.edit-post`).replaceWith(data.html);
-                        // if its not the user that created it then hide dropdown menu on the edited post
+                        // if its not the user that created it then remove dropdown menu on the edited post
                         if(data.created_by != currentUser){
                             $('.post${data.edit_id} .dropdown').addClass('d-none')
                         }
@@ -130,10 +130,9 @@ function websocketInit(socket) {
                 if (data.html) {
                     if(data.edit_id){
                         $(`.edit-post`).replaceWith(data.html);
-                        //let user = $('#message-list').data('user')
                         // if its the user that created it then hide dropdown menu on comments
                         if(data.created_by != currentUser){
-                            $('.comment${data.edit_id} .dropdown').addClass('d-none')
+                            $('.comment${data.edit_id} .dropdown').remove()
                         }
                     }else{
                         $('.comments-list').append(data.html);
@@ -142,14 +141,18 @@ function websocketInit(socket) {
                             autoScroll(true)
                         }else {
                             displayMessage({status: 'Success', message : data.message}, '.comments-list');
-                            $('.comment${data.edit_id} .dropdown').addClass('d-none')
+                            $('.comment${data.edit_id} .dropdown').remove()
                         }
                        
                     }
                 }
             } else if (data.type === 'messaging_notification') {
-                
+                if (data.html) {
+                    if(data.edit_id){
+                        $(`.edit-post`).replaceWith(data.html);
+                    }else{
                     $('#message-list').append(data.html)
+                    }
                     let user = $('#message-list').data('user')
                    // if its the user that created it add the class my-message
                     if(data.created_by === user){
@@ -157,13 +160,14 @@ function websocketInit(socket) {
                     }else{
                         $('#message-list .new-message').removeClass('new-message')
                     }
+                    
+                }
 
             } else if (data.type === 'global_consumer') {
                 if(data.created_by != currentUser){
                     console.log(currentUser)
                     displayMessage(data, 'body')
                 }
-
             }else {
                     console.error('Unknown notification type:', data.type);
                 }
@@ -309,7 +313,6 @@ $(document).ready(function(){
 
 $(document).ready(function(){
     $('body').on('click', '.profile-pic', function(){
-        console.log('woring')
         let header = `
         <div class="d-flex justify-content-between align-items-center w-100">
             <h3 class="display-7 text-center mb-0 mx-auto">User Profile</h3>
@@ -365,4 +368,79 @@ function deleteObject(url, object, objectName, msgLocation){
         ajaxRequest(url, csrfToken, 'DELETE', `${msgLocation}`)
 
     })
+}
+
+
+// //////////////////////////// search functionality for header, messages, tagging /////////////////////////
+$(document).on('click', ".header-search-form", function(){
+    getAllUserProfiles(this)
+})
+function getAllUserProfiles(form){
+    let url = $(form).find('input').data('profiles')
+    let inputElement = $(form).find('input')
+    let csrfToken = $(form).data('csrf-token')
+    let profileTags = [];
+    ajaxRequest(url, csrfToken, 'GET', 'body', null, function(response){
+        response.forEach(function(profile) {
+          profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
+            // You can use this data to update your UI, create HTML elements, etc.
+        });
+        autoComplete(form, profileTags, inputElement, function(tag){
+            let header = `
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <h3 class="display-7 text-center mb-0 mx-auto">User Profile</h3>
+                <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
+            </div>
+    
+            `;
+            let url = inputElement.data('view-profile-url').replace('0', tag.id)
+
+            ajaxRequest(url, csrfToken, 'GET', 'body', null, function(response){
+                showModal(header, response)
+                showModal()
+            });
+        })
+
+    });
+}
+
+
+function autoComplete(formElement, availableTags, inputElement, callBackFunction){
+    $(formElement).append(`<div class="autocompleteList"></div>`)
+    const $autocompleteList = $(".autocompleteList");
+    $searchInput = $(inputElement)
+
+    $searchInput.on("input", function () {
+        var inputText = $(this).val().toLowerCase();
+        var filteredTags = availableTags.filter(function (tag) {
+            return tag.label.toLowerCase().slice(0, inputText.length) === inputText;
+        });
+    
+        $autocompleteList.empty().hide();
+    
+
+        if (filteredTags.length > 0) {
+            $.each(filteredTags, function (index, tag) {
+                var $item = $("<div>").addClass("autocomplete-item")
+                    .html('<img src="' + tag.profile_img + '" class="autocomplete-img" />' + tag.label);
+    
+                $item.on("click", function () {
+                   callBackFunction(tag)
+                   $autocompleteList.hide();
+                   $autocompleteList.remove();
+                });
+    
+                $autocompleteList.append($item);
+            });
+    
+            $autocompleteList.show();
+        }    
+    });
+
+    $(document).on("click", function (event) {
+        if (!$(event.target).closest(".autocompleteList").length && event.target !== $searchInput[0]) {
+            $autocompleteList.hide();
+            $autocompleteList.remove();
+        }
+    });
 }
