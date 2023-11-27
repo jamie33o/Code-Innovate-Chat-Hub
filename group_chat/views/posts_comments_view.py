@@ -245,17 +245,7 @@ class PostsView(BaseChatView):
                     redirect_url = reverse('channel_posts', args=[channel_id])
                     return redirect(redirect_url)
 
-                # if its an edited post post_id will not be none
-                # and edited post will be returned
-                response_data = {
-                    'status': 'success',
-                    'post': post.post,
-                    'images': None,
-                }
-
-                if post.images:
-                    response_data['images'] = post.images
-                return JsonResponse(response_data)
+                return JsonResponse({'status' : 200})
 
 
             # Return JSON response with validation errors
