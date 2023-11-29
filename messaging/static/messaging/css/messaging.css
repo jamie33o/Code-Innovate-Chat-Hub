@@ -208,6 +208,7 @@
   font-size: 10px;
 }
 
+
 /* //////////////////////////////////// messages list /////////////////////////////////// */
 #messages-list-container {
   position: relative;
@@ -229,15 +230,98 @@
   width: 100%;
 }
 
-.message-img {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  padding: 10px;
+/* //////////////////// modal for images and deleting posts/comments ///////////////////*/
+.modal-dialog {
+  max-width: 100%;
+  height: 90%;
 }
 
-.message-img img{
-  width: 100px;
+.modal-open .modal {
+  overflow-y:hidden;
+  background-color: #000;
+}
+
+.modal-open {
+  padding: 0 !important;
+}
+
+.modal-content {
+  width: 80%;
+  height: 90%;
+  margin: auto auto;
+}
+
+.modal-content img {
+  margin: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: center;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-y:auto;
+  overflow-x:auto;
+}
+
+
+/* image modal btns for zoom */
+.zoom-in,.zoom-out {
+  background-color: #bab6b6;
+}
+
+.zoom-in {
+  border-left: 1px solid rgb(80, 77, 77);
+  border-radius: 50px 0 0 50px; /* Adjust border-radius to create an oval shape */
+  width: 40px;
+}
+.zoom-out {
+  border-right: 1px solid rgb(80, 77, 77);
+  border-radius: 0 50px 50px 0; /* Adjust border-radius to create an oval shape */
+  width: 40px;
+}
+
+/* delete post/comment buttons */
+.btn-oval{
+  background: linear-gradient(#889ad6, #626f9a, #3d486d);
+  color: #fff;
+  border-radius: 20px;
+  padding: 0.5em 2em;
+  font-size: 18px;
+  border: 2px solid #4b5986;
+  transition: all .3s ease-in-out;
+}
+
+.btn-oval:hover,.btn-oval:focus{
+  background: linear-gradient(#889ad6, #626f9a);
+  color: #fff;
+  border-color: #626f9a !important;
+  transition: all .3s ease-in-out;
+}
+
+/* images  */
+.post-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; 
+  width: 100%;
+  height: fit-content;
+  margin: 20px auto;
+}
+
+.post-images img {
+  max-width: 200px;
+  border-radius: 10px;
+}
+
+.post-images img:hover {
+  box-shadow: var(--lg-box-shadow); 
+  cursor: zoom-in;
 }
 
 .message br {
