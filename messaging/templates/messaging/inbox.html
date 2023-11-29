@@ -1,44 +1,55 @@
 {% extends "base.html" %}
 {% load static %}
 {% load emoji_tags %}
-<!-- groupchat app css links -->
+
+<!-- Include CSS links for the groupchat app -->
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'group_chat/css/summernote.css' %}"> 
     <link href="{% static 'group_chat/css/emoji.css' %}" rel="stylesheet">
     <link href="{% static 'messaging/css/messaging.css' %}" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-
 {% endblock %}
 
 {% block content %}
 <div class="w-100 h-100 d-flex flex-dir-row messaging">
     <div class="inbox-container">
+        <!-- Search form -->
         <form class="panel-search-form info no-margin-bottom">
             <input type="text" class="form-control msg-input" id="searchInput" name="search" placeholder="Search" autocomplete="off">
             <span class="fa fa-search form-control-feedback"></span>
         </form>
-        
+
+        <!-- Message list links -->
         <div class="message-list-links-outter">
             <ul class="list-unstyled">
                 {% for message in messages %}
-                    <li class="message-link" data-userid="{{ message.receiver.id}}" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}">
+                    <li class="message-link" data-userid="{% if user.id == message.sender.id %}{{ message.receiver.id}}{% else %}{{ message.sender.id}}{% endif %}" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}">
+                        <!-- Profile image and user information -->
                         <div class="img-count">
-                            {% if message.conversation.id in unread_messages %}<div class="message-count">NEW</div>{% endif %} 
-                            {%if message.sender.userprofile.profile_picture %}
-                            <div class="{% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
-                                <img alt="profile picture" class="img-circle medium-image" src="{% if message.sender == user %}{{ message.receiver.userprofile.profile_picture.url }}{% else %}{{ message.sender.userprofile.profile_picture.url }}{% endif %}">
-                            </div>
+                            {% if message.conversation.id in unread_messages %}
+                                <div class="message-count">NEW</div>
+                            {% endif %} 
+                            {% if message.sender.userprofile.profile_picture %}
+                                <div class="{% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
+                                    <img alt="profile picture" 
+                                    class="img-circle medium-image" 
+                                    src="{% if message.sender == user %}{{ message.receiver.userprofile.profile_picture.url }}{% else %}{{ message.sender.userprofile.profile_picture.url }}{% endif %}">
+                                </div>
                             {% else %}
-                            <img alt="profile picture" class="img-circle medium-image" src="{% static 'noimage.png'}">
+                                <img alt="profile picture" class="img-circle medium-image" src="{% static 'noimage.png'}">
                             {% endif %}
                         </div>
+
+                        <!-- Message information -->
                         <div class="info-combo">
                             <h3 class="no-margin-bottom name"> {% if message.sender == user %}{{ message.receiver.username }}{% else %}{{ message.sender.username }}{% endif %}</h3>
                             <h5 class="d-flex flex-dir-row">
                                 <span class="mr-1">{% if message.sender == user %}You: {% else %}{{ message.sender.username }}: {% endif %} </span>
-                                    <p>{{ message.content|safe|emoji_replace }}</p>
+                                <p>{{ message.content|safe|emoji_replace }}</p>
                             </h5>
                         </div>
+
+                        <!-- Time and delete icon -->
                         <div class="time-del-icon">
                             <span class="message-time">
                                 {% now "Y-m-d" as current_datetime %}             
@@ -51,9 +62,9 @@
                                 {% endwith %}
                             </span>
                             {% if not new_message %}
-                            <span class="fa fa-trash-o delete-conversation" 
-                            data-url="{% url 'delete_obj' model='Conversation' pk=message.conversation.id %}"
-                            data-csrf-token="{{ csrf_token }}"></span>
+                                <span class="fa fa-trash-o delete-conversation" 
+                                    data-url="{% url 'delete_obj' model='Conversation' pk=message.conversation.id %}"
+                                    data-csrf-token="{{ csrf_token }}"></span>
                             {% endif %}
                         </div>
                     </li>
@@ -62,49 +73,41 @@
         </div>
     </div>
 
-
-    <!-- container where posts get loaded into with ajax -->
+    <!-- Container where posts get loaded into with ajax -->
     <div id="messages-list-container" class=" w-100 d-none d-sm-flex flex-column justify-content-between"></div>
 
-    <!-- container where comments get loaded into with ajax -->
+    <!-- Container where comments get loaded into with ajax -->
     <div id='message-list-thread' class ="comments-container flex-column justify-content-between"></div>
 
 </div>
 {% endblock %}
 
-
 {% block postloadjs %}
-    <!-- group chat app scripts  -->
+    <!-- Include group chat app scripts  -->
     <script src="{% static 'group_chat/js/config.js' %}"></script>
     <script src="{% static 'group_chat/js/tam-emoji.js' %}"></script>
     <script src="{% static 'group_chat/js/summernote.js' %}"></script>
     <script src="{% static 'messaging/js/messaging.js' %}"></script>
 
-
-
     <script>     
-        
         {% if new_message %}
             $('.message-link:last').click()
         {% elif receiver %}
             $('.message-link[data-userid="{{ receiver.id }}"]').click();
         {% endif %}
 
-
-    var messageTags = [
-        {% for user in conversation_users %}
-            {% if user != request.user %}
-                {
-                    label: '{{ user.username }}',
-                    value: '{{ user.username }}',
-                    profile_img: '{{ user.userprofile.profile_picture.url }}',
-                    id: {{ user.id }}
-                },
-            {% endif %}
-        {% endfor %}
-    ];
-
-  
+        // Define message tags for autocomplete
+        var messageTags = [
+            {% for user in conversation_users %}
+                {% if user != request.user %}
+                    {
+                        label: '{{ user.username }}',
+                        value: '{{ user.username }}',
+                        profile_img: '{{ user.userprofile.profile_picture.url }}',
+                        id: {{ user.id }}
+                    },
+                {% endif %}
+            {% endfor %}
+        ];
     </script>
-
 {% endblock %}
