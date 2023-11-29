@@ -14,6 +14,8 @@ let commentsWebSocket = null;
 let messageWebsocket = null;
 let unseenPostsWebsocket = null;
 let userId = null;
+let sizeFactor = 1
+let imgToResize = null
 
 
 /////////////////////// function for notification messages ///////////////////////////////
@@ -104,6 +106,7 @@ function websocketInit(socket) {
              // when a new message is broadcast, this websocket will receive it
             // and create and add the post/comment to the list
             const data = JSON.parse(event.data);
+
             if (data.type === 'post_notification') {
                 if (data.html) {
                     if(data.edit_id){
@@ -320,7 +323,7 @@ $(document).ready(function(){
         </div>
 
         `;
-        let url = $(this).data('url')
+        let url = $(this).data('profile-url')
         ajaxRequest(url, csrfToken, 'GET', '#channel-posts', null, function(response){
             showModal(header, response)
             showModal()
@@ -373,6 +376,7 @@ function deleteObject(url, object, objectName, msgLocation){
 
 // //////////////////////////// search functionality for header, messages, tagging /////////////////////////
 $(document).on('click', ".header-search-form", function(){
+    console.log('working')
     getAllUserProfiles(this)
 })
 function getAllUserProfiles(form){
@@ -383,7 +387,6 @@ function getAllUserProfiles(form){
     ajaxRequest(url, csrfToken, 'GET', 'body', null, function(response){
         response.forEach(function(profile) {
           profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
-            // You can use this data to update your UI, create HTML elements, etc.
         });
         autoComplete(form, profileTags, inputElement, function(tag){
             let header = `
@@ -391,7 +394,6 @@ function getAllUserProfiles(form){
                 <h3 class="display-7 text-center mb-0 mx-auto">User Profile</h3>
                 <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
             </div>
-    
             `;
             let url = inputElement.data('view-profile-url').replace('0', tag.id)
 
@@ -444,3 +446,82 @@ function autoComplete(formElement, availableTags, inputElement, callBackFunction
         }
     });
 }
+
+
+
+$(document).on('click', '.delete-account', function(){
+    let header = `
+    <div class="d-flex justify-content-between align-items-center w-100">
+        <h3 class="display-7 text-center mb-0 mx-auto">Delete Your Account!!</h3>
+        <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
+    </div>
+    `;
+
+    let body = `
+    <H5>Are you sure you want to delete your account this can't be un-done 
+    ?
+    </h5
+    <form>
+        <div class="input-group text-center d-flex justify-content-between">
+            <button type="button" class="btn-oval btn btn-info" 
+            data-dismiss="modal" aria-label="Close">No</button>
+
+            <button id="yes-btn" 
+            class="btn btn-oval btn-info" data-dismiss="modal" 
+            type="button">Yes</button>
+        </div>
+    </form>`;
+            
+    showModal(header, body)
+
+})
+
+////// functionality for zooming in and out of images///////
+
+/**
+ * Resize the specified image by a given factor for zooming in or out.
+ *
+ * @param {number} factor - The factor by which to resize the image. 
+ *                         Use values greater than 1 to zoom in, and values between 0 and 1 to zoom out.
+ * @param {HTMLElement} imgElement - The HTML element representing the image to be resized.
+ */
+function resizeImage(factor, imgElement) {
+    // Update the size factor
+    sizeFactor *= factor;
+    // Apply the new size to the image
+    $(imgElement).css('width', 100 * sizeFactor + '%');
+}
+
+// Event listener for the plus button on image zoom model
+$(document).on('click', '.zoom-in', function() {
+    resizeImage(1.2, imgToResize); // Increase size by 20%
+});
+    
+// Event listener for the minus button on image zoom model
+$(document).on('click', '.zoom-out', function() {
+    resizeImage(0.8, imgToResize); // Decrease size by 20%
+});
+
+// event listener for images 
+$(document).on('click', '.post-images img', function(e) {
+    imgToResize = $(this)[0]
+    sizeFactor = 1
+    
+    let header =
+        `<div class="d-flex justify-content-between align-items-center w-100">
+            <div class="buttons text-center mb-0 mx-auto">
+                <button type="button" class ="zoom-in">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button type="button" class ="zoom-out">
+                    <i class="fa-solid fa-minus"></i>            
+                </button>
+            </div>
+       
+        <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
+        </div>
+        `;
+    let img = $(e.currentTarget).clone()
+    showModal(header, img)
+    resizeImage(.5, $('#modal').find('img')[0]); // Increase size by 20%
+})
