@@ -52,8 +52,6 @@ class ProfileImageForm(forms.ModelForm):
 
     """
     class Meta:
-        model = UserProfile
-        fields = ['profile_picture']
         """
         Meta class for the ProfileImageForm.
 
@@ -62,6 +60,8 @@ class ProfileImageForm(forms.ModelForm):
         - fields: List of fields to include in the form.
 
         """
+        model = UserProfile
+        fields = ['profile_picture']
 
 class EditProfileForm(forms.ModelForm):
     """

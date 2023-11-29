@@ -1,4 +1,13 @@
-# urls.py
+"""
+URL patterns for messaging app.
+
+These patterns define the routing for various views in the messaging app,
+including the inbox, message list, new message, send message, edit message,
+delete object, image upload, and messages emoji.
+
+Attributes:
+- urlpatterns (list): A list of URL patterns for the messaging app views.
+"""
 from django.urls import path
 from .views import InboxView, MessageListView, GenericObjectDeleteView, ImageUploadView, AddOrUpdateEmojiView
 
@@ -15,6 +24,6 @@ urlpatterns = [
      path('delete_obj/<str:model>/<int:pk>/',
           GenericObjectDeleteView.as_view(), name='delete_obj'),
      path('upload-image/', ImageUploadView.as_view(), name='image_upload'),
-     path('emoji/<str:model>/<int:instance_id>/',
-          AddOrUpdateEmojiView.as_view(), name='emoji'),
+     path('messages_emoji/<int:instance_id>/',
+          AddOrUpdateEmojiView.as_view(), name='messages_emoji'),
 ]

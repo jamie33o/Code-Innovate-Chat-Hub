@@ -407,6 +407,7 @@ class CommentsView(BaseChatView):
             'post': post,
             'comments': comments,
             'form': form,
+            'channel': post.post_channel
         }
 
         return render(request, self.comments_template, context)

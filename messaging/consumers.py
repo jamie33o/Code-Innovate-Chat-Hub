@@ -13,12 +13,18 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 
 class MessageConsumer(AsyncWebsocketConsumer):
+    """
+    WebSocket consumer for handling real-time messaging.
 
+    This consumer class extends the AsyncWebsocketConsumer provided by the Channels library.
+    It is responsible for handling WebSocket connections, receiving and sending messages
+    in real-time.
+    
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.room_group_name = None
         self.conversation_id = None
-
 
     async def connect(self):
         """

@@ -63,7 +63,6 @@ class ViewUserProfile(View):
             'user_profile': user_profile,
         }
         return render(request, self.template_name, context)
-    
 
 
     def post(self, request):
@@ -115,7 +114,7 @@ def update_status(request):
         if form.is_valid():
             status = form.save()
             return JsonResponse({'status': 'success', 'message': status.status })
-        return JsonResponse({'success': False, 
+        return JsonResponse({'success': False,
                              'message': 'Error updating status', 
                              'errors': form.errors})
     form = StatusForm(instance=request.user.userprofile)
@@ -146,12 +145,17 @@ def remove_saved_post(request, post_id):
             return JsonResponse({'status': 'Success', 'message': 'Post removed'})
        
         # If the post is not saved, return an error
-        return JsonResponse({'status': 'Error', 'message': 'Post is not saved'})
+        return JsonResponse({'status': 'Error', 'message': 'Post does not exist'})
 
     # Return an error for non-POST requests
     return JsonResponse({'status': 'Error', 'message': 'Invalid request method'})
 
 
 def get_all_users_profiles(request):
+    """
+    view for retrieving all users profiles and creating a list 
+    of username, id and profile_picture url for search bar in 
+    the header section of site
+    """
     user_profiles = UserProfile.objects.all().values('username', 'id', 'profile_picture')
     return JsonResponse(list(user_profiles), safe=False)
