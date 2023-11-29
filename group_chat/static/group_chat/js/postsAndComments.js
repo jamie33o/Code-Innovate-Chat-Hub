@@ -2,7 +2,7 @@
 //url for adding or removing emojis
 let emojiUrl = null;
 // emoji picker class object
-const emojiPicker = new EmojiPicker();
+let emojiPicker = new EmojiPicker();
 // url for loading older posts
 let olderPostsUrl = null;
 // boolean to check if user scrolled to top
@@ -19,43 +19,12 @@ const MD_BRAKE_POINT = 991.98;
 const LG_BRAKE_POINT = 1111.98;
 // html form with csrf
 let deleteModelBody = null;
-let sizeFactor = 1;
-let csrfToken = null;
+const csrfToken = $('body').data('csrf-token');
+let nextPageNum = null;
+
 
 ///////////////// event listeners ////////////////////////////
 
-
-
-// event listener for images 
-$('main').on('click', '.post-images img', function(e) {
-    let header =
-        `<div class="d-flex justify-content-between align-items-center w-100">
-            <div class="buttons text-center mb-0 mx-auto">
-                <button type="button" class ="zoom-in">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <button type="button" class ="zoom-out">
-                    <i class="fa-solid fa-minus"></i>            
-                </button>
-            </div>
-       
-        <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
-        </div>
-        `;
-    let img = $(e.currentTarget).clone()
-    showModal(header, img)
-    resizeImage(.5, $('#modal').find('img')[0]); // Increase size by 20%
-})
-
-// Event listener for the plus button on image zoom model
-$('body').on('click', '.zoom-in', function() {
-resizeImage(1.2, $('#modal').find('img')[0]); // Increase size by 20%
-});
-
-// Event listener for the minus button on image zoom model
-$('body').on('click', '.zoom-out', function() {
-resizeImage(0.8, $('#modal').find('img')[0]); // Decrease size by 20%
-});
 
 //event listener for the comments links on each post
 $('main').on('click', '.comments-link', function(event) {
@@ -80,7 +49,7 @@ $('main').on('click', '.comments-close-btn', function() {
     $('#post-comments').html('')
 });
 
-    // Click event for the x button to close posts 
+// Click event for the x button to close posts 
 $('main').on('click', '.posts-close-btn', function() {
     $('#channel-posts').removeClass('d-flex');
     $('#channel-links-container').removeClass('d-none');
@@ -147,7 +116,6 @@ $('main').on('click', '.edit-btn', function(event) {
     // Append the HTML structure to the body
     editPostUrl += postId + '/'
     summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl, csrfToken)
-    
 
     summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
 
@@ -161,10 +129,10 @@ $('main').on('click', '.edit-btn', function(event) {
 
     if(cardImages){
         $(cardImages).each(function () {
-        let src = $(this).attr('src');
-        if(src != undefined){
-            summernoteEnhancerEditPost.addimageToSummernote(src)
-        }
+            let src = $(this).attr('src');
+            if(src != undefined){
+                summernoteEnhancerEditPost.addimageToSummernote(src)
+            }
         }); 
     }
 });
@@ -177,16 +145,16 @@ $('main').on('click', '.edit-btn', function(event) {
  */
 function loadOldPosts(){
     // Attach scroll event to load older posts when scrolling to the top
-    if ($(this).scrollTop() === 0 && !scrolledToTop && olderPostsUrl != null) {
+    if ($(this).scrollTop() === 0 && !scrolledToTop && olderPostsUrl != '') {
         scrolledToTop = true;
         ajaxRequest(olderPostsUrl, null, 'GET', '#channel-posts', null, function(response){
             // Update the div with the returned template
             $('#posts-list').prepend(response)
             autoScroll()
-          
         })
     }    
 }
+
 
 /**
  * Auto-scroll function for handling automatic scrolling in a chat application.
@@ -198,7 +166,6 @@ function autoScroll(bottomBool, id) {
     let postCount = $('#channel-posts .scrollable-div .card').length;
 
     let container = $('#channel-posts .scrollable-div');
-
 
     //get the index of the last post before the older posts being appended
     let postAtIndex = $('#channel-posts .scrollable-div .card').eq(9); 
@@ -214,8 +181,7 @@ function autoScroll(bottomBool, id) {
         container.animate({ scrollTop: offsetRelativeToContainer  }, 'fast');
         // Set multiple CSS properties for the targetPost element
         targetPost.css({
-            'border': '2px solid green',
-            
+            'border': '2px solid green', 
         });
 
         $('#channel-posts .scrollable-div').animate({ scrollTop: targetPost.offset().top }, 'fast');
@@ -225,20 +191,32 @@ function autoScroll(bottomBool, id) {
     }
     scrolledToTop = false;
 }
-/**
- * Resize the specified image by a given factor for zooming in or out.
- *
- * @param {number} factor - The factor by which to resize the image. 
- *                         Use values greater than 1 to zoom in, and values between 0 and 1 to zoom out.
- * @param {HTMLElement} imgElement - The HTML element representing the image to be resized.
- */
-function resizeImage(factor, imgElement) {
-    // Update the size factor
-    sizeFactor *= factor;
-    // Apply the new size to the image
-    $(imgElement).css('width', 100 * sizeFactor + '%');
-}
 
+//  function gets called when user changes group
+function changeGroup(){
+
+    olderPostsUrl = $('#posts-list').data('olderposts-url')
+    if ($('.card').length < 10 && olderPostsUrl != "") {
+        olderPostsUrl = olderPostsUrl.replace(/0/g, nextPageNum);
+        ajaxRequest(olderPostsUrl, null, 'GET', '#channel-posts', null, function(response){
+            $('#posts-list').prepend(response)
+            autoScroll()
+        })
+    }
+    // Scroll to the bottom of the posts list
+    scrollTo()
+    $('#posts-list').scroll(loadOldPosts)
+    let summernoteUrl = $('#posts-list').data('summernote-url')
+    // Initialize summernote enhancer class
+    summernoteEnhancerPosts.init('#channel-posts', summernoteUrl, csrfToken)
+     // Get the channel id using a Django template literal for use in the JS file and for the websocket
+    let channel_id = $('#posts-list').data('channel-id'); 
+    
+    // Start the WebSocket for channel posts
+    startWebSocket('channel_posts', channel_id)
+     // Add channel users to the static variable in the SummernoteEnhancer class
+    SummernoteEnhancer.sharedChannelUsers = [$('#posts-list').data('channel-users').split(',')];
+}
 
 ///////////////// Emoji functionality //////////////////////
 // event listener for the emoji button on posts and comments
@@ -379,8 +357,5 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
             break;
         case "removed":
                 $(emojiUlClass).find(`.${emojiClass}`).parent().remove()
-            
     }
-    
-
 }
