@@ -41,58 +41,8 @@
             {% endif %}
         </div>
         <div class="d-flex px-2">
-            <a data-emoji-url="{% url 'emoji_home' model='CommentsModel' instance_id=comment.id %}"  
-            href="" class="card-emoji-btn card-link"><i class="fa-regular fa-face-smile fa-lg" 
-            style="color: #f58a32;"></i></a>
-
-            <ul class="list-inline ml-2 p-0 emoji-list{{ comment.id }}">
-
-            <!-- Loop through your emojis and generate list items -->
-            {% for emoji in comment.emojis.all %}
-                <li class="list-inline-item mr-2">
-                    <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}" 
-                            data-emoji-url="{% url 'emoji_home' model='CommentsModel' instance_id=comment.id %}" 
-                            data-post-emoji-list=".emoji-list{{ comment.id }}" 
-                            data-target="#emojiModal{{ emoji.id }}" 
-                            data-emoji-code="{{ emoji.emoji_colon_name }}">
-                            
-                    {{ emoji.emoji_colon_name|emoji_replace }}
-                        <span>
-                            {% if emoji.users_who_incremented.all|length > 1 %}
-                                {{ emoji.users_who_incremented.all|length }}
-                            {% endif %}
-                        </span>
-                    </button>
-                    <!-- Small Box Modal -->
-                    <div class="emoji-user-count-modal d-none" id="emojiModal{{ emoji.id }}">
-                        <div class="modal-dialog modal-sm">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="emojiModalLabel">{{ emoji.emoji_colon_name|emoji_replace }}</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <p> {% for emoji_creators in emoji.users_who_incremented.all %}
-                                            {{ emoji_creators }}
-                                        {% if emoji.users_who_incremented.all|length == 2 and forloop.counter == 1 %}
-                                            and 
-                                        {% elif emoji.users_who_incremented.all|length > 2 %}
-                                            {% if forloop.counter < emoji.users_who_incremented.all|length|add:"-1" %}
-                                                ,
-                                            {% else %}
-                                                and
-                                            {% endif %}
-                                        {% endif %}                                        
-                                        
-                                        {% endfor %}
-                                        reacted with  {{ emoji.emoji_colon_name }}</p>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            {% endfor %}
-            </ul>
+            {% url 'emoji_home' model='CommentsModel' instance_id=comment.id as emoji_url %}
+            {% include 'includes/emoji.html' with instance=comment url=emoji_url %}
         </div>
     </div>
 </div>
