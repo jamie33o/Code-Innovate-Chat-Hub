@@ -6,20 +6,19 @@ const emojiPicker = new EmojiPicker()
 
 // ////////////////////////////// inbox functionality ////////////////////////////
 
-$('#messages-list-container').on('click', '.close-messages-btn', function(e){
+$('#messages-list-container').on('click', '.close-messages-btn', function(){
     $('.inbox-container').removeClass('d-none')
     $('#messages-list-container').addClass('d-none')
     $('#messages-list-container').removeClass('d-flex')
-
     $('#nav-bar').removeClass('d-none')
     $('header').removeClass('d-none')
 })
+
 $('.inbox-container').on('click', '.message-link', function(e){
     e.preventDefault()
     let url = $(this).closest('.message-link').data('url')
     $('.message-link').removeClass('active')
     $(this).addClass('active')
-
     ajaxRequest(url, null, 'GET', '#messages-list-container', null, function(response){
         $('#messages-list-container').html(response)
         //autoScroll()
@@ -79,12 +78,11 @@ $('main').on('click', '.edit-btn', function(event) {
     var card = $(this).closest('.message');
     //let carbody = card.find('.message-body').html()
     let cardText = card.find('.message-text').html();
-    let cardImages = card.find('.message-img').html()
+    let cardImages = card.find('.post-images').html()
     card.addClass('edit-post')
-    let postId = card.data("post-id")
     let editPostUrl = card.data('url')
     card.find('.message-text').html('')
-    card.find('.message-img').html('')
+    card.find('.post-images').html('')
     // Append the HTML structure to the body
     
     summernoteEnhancerEditPost.init('.edit-post .message-text', editPostUrl, csrfToken)
@@ -96,7 +94,7 @@ $('main').on('click', '.edit-btn', function(event) {
     $('main').on('click', '.cancel-edit', function(event) {
         event.preventDefault()
         $('.edit-post .message-text').html(cardText)
-        $('.edit-post .message-img').html(cardImages)
+        $('.edit-post .post-images').html(cardImages)
         $('.message').removeClass('edit-post')
     })
 
@@ -109,8 +107,6 @@ $('main').on('click', '.edit-btn', function(event) {
         }); 
     }
 });
-
-
 
 
 ///////////////// Emoji functionality //////////////////////
@@ -194,7 +190,6 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
     let currentNumber = null
     // Handle success
     switch (response.status) {
-
         case "added":
             let em = $(emojiImg).prop('outerHTML');
 
@@ -259,11 +254,11 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
     }
     
 }
-$(".panel-search-form").on('click', function(){
+$('body').on('click', ".panel-search-form", function(){
     autoComplete(".panel-search-form", messageTags, ".msg-input", function(tag){
         let targetDiv = $(`[data-userId="${tag.id}"]`)
         targetDiv.click()
-        targetDiv.addClass('active')
+        
     })
 })
 
