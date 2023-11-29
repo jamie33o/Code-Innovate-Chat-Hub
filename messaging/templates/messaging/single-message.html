@@ -1,18 +1,25 @@
 {% load static %}
 {% load emoji_tags %}
-  
-<div class="message new-message">
+
+<div class="message {% if message_list and message.sender == user  %}my-message{% elif message_list %}info{% else %}new-message{% endif %}" data-url="{% url 'edit_message' receiver_id=receiver.id message_id=message.id %}">
     {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
-        <img class="img-circle medium-image" src="{{ message.sender.userprofile.profile_picture.url }}" alt="Profile Picture">
+        <img class="img-circle medium-image profile-pic" 
+        src="{{ message.sender.userprofile.profile_picture.url }}" 
+        data-profile-url="{% url 'view_user_profile' message.sender.userprofile.id %}" 
+        alt="Profile Picture">
     {% else %}
-        <img class="img-circle medium-image" src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+        <img class="img-circle medium-image profile-pic" 
+        src="{% static 'noimage.png' %}" 
+        data-profile-url="{% url 'view_user_profile' message.sender.userprofile.id %}" 
+        alt="Profile Picture Placeholder">
     {% endif %}
     <div class="message-body">
         <div class="message-body-inner">
             <div class="message-info">
                 <h4>{{ message.sender.username }} </h4>
-                <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>
-                <div class="dropdown message-dropdown">
+                <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>                     
+            
+                <div class="dropdown message-dropdown {% if not message.sender == user  %}d-none{% endif %}">
                     <button class="btn btn-link dropdown-toggle p-0" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-ellipsis-h"></i>
                     </button>
@@ -27,13 +34,12 @@
                     </div>
                 </div>
             </div>
-          
             <hr>
             <div class="message-text">
                 {{ message.content|safe|emoji_replace }}
             </div>
             {% if message.images %}
-                <div class="message-img">
+                <div class="post-images">
                     {% for image_url in message.get_image_urls %}
                         {% if image_url %}
                             <img src="{{ image_url }}">
@@ -42,58 +48,12 @@
                 </div>
             {% endif %}
         </div>
+    
         <div id="post-emoji" class="card-link message-emoji-container">
-            <ul class="list-inline m-0 p-0 emoji-list{{ message.id }}">
-                <!-- Emoji button -->
-                <a data-emoji-url="{% url 'emoji' model='Message' instance_id=message.id %}" href="" class="card-emoji-btn">
-                    <i class="fa-regular fa-face-smile fa-lg" style="color: #f58a32;"></i>
-                </a>
-                <!-- Loop through emojis and generate list items -->
-                {% for emoji in message.emojis.all %}
-                    <li class="list-inline-item mr-2">
-                        <button class="added-emoji-btn btn {{ emoji.emoji_colon_name|slice:'1:-1' }}" 
-                                data-emoji-url="{% url 'emoji' model='Message' instance_id=message.id %}"  
-                                data-target="#emojiModal{{ emoji.id }}" 
-                                data-emoji-code="{{ emoji.emoji_colon_name }}">
-                            {{ emoji.emoji_colon_name|emoji_replace }}
-                            <span>
-                                {% if emoji.users_who_incremented.all|length > 1 %}
-                                    {{ emoji.users_who_incremented.all|length }}
-                                {% endif %}
-                            </span>
-                        </button>
-                        <!-- Small box modal when a user hovers over an emoji -->
-                        <div class="emoji-user-count-modal d-none" id="emojiModal{{ emoji.id }}">
-                            <div class="modal-dialog modal-sm">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="emojiModalLabel">{{ emoji.emoji_colon_name|emoji_replace }}</h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>
-                                            {% for emoji_creators in emoji.users_who_incremented.all %}
-                                                {{ emoji_creators }}
-                                                {% if emoji.users_who_incremented.all|length == 2 and forloop.counter == 1 %}
-                                                    and 
-                                                {% elif emoji.users_who_incremented.all|length > 2 %}
-                                                    {% if forloop.counter < emoji.users_who_incremented.all|length|add:"-1" %}
-                                                        ,
-                                                    {% else %}
-                                                        and
-                                                    {% endif %}
-                                                {% endif %}                                        
-                                            {% endfor %}
-                                            reacted with  {{ emoji.emoji_colon_name }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
+            <!-- Loop through emojis and generate list items -->
+            {% url 'messages_emoji' instance_id=message.id as emoji_url %}
+            {% include 'includes/emoji.html' with instance=message url=emoji_url %}
         </div>
     </div>
     <br>
-</div>      
-    
+</div>   
