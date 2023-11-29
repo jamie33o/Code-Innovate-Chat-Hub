@@ -43,11 +43,10 @@
                             {% if request.user.is_staff %}
                             <a href="{% url 'admin:index' %}" class="btn-ci">Add Channel</a>
                             {% endif %}
-                            <a href="#" class="btn-ci">Privacy Policy</a>
                             <a href="{% url 'account_logout' %}" class="btn-ci">Logout</a>
                             <a class="btn-ci" href="{% url 'account_change_password' %}">Change Password</a>
                             <a class="btn-ci" href="{% url 'account_email' %}">Email settings</a>
-                            <a href="#" class="btn-ci">Delete Account</a>
+                            <a href="#" class="btn-ci delete-account">Delete Account</a>
                         </div>
                     </div>
                 </div>
