@@ -41,7 +41,6 @@
                     <h3 class="side-title">New Messages<button data-target=".messages" class="btn toggleLinksButton pull-right p-0"><i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
                     <ul class="list-unstyled messages">
                         {% if unread_messages %}
-
                             {% for message in unread_messages %}
                                 <li>
                                     <a class="btn-ci" href="{% if message.sender == user %}{% url 'new_message' message.receiver.id %}{% else %}{% url 'new_message' message.sender.id  %}{% endif %}">
@@ -57,9 +56,7 @@
                             <li>
                                 <h>No New Messages</h>
                             </li>
-                        {% endif %}  
-
-            
+                        {% endif %} 
                     </ul>
                 </div>
             </div> 
@@ -93,7 +90,7 @@
         {% if last_viewed_channel_id %}
             if(window.innerWidth > 575){
                 let lastViewedurl = `{% url 'channel_posts' last_viewed_channel_id %}`
-                ajaxRequest(lastViewedurl, null, 'GET', '#channel-posts', null, function(response){
+                ajaxRequest(lastViewedurl, 'GET', '#channel-posts', null, function(response){
                     $('#channel-posts').html(response)
                     autoScroll()
                 })
@@ -102,7 +99,7 @@
         {% elif channel_id %}
                 let savedPostChannel = `{% url 'channel_posts' channel_id post_id %}`
 
-                ajaxRequest(savedPostChannel, null, 'GET', '#channel-posts', null, function(response){
+                ajaxRequest(savedPostChannel, 'GET', '#channel-posts', null, function(response){
                     $('#channel-posts').html(response)
                     autoScroll(null, {{ post_id }})
 

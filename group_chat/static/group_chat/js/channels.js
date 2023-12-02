@@ -27,7 +27,7 @@ $('main').on('click', '.channel-link', function(event) {
     $(this).addClass('active');
     lastChannel = $(this);
     let url = event.currentTarget.href;
-    ajaxRequest(url, null, 'Get', '#channel-posts', null, function(response){
+    ajaxRequest(url, 'Get', '#channel-posts', null, function(response){
         $('#channel-posts').html(response);
         autoScroll();
     });

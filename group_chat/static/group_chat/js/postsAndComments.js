@@ -19,7 +19,6 @@ const MD_BRAKE_POINT = 991.98;
 const LG_BRAKE_POINT = 1111.98;
 // html form with csrf
 let deleteModelBody = null;
-const csrfToken = $('body').data('csrf-token');
 let nextPageNum = null;
 
 
@@ -30,7 +29,7 @@ let nextPageNum = null;
 $('main').on('click', '.comments-link', function(event) {
     event.preventDefault();
     let url = $(this).attr('href');  // Use $(this) to access the clicked element
-    ajaxRequest(url, null, 'GET', '#post-comments', null, function(response){
+    ajaxRequest(url, 'GET', '#post-comments', null, function(response){
         $('#post-comments').html(response);
     })
 
@@ -61,11 +60,9 @@ $('main').on('click', '.posts-close-btn', function() {
 // shows when user is not a channel member
 $('main').on('submit', '#add-user-form', function(event) {
     event.preventDefault();
-    //get csrf token from the form
-    let csrftoken = $(this).find('input[name="csrfmiddlewaretoken"]').val();
     let url = $(this).attr('action');
     // send post request to add user
-    ajaxRequest(url, csrftoken, 'POST', '#channel-posts', null, function(response){
+    ajaxRequest(url, 'POST', '#channel-posts', null, function(response){
         $('#overlay').addClass('d-none');
         displayMessage(response, '#channel-posts');
     });
@@ -93,7 +90,7 @@ $('main').on('click', '.save-post-btn', function(event) {
     let savePostUrl = $(this).data('save-post-url');
 
     // Make an AJAX request to save the post
-    ajaxRequest(savePostUrl, csrfToken, 'POST', '#channel-posts')
+    ajaxRequest(savePostUrl, 'POST', '#channel-posts')
 });
 
 // listener for edit button on posts and comments dropdown menu
@@ -115,7 +112,7 @@ $('main').on('click', '.edit-btn', function(event) {
     card.find('.card-body').html('')
     // Append the HTML structure to the body
     editPostUrl += postId + '/'
-    summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl, csrfToken)
+    summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl)
 
     summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
 
@@ -147,7 +144,7 @@ function loadOldPosts(){
     // Attach scroll event to load older posts when scrolling to the top
     if ($(this).scrollTop() === 0 && !scrolledToTop && olderPostsUrl != '') {
         scrolledToTop = true;
-        ajaxRequest(olderPostsUrl, null, 'GET', '#channel-posts', null, function(response){
+        ajaxRequest(olderPostsUrl, 'GET', '#channel-posts', null, function(response){
             // Update the div with the returned template
             $('#posts-list').prepend(response)
             autoScroll()
@@ -198,7 +195,7 @@ function changeGroup(){
     olderPostsUrl = $('#posts-list').data('olderposts-url')
     if ($('.card').length < 10 && olderPostsUrl != "") {
         olderPostsUrl = olderPostsUrl.replace(/0/g, nextPageNum);
-        ajaxRequest(olderPostsUrl, null, 'GET', '#channel-posts', null, function(response){
+        ajaxRequest(olderPostsUrl, 'GET', '#channel-posts', null, function(response){
             $('#posts-list').prepend(response)
             autoScroll()
         })
@@ -208,7 +205,7 @@ function changeGroup(){
     $('#posts-list').scroll(loadOldPosts)
     let summernoteUrl = $('#posts-list').data('summernote-url')
     // Initialize summernote enhancer class
-    summernoteEnhancerPosts.init('#channel-posts', summernoteUrl, csrfToken)
+    summernoteEnhancerPosts.init('#channel-posts', summernoteUrl)
      // Get the channel id using a Django template literal for use in the JS file and for the websocket
     let channel_id = $('#posts-list').data('channel-id'); 
     
@@ -238,7 +235,7 @@ $('main').on({
             emoji_colon_name: emojiCode,
         }
          // Send a post request to Django with the emoji information
-    ajaxRequest(url, csrfToken, 'POST', 'main', data, function(response){
+    ajaxRequest(url, 'POST', 'main', data, function(response){
         updateEmoji(emojiCode, null, self, response, url)
     });
     },
@@ -272,7 +269,7 @@ function emojiPickerCallback(emoji) {
         emoji_colon_name: emojiColonName,
     }
     // Send a post request to Django with the emoji information
-    ajaxRequest(emojiUrl, csrfToken, 'POST', 'main', data, function(response){
+    ajaxRequest(emojiUrl, 'POST', 'main', data, function(response){
         updateEmoji(emojiColonName, emoji, null, response, emojiUrl)
     });
 }
