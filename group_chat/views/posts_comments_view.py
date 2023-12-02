@@ -1,7 +1,6 @@
 import bleach
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
+from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.utils import timezone
@@ -43,7 +42,7 @@ class BaseChatView(View):
             url_list = request.POST.getlist('urls[]')
             instance.images = ",".join(url_list)
             allowed_tags = ['b', 'i', 'u', 'p', 'br', 'img', 'ol', 'li', 'div', 'span', 'a']
-            allowed_attributes = ['src', 'href','class']
+            allowed_attributes = ['src', 'href', 'class', 'data-profile-url']
             instance.post = bleach.clean(instance.post, tags=allowed_tags, attributes=allowed_attributes)
             instance.created_by = request.user
             instance.save()
@@ -156,7 +155,7 @@ class PostsView(BaseChatView):
                 except Exception as e:
                     print(e)
             page = int(request.GET.get('page')) if request.GET.get('page') else (page_number if page_number is not None else None)
-            paginated_posts, next_page_num = self.get_paginated_posts(posts, page)
+            paginated_posts, prev_page_num, next_page_num = self.get_paginated_posts(posts, page)
 
             post_comments_users = self.users_that_commented(paginated_posts)
             self.update_last_viewed_channel(request, channel_id)
@@ -179,7 +178,8 @@ class PostsView(BaseChatView):
                 'form': form,
                 'channel_users': channel.users.all(),
                 'next_page_number': next_page_num,
-                'post_comments_users': post_comments_users
+                'prev_page_number': prev_page_num,
+                'post_comments_users': post_comments_users,
             }
 
             if page and not post_id:
@@ -236,16 +236,15 @@ class PostsView(BaseChatView):
                 try:
                     html_content = render_to_string(self.single_post_template, context)
                 except Exception as e:
-                    print(f"Error rendering template: {e}")
+                    return JsonResponse({'status' : 'error', 'message': e}, status=500)
 
                 self.broadcast_message(request, 'post', html_content, channel_id, post_id)
                 self.notification_msg(request, post.created_date, post.post, 'channel', channel.id)
 
                 if post_id is None:
-                    redirect_url = reverse('channel_posts', args=[channel_id])
-                    return redirect(redirect_url)
+                    return JsonResponse({'status': 'Success'}, status=200)
 
-                return JsonResponse({'status' : 200})
+                return JsonResponse({'status' : 'Success'}, status=200)
 
 
             # Return JSON response with validation errors
@@ -314,7 +313,7 @@ class PostsView(BaseChatView):
             if paginated_posts.has_next()
             else None
         )
-        return paginated_posts, prev_page_number
+        return paginated_posts, prev_page_number, next_page_number
 
 
     def update_user_status(self, request, channel):
@@ -449,20 +448,8 @@ class CommentsView(BaseChatView):
 
                 self.broadcast_message(request, 'comment', html_content, post_id, comment_id)
                 self.notification_msg(request, comment.created_date, comment.post,'post', post_model.id)
-
-                if comment_id is None:
-                    redirect_url = reverse('post_comments', args=[post_id])
-                    return redirect(redirect_url)
-
-                response_data = {
-                    'status': 'success',
-                    'post': comment.post,
-                    'images': None,
-                }
-
-                if comment.images:
-                    response_data['images'] = comment.images
-                return JsonResponse(response_data)
+                
+                return JsonResponse({'status': 'Success'}, status=200)
 
             # Return JSON response with validation errors
             return JsonResponse({'status': 'error', 'message': form.errors})
