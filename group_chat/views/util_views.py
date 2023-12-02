@@ -36,7 +36,7 @@ class ImageUploadView(View):
                 new_image = ImageModel.objects.create(image=image_file)
 
                 # Return the URL
-                return JsonResponse({'url': new_image.image.url})
+                return JsonResponse({'status': 'Success', 'url': new_image.image.url})
 
             return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'})
         except Exception as e:
@@ -148,7 +148,6 @@ class GenericObjectDeleteView(DeleteView):
 
             # Delete the object
             obj.delete()
-
             # Override the delete method to return a JSON response
             return JsonResponse({'status': 'success', 'message': f'{model_name[:-6]} deleted'})
         except Exception as e:
@@ -197,10 +196,10 @@ class SavePostView(View):
             saved_post = SavedPost(user=request.user, post=post)
             saved_post.save()
 
-            return JsonResponse({'status': 'Success', 'message': 'Post saved'})
+            return JsonResponse({'status': 'Success', 'message': 'Post saved'},status=200)
         except PostsModel.DoesNotExist:
             # Handle the case where the specified post does not exist
-            return JsonResponse({'status': 'Error', 'message': 'Post does not exist'})
+            return JsonResponse({'status': 'Error', 'message': 'Post does not exist'}, status=404)
         except Exception as e:
             # Handle other exceptions
             return JsonResponse({'status': 'Error', 'message': f'Error: {str(e)}'})
@@ -208,7 +207,8 @@ class SavePostView(View):
 
 def delete_image_from_s3(image_key):
     try:
-        s3 = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        s3 = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
         bucket_name = settings.AWS_STORAGE_BUCKET_NAME
 
         s3.delete_object(Bucket=bucket_name, Key=image_key)
@@ -216,3 +216,4 @@ def delete_image_from_s3(image_key):
     except NoCredentialsError:
         print('Credentials not available')
         return False
+    
