@@ -77,8 +77,7 @@ class SummernoteEnhancer {
               // Attach an input event handler to the Summernote editor
               self.$sn.next().find('.note-editable').on('input', function (e) {
                 let $snText = $('<p>').html(self.$sn.summernote('code')).text();
-                console.log($snText.slice(-2, -1))
-                if ($snText.slice(-1) === '@' && $snText.slice(-2, -1) === ' '){
+                if ($snText.slice(-1) === '@' && ($snText.slice(-2, -1) === ' ' || $snText.slice(-2, -1) === ';')){
                     self.tagUser();
                   }else{
                     self.atRemoved = self.$sn.summernote('code')
@@ -233,19 +232,13 @@ class SummernoteEnhancer {
             href: '#'
         });
 
-      
-        const editorContent = $(self.atRemoved);
-        //check that summernote editor(self.atRemoved) is not empty
-        if(editorContent.length > 0 && !self.parentDiv){
-          self.$sn.summernote(`code`, '');
-          editorContent.append(tagLink)
+        self.$sn.summernote(`code`, '');
 
-          self.$sn.summernote(`editor.insertNode`, editorContent[0]);
-        }else{
-          self.$sn.summernote(`editor.insertNode`, tagLink[0]);
-
-        }
-
+        $(self.atRemoved).each(function(){
+          self.$sn.summernote(`editor.insertNode`, this);
+        })
+          
+        self.$sn.summernote(`editor.insertNode`, tagLink[0]);
       });
     })
     
