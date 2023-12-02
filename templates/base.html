@@ -38,7 +38,10 @@
 
     <title>Code Institute Chat Hub {% block extra_title %}{% endblock %}</title>
   </head>
-  <body data-csrf-token="{{ csrf_token }}" data-emoji-img-url="{% static 'group_chat/tam-emoji/img' %}">
+  <body data-csrf-token="{{ csrf_token }}" 
+  data-emoji-img-url="{% static 'group_chat/tam-emoji/img' %}"
+  data-user-profiles="{% url 'get_all_user_profiles' %}"
+  data-view-profile-url="{% url 'view_user_profile' 0 %}">
 
     <header class="container-fluid px-0">
         <div class="edu-info"><p>THIS SITE IS FOR EDUCATION PURPOSES ONLY!</p></div>
