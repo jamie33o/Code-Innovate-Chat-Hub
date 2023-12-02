@@ -1,8 +1,8 @@
-let csrfToken = null;
 let msgToBeDel = null;
 let deleteUrl = null;
 let deleteModelBody = null;
 const emojiPicker = new EmojiPicker()
+
 
 // ////////////////////////////// inbox functionality ////////////////////////////
 
@@ -16,10 +16,10 @@ $('#messages-list-container').on('click', '.close-messages-btn', function(){
 
 $('.inbox-container').on('click', '.message-link', function(e){
     e.preventDefault()
-    let url = $(this).closest('.message-link').data('url')
+    let url = $(this).closest('.message-link').data('message-list-url')
     $('.message-link').removeClass('active')
     $(this).addClass('active')
-    ajaxRequest(url, null, 'GET', '#messages-list-container', null, function(response){
+    ajaxRequest(url, 'GET', '#messages-list-container', null, function(response){
         $('#messages-list-container').html(response)
         //autoScroll()
         if(window.innerWidth < 575){
@@ -34,10 +34,8 @@ $('.inbox-container').on('click', '.message-link', function(e){
 
 $('.inbox-container').on('click', '.delete-conversation', function(e){
     const url = $(this).data('url')
-    const csrfToken = $(this).data('csrf-token')
-
     let users_name = $(this).closest("li").find("h3").text();
-
+    const convId = $(this).data('conv-id')
     let header = `<h3>Are you sure you want to delete your conversation with ${users_name}</h3>`
     let body = `
         <form>
@@ -45,26 +43,32 @@ $('.inbox-container').on('click', '.delete-conversation', function(e){
                 <button type="button" class="btn btn-oval btn-info" 
                 data-dismiss="modal" aria-label="Close">No</button>
 
-                <button id="yes-btn" 
+                <button id="delete-conversation-btn" 
                 class="btn btn-oval btn-info" data-dismiss="modal" 
-                type="button">Yes</button>
+                type="button" data-url="${url}"
+                data-conv-id="${convId}">Yes</button>
             </div>
         </form>`;
-            
     showModal(header, body)
-
-    $('body').on('click', '#yes-btn', function(e){
-         ajaxRequest(url, csrfToken, 'DELETE', '.messaging', null) 
-    })
-
 })
 
+
+$('body').on('click', '#delete-conversation-btn', function(e){
+    const url = $(this).data('url')
+    const convId = $(this).data('conv-id')
+    ajaxRequest(url, 'DELETE', '.messaging', null) 
+    $(`.msg${convId}`).remove()
+    $('#messages-list-container').empty()
+})
+
+
 // event listener for the delete button on post and comments
-$(document).on('click', '.delete-btn', function() {
+$('#messages-list-container').on('click', '.message-delete-btn', function() {
     let deleteUrl = $(this).data('delete-url')
     let msgToBeDel = $(this).closest('.message');
     deleteObject(deleteUrl, msgToBeDel, 'message', '.messaging')
 });
+
 
 // listener for edit button on posts and comments dropdown menu
 $('main').on('click', '.edit-btn', function(event) {
@@ -72,23 +76,24 @@ $('main').on('click', '.edit-btn', function(event) {
     if($('.cancel-edit').length > 0){
         $('.cancel-edit').click()
     }else if($('.edit-post').length > 0 ){
-        $('.card.edit-post').removeClass('edit-post')
+        $('.edit-post').removeClass('edit-post')
     }
     // Find the closest ancestor with the class 'card'
     var card = $(this).closest('.message');
-    //let carbody = card.find('.message-body').html()
     let cardText = card.find('.message-text').html();
     let cardImages = card.find('.post-images').html()
     card.addClass('edit-post')
-    let editPostUrl = card.data('url')
+    
+    let editPostUrl = $('#message-list').data('edit-url')
+    let msgId = card.data('msg-id')
+    editPostUrl = editPostUrl.replace('0', msgId)
+
     card.find('.message-text').html('')
     card.find('.post-images').html('')
     // Append the HTML structure to the body
     
     summernoteEnhancerEditPost.init('.edit-post .message-text', editPostUrl, csrfToken)
-    
     summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
-
     $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button class="cancel-edit">Cancel</button>');
     
     $('main').on('click', '.cancel-edit', function(event) {
@@ -107,7 +112,6 @@ $('main').on('click', '.edit-btn', function(event) {
         }); 
     }
 });
-
 
 ///////////////// Emoji functionality //////////////////////
 // event listener for the emoji button on posts and comments
@@ -129,7 +133,7 @@ $('main').on({
             emoji_colon_name: emojiCode,
         }
          // Send a post request to Django with the emoji information
-    ajaxRequest(url, csrfToken, 'POST', 'main', data, function(response){
+    ajaxRequest(url, 'POST', 'main', data, function(response){
         updateEmoji(emojiCode, null, self, response, url)
     });
     },
@@ -148,6 +152,7 @@ $('main').on({
     }
 }, '.added-emoji-btn');
 
+
 /**
  * Callback function triggered when a user clicks an emoji in the emoji picker.
  *
@@ -163,9 +168,7 @@ function emojiPickerCallback(emoji) {
         emoji_colon_name: emojiColonName,
     }
     // Send a post request to Django with the emoji information
-    ajaxRequest(emojiUrl, csrfToken, 'POST', 'main', data, function(response){
-        console.log(response)
-
+    ajaxRequest(emojiUrl, 'POST', 'main', data, function(response){
         updateEmoji(emojiColonName, emoji, null, response, emojiUrl)
     });
 }
@@ -220,10 +223,8 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
             break;
         case "decremented":
             currentNumber = parseInt(spanElement.html(), 10);
-
             if (!isNaN(currentNumber)) {
                 // Check if currentNumber is a valid number
-
                 // Subtract 1 from the current number
                 let newNumber = currentNumber - 1;
                 if (newNumber > 1) {
@@ -231,12 +232,10 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
                     spanElement.html(newNumber);
                 } else {
                     spanElement.html('');
-
                 }
             }
             break;
         case "incremented":
-
             currentNumber = parseInt(spanElement.html(), 10);
             if (!isNaN(currentNumber)) {
                 // add 1 to the current number
@@ -249,16 +248,15 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
 
             break;
         case "removed":
-                $(emojiUlClass).find(`.${emojiClass}`).parent().remove()
-            
+            $(emojiUlClass).find(`.${emojiClass}`).parent().remove()
     }
-    
 }
+
+
 $('body').on('click', ".panel-search-form", function(){
     autoComplete(".panel-search-form", messageTags, ".msg-input", function(tag){
         let targetDiv = $(`[data-userId="${tag.id}"]`)
         targetDiv.click()
-        
     })
 })
 
