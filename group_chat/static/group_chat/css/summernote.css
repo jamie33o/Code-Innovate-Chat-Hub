@@ -46,6 +46,28 @@
     border: none;
     width: fit-content;
 }
+
+.tag-link-modal {
+    display: none;
+   
+}
+
+.tag-user-link {
+    position: relative;
+}
+
+.tag-user-link:hover {
+    cursor: pointer;
+}
+
+.tag-user-link:hover .tag-link-modal {
+    display: flex;
+    position: absolute;
+    top: 100px;
+    z-index: 100;
+    border: 1px solid black;
+}
+
 /* ////////////// emoji, @ symbol and post buttons ///////////////// */
 
 /* div for the buttons at the bottom of summernote */
