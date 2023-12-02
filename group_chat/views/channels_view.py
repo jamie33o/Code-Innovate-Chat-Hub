@@ -8,7 +8,6 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.http import Http404
-from django.db.models import Max
 from group_chat.models import ChannelModel, ChannelLastViewedModel
 from messaging.models import UnreadMessage, Conversation
 
@@ -87,7 +86,7 @@ class ChannelsView(View):
                 latest_message = conv.messages.order_by('-timestamp').first()
 
                 # Check if there is a latest message before adding it to the list
-                if latest_message:
+                if latest_message and latest_message.receiver == request.user:
                     messages_by_conversation.append(latest_message)
 
         return messages_by_conversation

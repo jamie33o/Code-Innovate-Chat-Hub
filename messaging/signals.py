@@ -30,13 +30,13 @@ def create_unread_message(sender, instance, created, **kwargs):
     - None
     """
     if created:
-        # Check if there's already an UnreadMessage for this conversation and receiver
+        # Check if there's already an UnreadMessage for this conversation 
         existing_unread_message = UnreadMessage.objects.filter(
             conversation=instance.conversation,
         ).first()
 
         if not existing_unread_message:
-            # Create an UnreadMessage instance for the receiver
+            # Create an UnreadMessage instance 
             UnreadMessage.objects.create(
                 conversation=instance.conversation,
             )

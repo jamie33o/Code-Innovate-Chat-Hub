@@ -312,11 +312,13 @@
   width: 100%;
   height: fit-content;
   margin: 20px auto;
+  padding: 10px;
 }
 
 .post-images img {
   max-width: 200px;
   border-radius: 10px;
+  border: 1px solid rgba(128, 128, 128, 0.482)
 }
 
 .post-images img:hover {
