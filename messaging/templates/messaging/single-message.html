@@ -1,7 +1,8 @@
 {% load static %}
 {% load emoji_tags %}
 
-<div class="message {% if message_list and message.sender == user  %}my-message{% elif message_list %}info{% else %}new-message{% endif %}" data-url="{% url 'edit_message' receiver_id=receiver.id message_id=message.id %}">
+<div class="message {% if message_list and message.sender == user  %}my-message{% elif message_list %}info{% else %}new-message{% endif %}" 
+     data-msg-id="{{ message.id }}">
     {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
         <img class="img-circle medium-image profile-pic" 
         src="{{ message.sender.userprofile.profile_picture.url }}" 
@@ -19,8 +20,8 @@
                 <h4>{{ message.sender.username }} </h4>
                 <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>                     
             
-                <div class="dropdown message-dropdown {% if not message.sender == user  %}d-none{% endif %}">
-                    <button class="btn btn-link dropdown-toggle p-0" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="dropdown message-dropdown">
+                    <button class="btn btn-link dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-ellipsis-h"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right p-0">
@@ -28,7 +29,7 @@
                             <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
                             <div class="links-body pb-2">
                                 <button class="dropdown-item btn-ci edit-btn">Edit</button>
-                                <button class="dropdown-item btn-ci delete-btn" data-delete-url="{% url 'delete_obj' model='Message' pk=message.id %}">Delete</button>
+                                <button class="dropdown-item btn-ci message-delete-btn" data-delete-url="{% url 'delete_message' message_id=message.id %}">Delete</button>
                             </div>
                         </div>
                     </div>

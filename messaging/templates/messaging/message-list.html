@@ -6,45 +6,28 @@
     <!-- Close button -->
     <button class="btn close-messages-btn  d-lg-none"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     
-    {% if sender == user %}
-        <div class="ml-2 {% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
-            <img class="p-1 img-circle profile-pic-medium profile-pic" src="
-            {% if message.receiver.userprofile and message.receiver.userprofile.profile_picture %}
-            {{ receiver.userprofile.profile_picture.url }}
-            {% else %}
-            {% static 'noimage.png' %}
-            {% endif %}
-            " alt="Profile Picture"
-            data-url="{% url 'view_user_profile' receiver.userprofile.id %}">
-        </div>
-        <h4 class="ml-3 w-100">{{ receiver.username }} </h4>
-    {% else %} 
-        <div class="ml-2 {% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
-            <img class=" p-1 img-circle profile-pic-medium  profile-pic" src="
-            {% if message.sender.userprofile and message.sender.userprofile.profile_picture %}
-            {{ sender.userprofile.profile_picture.url }}
-            {% else %}
-            {% static 'noimage.png' %}
-            {% endif %}
-            " alt="Profile Picture"
-            data-url="{% url 'view_user_profile' sender.userprofile.id %}">
-        </div>
-        <h4 class="ml-3 w-100">{{ sender.username }} </h4>
-    {% endif %} 
+    <div class="ml-2 {% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
+        <img class="p-1 img-circle profile-pic-medium profile-pic" 
+        src="
+        {% if message.receiver.userprofile and message.receiver.userprofile.profile_picture %}
+        {{ receiver.userprofile.profile_picture.url }}
+        {% else %}
+        {% static 'noimage.png' %}
+        {% endif %}
+        " 
+        alt="Profile Picture"
+        data-profile-url="{% url 'view_user_profile' receiver.userprofile.id %}">
+    </div>
+    <h4 class="ml-3 w-100">{{ receiver.username }} </h4>
 </div>
 
 
 <!-- message list populated by Django -->
 <div id="message-list" 
     class="scrollable-div py-3" 
-    data-user="{{ user }}" 
-    data-summernote-url="
-        {% if sender == user %}
-            {% url 'send_message' receiver.id %}
-        {% else %}
-            {% url 'send_message' sender.id %}
-        {% endif %}"
-        data-conversation-id="{{ conversation_id }}">
+    data-summernote-url="{% url 'send_message' conversation_id %}"
+    data-conversation-id="{{ conversation_id }}"
+    data-edit-url="{% url 'edit_message' conversation_id=conversation_id message_id=0 %}">
 
     {% if messages %}
         {% for message in messages %}
@@ -66,5 +49,6 @@
         summernoteEnhancerPosts.init('#messages-list-container', summernoteUrl, csrfToken)
         // Start the WebSocket for posts
         startWebSocket('messaging', conversationId)
+
     });
 </script>
