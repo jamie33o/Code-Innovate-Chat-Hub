@@ -23,11 +23,15 @@
         <div class="message-list-links-outter">
             <ul class="list-unstyled">
                 {% for message in messages %}
-                    <li class="message-link" data-userid="{% if user.id == message.sender.id %}{{ message.receiver.id}}{% else %}{{ message.sender.id}}{% endif %}" data-url="{% url 'message_list' sender_id=message.sender.id receiver_id=message.receiver.id %}">
+                    <li class="message-link msg{{ message.conversation.id }}" 
+                    data-userid="{% if user.id == message.sender.id %}{{ message.receiver.id}}{% else %}{{ message.sender.id}}{% endif %}" 
+                    data-message-list-url="{% url 'message_list' conversation_id=message.conversation.id %}">
                         <!-- Profile image and user information -->
                         <div class="img-count">
                             {% if message.conversation.id in unread_messages %}
-                                <div class="message-count">NEW</div>
+                                {% if message.receiver == request.user %}
+                                    <div class="message-count">NEW</div>
+                                {% endif %} 
                             {% endif %} 
                             {% if message.sender.userprofile.profile_picture %}
                                 <div class="{% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
@@ -63,8 +67,9 @@
                             </span>
                             {% if not new_message %}
                                 <span class="fa fa-trash-o delete-conversation" 
-                                    data-url="{% url 'delete_obj' model='Conversation' pk=message.conversation.id %}"
-                                    data-csrf-token="{{ csrf_token }}"></span>
+                                    data-url="{% url 'delete_conversation' conversation_id=message.conversation.id %}"
+                                    data-csrf-token="{{ csrf_token }}"
+                                    data-conv-id="{{ message.conversation.id}}"></span>
                             {% endif %}
                         </div>
                     </li>
@@ -109,5 +114,6 @@
                 {% endif %}
             {% endfor %}
         ];
+
     </script>
 {% endblock %}
