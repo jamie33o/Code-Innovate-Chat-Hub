@@ -16,7 +16,7 @@ let unseenPostsWebsocket = null;
 let userId = null;
 let sizeFactor = 1
 let imgToResize = null
-
+let htmlElement = null;
 
 /////////////////////// function for notification messages ///////////////////////////////
 
@@ -104,9 +104,8 @@ function websocketInit(socket) {
           // Message event listener
           socket.addEventListener('message', function (event) {
              // when a new message is broadcast, this websocket will receive it
-            // and create and add the post/comment to the list
+            // and create and add the post/comment/message/notification to the list
             const data = JSON.parse(event.data);
-
             if (data.type === 'post_notification') {
                 if (data.html) {
                     if(data.edit_id){
@@ -146,29 +145,27 @@ function websocketInit(socket) {
                             displayMessage({status: 'Success', message : data.message}, '.comments-list');
                             $('.comment${data.edit_id} .dropdown').remove()
                         }
-                       
                     }
                 }
             } else if (data.type === 'messaging_notification') {
                 if (data.html) {
+                    let msgId = $(data.html).data('msg-id')
                     if(data.edit_id){
                         $(`.edit-post`).replaceWith(data.html);
                     }else{
-                    $('#message-list').append(data.html)
+                        $('#message-list').append(data.html)
                     }
-                    let user = $('#message-list').data('user')
-                   // if its the user that created it add the class my-message
-                    if(data.created_by === user){
+                
+                    // if its the user that created it add the class my-message
+                    if(data.created_by === currentUser){
                         $('#message-list .new-message').removeClass('new-message').addClass('my-message');
                     }else{
                         $('#message-list .new-message').removeClass('new-message')
+                        $(`[data-msg-id=${msgId}] .dropdown`).remove();
                     }
-                    
                 }
-
             } else if (data.type === 'global_consumer') {
                 if(data.created_by != currentUser){
-                    console.log(currentUser)
                     displayMessage(data, 'body')
                 }
             }else {
@@ -193,13 +190,14 @@ function websocketInit(socket) {
 /**
  * Sends an AJAX request.
  * @param {string} url - The URL for the AJAX request.
- * @param {string} csrfToken - The CSRF token for the request headers.
  * @param {string} type - The type of the request (e.g., 'GET' or 'POST').
  * @param {string} divClass - The class of the HTML element to append the response.
  * @param {Object} data - The data to send with the request.
  * @param {function} callBackFunction - Callback function to handle the response.
  */
-function ajaxRequest(url, csrfToken, type, divClass, data, callBackFunction) {
+function ajaxRequest(url, type, divClass, data, callBackFunction) {
+    const csrfToken = $('body').data('csrf-token')
+
     let processData = undefined;
     let contentType = undefined;
 
@@ -242,7 +240,6 @@ function startWebSocket(type, id){
         url = `wss://${window.location.host}/ws/${type}/${id}/`
     }
 
-
     if(type === 'channel_posts'){
         if(postsWebSocket){
             postsWebSocket.close()
@@ -255,14 +252,12 @@ function startWebSocket(type, id){
         }
         messageWebsocket = new WebSocket(url)
         websocketInit(messageWebsocket); 
-    
     }else if(type === 'global_consumer'){
         if(unseenPostsWebsocket){
             unseenPostsWebsocket.close()
         }
         unseenPostsWebsocket = new WebSocket(url)
         websocketInit(unseenPostsWebsocket); 
-    
     }else{
         if(commentsWebSocket){
             commentsWebSocket.close()
@@ -283,32 +278,33 @@ $(document).ready(function(){
  * @param {string} header - The header content of the modal.
  * @param {string} body - The body content of the modal.
  */
-    function showModal(header, body,) {
-        // Check if the modal already exists
-        let modal = $('#modal');
-        if (modal.length === 0) {
-            // If not, create the modal element
-            modal = $(`
-            <div class="modal fade modal" id="modal" tabindex="-1" role="dialog" aria-labelledby="model" aria-hidden="true">
-                <div class="modal-dialog modal-div " role="document">
-                    <div class="modal-content mt-5 ">
-                        <div class="modal-header d-block text-center"></div>
-                        <div class="modal-body scrollable-div text-center"></div>
-                    </div>
+function showModal(header, body,) {
+    // Check if the modal already exists
+    let modal = $('#modal');
+
+    if (modal.length === 0) {
+        // If not, create the modal element
+        modal = $(`
+        <div class="modal fade modal" id="modal" tabindex="-1" role="dialog" aria-labelledby="model" aria-hidden="true">
+            <div class="modal-dialog modal-div " role="document">
+                <div class="modal-content mt-5 ">
+                    <div class="modal-header d-block text-center"></div>
+                    <div class="modal-body scrollable-div text-center"></div>
                 </div>
             </div>
-        `);
+        </div>
+    `);
 
-            // Append the modal to the body
-            $('body').append(modal);
-        }
-
-        // Find the modal-header and modal-body elements within the modal
-        modal.find('.modal-header').html(header);
-        modal.find('.modal-body').html(body);
-
-        modal.modal('show');
+        // Append the modal to the body
+        $('body').append(modal);
     }
+
+    // Find the modal-header and modal-body elements within the modal
+    modal.find('.modal-header').html(header);
+    modal.find('.modal-body').html(body);
+
+    modal.modal('show');
+}
 
 
 //////////////////////////// show profile ///////////////////////////////////
@@ -324,7 +320,7 @@ $(document).ready(function(){
 
         `;
         let url = $(this).data('profile-url')
-        ajaxRequest(url, csrfToken, 'GET', '#channel-posts', null, function(response){
+        ajaxRequest(url, 'GET', '#channel-posts', null, function(response){
             showModal(header, response)
             showModal()
         });
@@ -335,7 +331,7 @@ $(document).ready(function(){
 
 ///////////////////////// delete object e.g post, comment, message //////////////////////////
 
-function deleteObject(url, object, objectName, msgLocation){
+function deleteObject(url, object, objectName, location){
     // Get the URL of the image
     // get card to be deleted
 
@@ -343,7 +339,7 @@ function deleteObject(url, object, objectName, msgLocation){
         `<h5 class="modal-title text-center">
         Are you sure you want to delete this ${objectName}?
         </h5>`;
-    
+    htmlElement = object
     // Clone object to be deleted
     let clonedObject = object.clone();
     // remove buttons and links
@@ -358,46 +354,53 @@ function deleteObject(url, object, objectName, msgLocation){
 
             <button id="yes-btn" 
             class="btn btn-oval btn-info" data-dismiss="modal" 
-            type="button">Yes</button>
+            type="button"
+            data-url="${url}" data-location="${location}">Yes</button>
         </div>
     </form>`;
     let body = $(deleteModelBody).prepend(clonedObject)
-            
     showModal(header, body)
     // event listener for yes-btn on the delete post/comment card modal
-    $(document).on('click', '#yes-btn', function(event) {
-        event.preventDefault()   
-        object.remove();
-        ajaxRequest(url, csrfToken, 'DELETE', `${msgLocation}`)
-
-    })
+  
 }
 
+$(document).on('click', '#yes-btn', function(event) {
+    event.preventDefault()   
+    $(htmlElement).remove()
+    let location = $(this).data('location')
+    let url = $(this).data('url')
+    ajaxRequest(url, 'DELETE', `${location}`)
+})
 
 // //////////////////////////// search functionality for header, messages, tagging /////////////////////////
-$(document).on('click', ".header-search-form", function(){
-    console.log('working')
-    getAllUserProfiles(this)
+$(document).on('input', ".header-search-form input", function(){
+    var inputValue = $(this).val();
+    if(inputValue === '#'){
+      // getAllChannels(this)
+    }else if(inputValue === '@'){
+       getAllUserProfiles($(this).parent())
+       $(this).val('')
+    }
 })
+
+
 function getAllUserProfiles(form){
-    let url = $(form).find('input').data('profiles')
-    let inputElement = $(form).find('input')
-    let csrfToken = $(form).data('csrf-token')
+    let url = $('body').data('profiles')
     let profileTags = [];
-    ajaxRequest(url, csrfToken, 'GET', 'body', null, function(response){
+    ajaxRequest(url, 'GET', 'body', null, function(response){
         response.forEach(function(profile) {
           profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
         });
-        autoComplete(form, profileTags, inputElement, function(tag){
+        autoComplete(form, profileTags, function(tag){
             let header = `
             <div class="d-flex justify-content-between align-items-center w-100">
                 <h3 class="display-7 text-center mb-0 mx-auto">User Profile</h3>
                 <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
             </div>
             `;
-            let url = inputElement.data('view-profile-url').replace('0', tag.id)
+            let viewProfileUrl = $('body').data('view-profile-url').replace('0', tag.id)
 
-            ajaxRequest(url, csrfToken, 'GET', 'body', null, function(response){
+            ajaxRequest(viewProfileUrl, 'GET', 'body', null, function(response){
                 showModal(header, response)
                 showModal()
             });
@@ -407,10 +410,15 @@ function getAllUserProfiles(form){
 }
 
 
-function autoComplete(formElement, availableTags, inputElement, callBackFunction){
-    $(formElement).append(`<div class="autocompleteList"></div>`)
-    const $autocompleteList = $(".autocompleteList");
-    $searchInput = $(inputElement)
+function autoComplete(formElement, availableTags, callBackFunction){
+    $(formElement).append(`<div class="autocomplete-model">
+    <input class="search-input" placeholder="start typing"><div class="list"</div> </div>`)
+    const $autocompleteModel = $(".autocomplete-model");
+    const $autocompleteList = $(".list");
+
+    $searchInput = $('.search-input')
+    $autocompleteModel.show();
+    $searchInput.focus()
 
     $searchInput.on("input", function () {
         var inputText = $(this).val().toLowerCase();
@@ -418,8 +426,7 @@ function autoComplete(formElement, availableTags, inputElement, callBackFunction
             return tag.label.toLowerCase().slice(0, inputText.length) === inputText;
         });
     
-        $autocompleteList.empty().hide();
-    
+        $autocompleteList.empty()
 
         if (filteredTags.length > 0) {
             $.each(filteredTags, function (index, tag) {
@@ -428,20 +435,19 @@ function autoComplete(formElement, availableTags, inputElement, callBackFunction
     
                 $item.on("click", function () {
                    callBackFunction(tag)
-                   $autocompleteList.hide();
+                   $autocompleteModel.remove();
                    $autocompleteList.remove();
                 });
     
                 $autocompleteList.append($item);
             });
     
-            $autocompleteList.show();
         }    
     });
 
     $(document).on("click", function (event) {
         if (!$(event.target).closest(".autocompleteList").length && event.target !== $searchInput[0]) {
-            $autocompleteList.hide();
+            $autocompleteModel.remove();
             $autocompleteList.remove();
         }
     });
