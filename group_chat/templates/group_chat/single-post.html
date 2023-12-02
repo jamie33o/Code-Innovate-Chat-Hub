@@ -33,6 +33,7 @@
                 </div>
             </div>
             <!-- Dropdown menu -->
+            {% if not comments %}
             <div class="dropdown">
                 <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-ellipsis-h"></i>
@@ -50,6 +51,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
     <!-- Card body text and images -->
@@ -93,22 +95,26 @@
                     {% endif %}
                 {% endfor %}
             </ul>
-            {% if single_post.latest_comment %}
-                <span class="comment-date">
-                    <span class="mx-2">Last Reply </span>
-                    {% now "Y-m-d" as current_datetime %}             
-                    {% with comment_date=single_post.latest_comment.created_date %}
-                        {% if comment_date|date:"Y-m-d" == current_datetime %}
-                            {{ comment_date|date:"H:i"|upper }} <!-- Display time -->
-                        {% else %}
-                            {{ comment_date|date:"M j"|upper }} <!-- Display date -->
-                        {% endif %}
-                    {% endwith %}
-                </span>
-                <span class="view-comments">View Comments</span>
-            {% else %}
-                <span class="view-comments d-flex">Reply</span>
+            {% if not comments %}
+
+                {% if single_post.latest_comment %}
+                    <span class="comment-date">
+                        <span class="mx-2">Last Reply </span>
+                        {% now "Y-m-d" as current_datetime %}             
+                        {% with comment_date=single_post.latest_comment.created_date %}
+                            {% if comment_date|date:"Y-m-d" == current_datetime %}
+                                {{ comment_date|date:"H:i"|upper }} <!-- Display time -->
+                            {% else %}
+                                {{ comment_date|date:"M j"|upper }} <!-- Display date -->
+                            {% endif %}
+                        {% endwith %}
+                    </span>
+                    <span class="view-comments">View Comments</span>
+                {% else %}
+                    <span class="view-comments d-flex">Reply</span>
+                {% endif %}
             {% endif %}
+
         </a>
     </div>
 </div>
