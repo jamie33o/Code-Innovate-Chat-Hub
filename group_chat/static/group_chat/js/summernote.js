@@ -39,6 +39,8 @@ class SummernoteEnhancer {
     this.$storeText = null;
     this.uploadImageUrls = [];
     this.parentDiv = '';
+    this.emojiPicker = null;
+    this.atRemoved = null;
   }
 
   /**
@@ -48,14 +50,13 @@ class SummernoteEnhancer {
    * @param {string} djangoUrl - The Django URL for handling form submission.
    * @param {string} csrf_token - The CSRF token for form submission.
    */
-  init(divToLoadIn, djangoUrl, csrf_token) {
+  init(divToLoadIn, djangoUrl) {
     let self = this;
     this.divToLoadIn = divToLoadIn
     this.djangoUrl = djangoUrl
-    let emojiPicker = new EmojiPicker()
-    let counter = 0
+    this.emojiPicker = new EmojiPicker()
 
-    this.createForm(csrf_token)
+    this.createForm()
 
     this.$sn = $(`${this.divToLoadIn} textarea`);  
 
@@ -72,12 +73,20 @@ class SummernoteEnhancer {
       focus: true,
       callbacks: {
           onInit: function () {
+              
               // Attach an input event handler to the Summernote editor
-              self.$sn.next().find('.note-editable').on('input', self.throttle(function (e) {
-                // event Throttling function so function doesnt get called every time there is an input
-                self.tagUser(false);
-                self.parentDiv = $(e.target.lastChild.classList)                
-            }, 300)); 
+              self.$sn.next().find('.note-editable').on('input', function (e) {
+                let $snText = $('<p>').html(self.$sn.summernote('code')).text();
+                console.log($snText.slice(-2, -1))
+                if ($snText.slice(-1) === '@' && $snText.slice(-2, -1) === ' '){
+                    self.tagUser();
+                  }else{
+                    self.atRemoved = self.$sn.summernote('code')
+                  }
+                  if(e.target.lastChild){
+                    self.parentDiv = $(e.target.lastChild.classList)                
+                  }
+              }); 
           
             
           },
@@ -129,7 +138,6 @@ class SummernoteEnhancer {
     $(`${this.divToLoadIn} .at-symbol`).click(() => {
       let atSymbol = document.createTextNode(`@`);
       this.$sn.summernote(`editor.insertNode`, atSymbol);
-
       this.tagUser();      
     });
 
@@ -179,11 +187,11 @@ class SummernoteEnhancer {
     // Add this code to bind the click event of existing button
     $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function (event) {      
       $(`.hide-modal`).show()
-        emojiPicker.addListener(event, function(emoji){
+        self.emojiPicker.addListener(event, function(emoji){
         self.$sn.summernote('editor.insertNode', emoji);
         $(`.hide-modal`).hide()
       });
-      emojiPicker.$panel.show();
+      self.emojiPicker.$panel.show();
     });
 
     $(document).on('click', '.delete-img-icon', function() {
@@ -207,50 +215,40 @@ class SummernoteEnhancer {
    * Tags a user in the Summernote editor.
    */
   tagUser() {
-    
-    let nameSuggestions = SummernoteEnhancer.sharedChannelUsers;
-    let $snText = $('<p>').html(this.$sn.summernote('code')).text();
-    
-    if($snText.includes('@')){
-        let atIndex = $snText.lastIndexOf("@");
-        // Check if "@" was the last character entered and the character before it is not a letter or symbol
-        if ($snText.endsWith('@') && !/[A-Za-z\d]/.test($snText.slice(atIndex -1, atIndex))) {
-            $(`${this.divToLoadIn} .tag-name-modal`).show()
+
+      let profileTags = []
+      let userProfileUrl = $('body').data('user-profiles')
+      let self = this
+      ajaxRequest(userProfileUrl, 'GET', 'body', null, function(response){
+        response.forEach(function(profile) {
+          profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
+        });
+        autoComplete(self.$sn.closest('form'), profileTags, function(tag){
+          let profileUrl = $('body').data('view-profile-url').replace('0', tag.id)
+
+          const tagLink = $('<a>', {
+            'data-profile-url': profileUrl,
+            text: '@' + tag.label,
+            class: 'profile-pic tag-user-link',
+            href: '#'
+        });
+
+      
+        const editorContent = $(self.atRemoved);
+        //check that summernote editor(self.atRemoved) is not empty
+        if(editorContent.length > 0 && !self.parentDiv){
+          self.$sn.summernote(`code`, '');
+          editorContent.append(tagLink)
+
+          self.$sn.summernote(`editor.insertNode`, editorContent[0]);
+        }else{
+          self.$sn.summernote(`editor.insertNode`, tagLink[0]);
 
         }
-        $(`${this.divToLoadIn} .channel-users`).empty()
 
-        const searchText = $snText.slice(atIndex + 1);
-
-        const matchingNames = nameSuggestions.filter(name =>
-          name.toLowerCase().startsWith(searchText.toLowerCase())
-        );
-
-        // Display matching names as suggestions
-        $.each(matchingNames, (index, name) => {
-
-          const suggestion = $('<a>', {
-            href: '#',
-            text: '@' + name
-          });
-          suggestion.on("click", (event) => {
-            event.preventDefault()
-            // Replace the typed text with the selected name
-
-            this.$sn.summernote(`editor.insertNode`, suggestion[0]);
-
-            $(`${this.divToLoadIn} .tag-name-modal`).hide()
-
-            $(`${this.divToLoadIn} .note-editable p`).contents().filter(function() {
-              return this.nodeType === 3 && /[^a-zA-Z0-9]@/.test(this.nodeValue);
-          }).each(function() {
-              const text = this.nodeValue.replace(/([^a-zA-Z0-9])@/g, '$1');
-              $(this).replaceWith(document.createTextNode(text));
-          });
-        });
-        $(`${this.divToLoadIn} .channel-users`).append(suggestion);
       });
-    }
+    })
+    
   }
 
   /**
@@ -271,21 +269,13 @@ class SummernoteEnhancer {
           }
       });
     }
-    // Send the form data to Django
-    $.ajax({
-        url: djangoUrl, 
-        type: 'POST',
-        data: formData,
-        success: function(response) {
-          self.$sn.summernote('code', "");
-          $(`${self.divToLoadIn} div.note-editing-area .sn-img`).remove()
 
-        },
-        error: function(error) {
-            // Handle errors
-            console.log(error);
-        }
-    });
+    ajaxRequest(djangoUrl, 'POST', 'body', formData, function(response){
+      self.$sn.summernote('code', "");
+      $(`${self.divToLoadIn} div.note-editing-area .sn-img`).remove()
+
+    })
+  
     self.uploadImageUrls = []
 
   }
@@ -362,9 +352,8 @@ class SummernoteEnhancer {
   /**
    * Creates the structure of the Summernote editor form.
    *
-   * @param {string} csrf_token - The CSRF token for form submission.
    */
-    createForm(csrf_token){
+    createForm(){
       let htmlStructure = `
       <!-- Container for summernote editor -->
       <div class="summernote-form mb-2 px-2">
@@ -376,7 +365,6 @@ class SummernoteEnhancer {
           <!-- Summernote editor form -->
           <form class="sn-form" method="post">
               
-              <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
   
               <textarea name="post"></textarea>
   
@@ -416,21 +404,6 @@ class SummernoteEnhancer {
     }
 
 
-    throttle(func, delay) {
-      let timer = null;
-  
-      return function () {
-          const context = this;
-          const args = arguments;
-  
-          if (!timer) {
-              func.apply(context, args);
-              timer = setTimeout(() => {
-                  timer = null;
-              }, delay);
-          }
-      };
-  }
 }
 /**
  * Instance for handling Summernote editors in posts.
