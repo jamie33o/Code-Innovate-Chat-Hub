@@ -76,26 +76,26 @@
             {% include 'includes/emoji.html' with instance=single_post url=emoji_url %}
         </div>
         <!-- Comments link -->
-        <a href="{% url 'post_comments' single_post.id %}" class="comments-link">
-            <!-- users that commented profile picture -->
-            <ul class="profile-pics">
-                {% for post_id, data in post_comments_users.items %}
-                    {% if post_id == single_post.id %}
-                        {% for user in data.commented_users %}
-                            <li class="list-inline-item">
-                                {% if user.userprofile %}
-                                    {% if user.userprofile.profile_picture %}
-                                        <img class="rounded-circle"  src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
-                                    {% else %}
-                                        <img class="rounded-circle"  src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+        {% if not comments %}
+            <a href="{% url 'post_comments' single_post.id %}" class="comments-link">
+                <!-- users that commented profile picture -->
+                <ul class="profile-pics">
+                    {% for post_id, data in post_comments_users.items %}
+                        {% if post_id == single_post.id %}
+                            {% for user in data.commented_users %}
+                                <li class="list-inline-item">
+                                    {% if user.userprofile %}
+                                        {% if user.userprofile.profile_picture %}
+                                            <img class="rounded-circle"  src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture">
+                                        {% else %}
+                                            <img class="rounded-circle"  src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </ul>
-            {% if not comments %}
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
 
                 {% if single_post.latest_comment %}
                     <span class="comment-date">
@@ -114,7 +114,6 @@
                     <span class="view-comments d-flex">Reply</span>
                 {% endif %}
             {% endif %}
-
         </a>
     </div>
 </div>
