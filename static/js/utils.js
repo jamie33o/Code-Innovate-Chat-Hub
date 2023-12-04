@@ -309,7 +309,6 @@ function showModal(header, body,) {
 
 //////////////////////////// show profile ///////////////////////////////////
 // view profile modal shows when profile pic clicked
-
 $(document).ready(function(){
     $('body').on('click', '.profile-pic', function(){
         let header = `
@@ -327,7 +326,6 @@ $(document).ready(function(){
         
     });
 })
-
 
 ///////////////////////// delete object e.g post, comment, message //////////////////////////
 
@@ -361,7 +359,6 @@ function deleteObject(url, object, objectName, location){
     let body = $(deleteModelBody).prepend(clonedObject)
     showModal(header, body)
     // event listener for yes-btn on the delete post/comment card modal
-  
 }
 
 $(document).on('click', '#yes-btn', function(event) {
@@ -383,9 +380,8 @@ $(document).on('input', ".header-search-form input", function(){
     }
 })
 
-
 function getAllUserProfiles(form){
-    let url = $('body').data('profiles')
+    let url = $('body').data('user-profiles')
     let profileTags = [];
     ajaxRequest(url, 'GET', 'body', null, function(response){
         response.forEach(function(profile) {
