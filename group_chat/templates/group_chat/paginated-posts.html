@@ -9,6 +9,6 @@
 
 <script>
     $(document).ready(function() {
-        nextPageNum = "{{ next_page_number }}"
+        prevPageNum = "{% if prev_page_number %}{{ prev_page_number }}{% endif %}"
     });
 </script>

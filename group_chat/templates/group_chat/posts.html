@@ -11,18 +11,16 @@
 <!-- Posts list populated by Django -->
 <div id="posts-list" class="scrollable-div" 
                     data-summernote-url="{% url 'channel_posts' channel.id %}"
-                    data-olderposts-url="{% if next_page_number %}
-                                {% url 'channel_posts' channel_id=channel.id %}?page=0
-                                {% endif %}"
-                    data-channel-id="{{ channel.id }}"
-                    data-channel-users = "{% for user in channel_users %}
-                    '{{ user.username }}',
-                {% endfor %}">
+                    data-posts-url="{% url 'channel_posts' channel_id=channel.id %}?page=0"
+                    data-channel-id="{{ channel.id }}">
     {% for single_post in posts %}
         <!-- Post -->
         {% include 'group_chat/single-post.html' with single_post=single_post %}
         <!-- Post /////-->
     {% endfor %}
+    <div class="load-postbtn-container">
+        <button class="load-new-posts btn d-none"><i class="fa-solid fa-arrow-down" style="color: #fcfcfd;"></i> Latest Posts</button>
+    </div>
 </div>
 
 <!-- Overlay that shows if the user is not added to the channel -->
@@ -42,7 +40,8 @@
 <!-- JavaScript code -->
 <script>
     $(document).ready(function() {
-        nextPageNum = "{{ next_page_number }}"
+        lastPageNum = '{% if last_page_num %}{{ last_page_num }}{% endif %}'
+        prevPageNum = "{% if prev_page_number %}{{ prev_page_number }}{% endif %}"
         changeGroup()
     });
 </script>

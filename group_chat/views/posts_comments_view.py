@@ -155,8 +155,7 @@ class PostsView(BaseChatView):
                 except Exception as e:
                     print(e)
             page = int(request.GET.get('page')) if request.GET.get('page') else (page_number if page_number is not None else None)
-            paginated_posts, prev_page_num, next_page_num = self.get_paginated_posts(posts, page)
-
+            paginated_posts, prev_page_num, last_page_num = self.get_paginated_posts(posts, page)
             post_comments_users = self.users_that_commented(paginated_posts)
             self.update_last_viewed_channel(request, channel_id)
 
@@ -177,10 +176,12 @@ class PostsView(BaseChatView):
                 'posts': paginated_posts,
                 'form': form,
                 'channel_users': channel.users.all(),
-                'next_page_number': next_page_num,
                 'prev_page_number': prev_page_num,
                 'post_comments_users': post_comments_users,
             }
+
+            if page_number:
+                context['last_page_num'] = last_page_num
 
             if page and not post_id:
                 return render(request, self.paginated_template, context)
@@ -189,7 +190,6 @@ class PostsView(BaseChatView):
 
         except Exception as e:
             # Handle unexpected exceptions
-            print(e)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
     def post(self, request, channel_id, post_id=None):
@@ -297,8 +297,10 @@ class PostsView(BaseChatView):
         page = total_pages if not page else page
 
         try:
-            # Start from the last page and go backward
+            # Start from the last page and go backward 
+            # because the latest post is at the bottom of the page
             paginated_posts = paginator.page(page)
+            
         except (PageNotAnInteger, EmptyPage):
              # If the page is not an integer, show the last page
             paginated_posts = paginator.page(total_pages)
@@ -308,12 +310,8 @@ class PostsView(BaseChatView):
             if paginated_posts.has_previous()
             else None
         )
-        next_page_number = (
-            paginated_posts.next_page_number()
-            if paginated_posts.has_next()
-            else None
-        )
-        return paginated_posts, prev_page_number, next_page_number
+
+        return paginated_posts, prev_page_number, total_pages
 
 
     def update_user_status(self, request, channel):

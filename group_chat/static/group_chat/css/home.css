@@ -74,6 +74,30 @@
     display: none;
 }
 
+#post-list {
+    position: relative;
+}
+
+.load-postbtn-container {
+    position: absolute;
+    bottom: 140px;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    margin: 0 5%;
+}
+
+.load-new-posts {
+    border-radius: 30px;
+    background-color: var(--ci-orange);
+    color: white;
+    z-index: 10;
+}
+
+.load-new-posts:hover {
+    box-shadow: var(--sm-box-shadow);
+}
+
 .comments-container {
     position: relative;
     display: none;
