@@ -35,9 +35,8 @@ $(document).ready(function () {
     $('.saved-posts-container').on('click', '.remove-post-btn', function(e){
         e.preventDefault()
         let url = $(this).data('url')
-        let csrf = $(this).data('csrf')
         let post = $(this).closest('.card')
-        ajaxRequest(url, csrf, 'POST', '.saved-posts-container', null, function(response){
+        ajaxRequest(url, 'POST', '.saved-posts-container', null, function(response){
             displayMessage(response, '.saved-posts-container')
             post.remove()
 
@@ -45,7 +44,6 @@ $(document).ready(function () {
     })
 
     $('body').on('change', '#id_profile_picture', function () {
-        console.log("Event triggered!");
         var selectedFile = event.target.files[0];
         if (selectedFile) {
             // Get a temporary URL for the selected file
@@ -59,11 +57,7 @@ $(document).ready(function () {
         let url = $(this).parent().data('url')
         var formData = new FormData($(this).closest('form')[0]);
 
-        var csrfToken = $(this).find('input[name="csrf_token"]').val();
-
-
-
-        ajaxRequest(url, csrfToken, 'Post', '.profile-container', formData, function (response) {
+        ajaxRequest(url, 'Post', '.profile-container', formData, function (response) {
             if (response.status === 'success') {
 
                 $('.status').html(`Current Status: ${response.message}`)
