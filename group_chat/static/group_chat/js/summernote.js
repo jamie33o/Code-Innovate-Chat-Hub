@@ -24,8 +24,6 @@
  * - summernoteEnhancerEditPost: Instance for handling Summernote editors in editing posts.
  */
 class SummernoteEnhancer {
-
-  static sharedChannelUsers= [];
   static emojiImgs = null;
   static imgUrl = null;
 
@@ -322,25 +320,10 @@ class SummernoteEnhancer {
       var formData = new FormData();
       formData.append("file", file);
       let self = this
-  
-      // Send the file to the server using AJAX
-      $.ajax({
-        data: formData,
-        type: "POST",
-        url: 'upload-image/', 
-        headers: {
-          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
-        },
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-          self.addimageToSummernote(response.url)         
-        },
-        error: function(error) {
-          console.error("Error uploading image:", error);
-        }
-      });
+
+      ajaxRequest('upload-image/', 'POST', 'body', formData, function(response){
+        self.addimageToSummernote(response.url)         
+      })
   }
   /**
    * Creates the structure of the Summernote editor form.
