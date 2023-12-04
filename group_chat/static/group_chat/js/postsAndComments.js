@@ -3,8 +3,6 @@
 let emojiUrl = null;
 // emoji picker class object
 let emojiPicker = new EmojiPicker();
-// url for loading older posts
-let olderPostsUrl = null;
 // boolean to check if user scrolled to top
 let scrolledToTop = false;
 // url to delete a post
@@ -19,7 +17,10 @@ const MD_BRAKE_POINT = 991.98;
 const LG_BRAKE_POINT = 1111.98;
 // html form with csrf
 let deleteModelBody = null;
-let nextPageNum = null;
+let prevPageNum = null;
+let lastPageNum = null;
+let paginatedPostsUrl = null;
+
 
 
 ///////////////// event listeners ////////////////////////////
@@ -136,20 +137,37 @@ $('main').on('click', '.edit-btn', function(event) {
 
 ////////////////////////// functions for posts ///////////////////////////////////
 
+$('main').on('click', '.load-new-posts', function(){
+    console.log(lastPageNum)
+    let newPostsUrl = paginatedPostsUrl.replace(/0/g, lastPageNum);
+    $(this).addClass('d-none')
+    ajaxRequest(newPostsUrl, 'GET', '#channel-posts', null, function(response){
+        // Update the div with the returned template
+        $('#posts-list').html(response)
+        autoScroll(true)
+    })
+})
 /**
  * Load older posts when scrolling to the top of the page.
  * This function is triggered by a scroll event.
  */
 function loadOldPosts(){
+    paginatedPostsUrl = $('#posts-list').data('posts-url')
+    let $scrollElement = $(this)
+
     // Attach scroll event to load older posts when scrolling to the top
-    if ($(this).scrollTop() === 0 && !scrolledToTop && olderPostsUrl != '') {
+    if ($scrollElement.scrollTop() === 0 && !scrolledToTop && prevPageNum != "") {
         scrolledToTop = true;
+        let olderPostsUrl = paginatedPostsUrl.replace(/0/g, prevPageNum);
         ajaxRequest(olderPostsUrl, 'GET', '#channel-posts', null, function(response){
             // Update the div with the returned template
             $('#posts-list').prepend(response)
             autoScroll()
         })
-    }    
+    }else if($scrollElement.scrollTop() > $scrollElement[0].scrollHeight - $scrollElement.innerHeight()-2 && lastPageNum != ""){
+        let loadPostsBtn = $('.load-new-posts');
+        loadPostsBtn.removeClass('d-none');
+    }
 }
 
 
@@ -191,10 +209,8 @@ function autoScroll(bottomBool, id) {
 
 //  function gets called when user changes group
 function changeGroup(){
-
-    olderPostsUrl = $('#posts-list').data('olderposts-url')
-    if ($('.card').length < 10 && olderPostsUrl != "") {
-        olderPostsUrl = olderPostsUrl.replace(/0/g, nextPageNum);
+    if ($('.card').length < 10 && prevPageNum != "") {
+        let olderPostsUrl = $('#posts-list').data('posts-url').replace(/0/g, prevPageNum);
         ajaxRequest(olderPostsUrl, 'GET', '#channel-posts', null, function(response){
             $('#posts-list').prepend(response)
             autoScroll()
@@ -211,8 +227,6 @@ function changeGroup(){
     
     // Start the WebSocket for channel posts
     startWebSocket('channel_posts', channel_id)
-     // Add channel users to the static variable in the SummernoteEnhancer class
-    SummernoteEnhancer.sharedChannelUsers = [$('#posts-list').data('channel-users').split(',')];
 }
 
 ///////////////// Emoji functionality //////////////////////
