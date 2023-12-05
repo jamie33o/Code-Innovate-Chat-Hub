@@ -67,19 +67,20 @@ class SummernoteEnhancer {
       ],
       width: '100%',
       attachment_require_authentication: true,
-      placeholder: 'Type @ to get a list of people you can tag',
+      placeholder: 'Type @ for users # for channels',
       focus: true,
       callbacks: {
           onInit: function () {
-              
               // Attach an input event handler to the Summernote editor
               self.$sn.next().find('.note-editable').on('input', function (e) {
-                let $snText = $('<p>').html(self.$sn.summernote('code')).text();
-                if ($snText.slice(-1) === '@' && ($snText.slice(-2, -1) === ' ' || $snText.slice(-2, -1) === ';')){
-                    self.tagUser();
+                  let $snText = $('<p>').html(self.$sn.summernote('code')).text();
+                  if (($snText.slice(-1) === '@' || $snText.slice(-1) === '#')&& ($snText.slice(-2, -1) === ' ' || $snText.slice(-2, -1) === ';')){
+                      self.tagUser($snText.slice(-1));
                   }else{
                     self.atRemoved = self.$sn.summernote('code')
                   }
+                  
+
                   if(e.target.lastChild){
                     self.parentDiv = $(e.target.lastChild.classList)                
                   }
@@ -135,7 +136,7 @@ class SummernoteEnhancer {
     $(`${this.divToLoadIn} .at-symbol`).click(() => {
       let atSymbol = document.createTextNode(`@`);
       this.$sn.summernote(`editor.insertNode`, atSymbol);
-      this.tagUser();      
+      this.tagUser('@');      
     });
 
     $(`${this.divToLoadIn} .add-image`).click(() => {
@@ -153,7 +154,7 @@ class SummernoteEnhancer {
 
     $(`${this.divToLoadIn} .note-toolbar .note-misc button:first`).off().addClass('codeview')
 
-    $(`${this.divToLoadIn}`).on('click', `.codeview`, function(e) {
+    $(`${this.divToLoadIn} .codeview`).on('click', function(e) {
       e.preventDefault()
       let txt = self.$sn.summernote('code')
       let txtContent = $(txt).text()
@@ -211,34 +212,65 @@ class SummernoteEnhancer {
   /**
    * Tags a user in the Summernote editor.
    */
-  tagUser() {
-
-      let profileTags = []
-      let userProfileUrl = $('body').data('user-profiles')
-      let self = this
-      ajaxRequest(userProfileUrl, 'GET', 'body', null, function(response){
-        response.forEach(function(profile) {
-          profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
+  tagUser(symbol) {
+    let self = this
+      if(symbol === '@'){
+        let profileTags = []
+        let userProfileUrl = $('body').data('user-profiles')
+  
+        ajaxRequest(userProfileUrl, 'GET', 'body', null, function(response){
+          response.forEach(function(profile) {
+            profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
+          });
+          autoComplete(self.$sn.closest('form'), profileTags, function(tag){
+            let profileUrl = $('body').data('view-profile-url').replace('0', tag.id)
+  
+            const tagLink = $('<a>', {
+              'data-profile-url': profileUrl,
+              text: '@' + tag.label,
+              class: 'profile-pic tag-user-link',
+              href: '#'
+          });
+  
+          self.$sn.summernote(`code`, '');
+  
+          $(self.atRemoved).each(function(){
+            self.$sn.summernote(`editor.insertNode`, this);
+          })
+            
+          self.$sn.summernote(`editor.insertNode`, tagLink[0]);
         });
-        autoComplete(self.$sn.closest('form'), profileTags, function(tag){
-          let profileUrl = $('body').data('view-profile-url').replace('0', tag.id)
+      })
 
-          const tagLink = $('<a>', {
-            'data-profile-url': profileUrl,
-            text: '@' + tag.label,
-            class: 'profile-pic tag-user-link',
-            href: '#'
+      }else if (symbol === '#'){
+        let channelTags = []
+        let allChannelsUrl = $('body').data('all-channels')
+
+  
+        ajaxRequest(allChannelsUrl, 'GET', 'body', null, function(response){
+          response.forEach(function(channel) {
+            channelTags.push({label: channel.name, name: channel.name, id: channel.id, url: channel.url });
+          });
+          autoComplete(self.$sn.closest('form'), channelTags, function(tag){
+  
+            const tagLink = $('<a>', {
+              text: '#' + tag.label,
+              href: tag.url,
+              class: 'tag-user-link'
+            });
+    
+            self.$sn.summernote(`code`, '');
+    
+            $(self.atRemoved).each(function(){
+              self.$sn.summernote(`editor.insertNode`, this);
+            })
+              
+            self.$sn.summernote(`editor.insertNode`, tagLink[0]);
         });
-
-        self.$sn.summernote(`code`, '');
-
-        $(self.atRemoved).each(function(){
-          self.$sn.summernote(`editor.insertNode`, this);
-        })
-          
-        self.$sn.summernote(`editor.insertNode`, tagLink[0]);
-      });
-    })
+      })
+        
+      }
+      
     
   }
 
@@ -317,11 +349,12 @@ class SummernoteEnhancer {
    */
   uploadImage(file, editor, welEditable) {
       // Create a FormData object to send the file to the server
+      let uploadUrl = $('body').data('upload-image')
       var formData = new FormData();
       formData.append("file", file);
       let self = this
 
-      ajaxRequest('upload-image/', 'POST', 'body', formData, function(response){
+      ajaxRequest(uploadUrl, 'POST', 'body', formData, function(response){
         self.addimageToSummernote(response.url)         
       })
   }
@@ -341,7 +374,6 @@ class SummernoteEnhancer {
           <!-- Summernote editor form -->
           <form class="sn-form" method="post">
               
-  
               <textarea name="post"></textarea>
   
               <!-- Buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
@@ -370,8 +402,6 @@ class SummernoteEnhancer {
       </div>
       `;
       let $htmlStructure = $(htmlStructure);
-
-      
   
     $(this.divToLoadIn).append($htmlStructure)  
        if(window.innerWidth < 575.98){ 
