@@ -3,7 +3,7 @@ URL patterns for routing requests to the appropriate views in Django application
 
 """
 from django.urls import path
-from .views.channels_view import ChannelsView, AddUserToChannelView
+from .views.channels_view import ChannelsView, AddUserToChannelView, get_all_channels
 from .views.posts_comments_view import PostsView, CommentsView
 from .views.util_views import ImageUploadView, AddOrUpdateEmojiView, SavePostView
 from .views.util_views import GenericObjectDeleteView
@@ -12,6 +12,7 @@ from .views.util_views import GenericObjectDeleteView
 
 urlpatterns = [
      path('', ChannelsView.as_view(), name='channels'),
+     path('view_channel/<int:channel_id>/', ChannelsView.as_view(), name='view_channel'),
      path('saved-post/<int:channel_id>/<int:post_id>', ChannelsView.as_view(), name='saved-post'),
      path('channel_posts/<int:channel_id>/',
           PostsView.as_view(), name='channel_posts'),
@@ -30,4 +31,6 @@ urlpatterns = [
           GenericObjectDeleteView.as_view(), name='delete_object'),
      path('save_post/<int:post_id>/',
           SavePostView.as_view(), name='save_post'),
+     path('get_all_channels/',
+          get_all_channels, name='get_all_channels'),
 ]
