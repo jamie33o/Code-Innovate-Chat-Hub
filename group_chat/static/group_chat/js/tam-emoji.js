@@ -28,6 +28,8 @@ class EmojiPicker {
         this.reverseIcons = {};
         this.$panel = null;
         this.emojiClickedCallback = null; //  callback function to send emoji to summernote.js
+        this.emojiSource = $('body').data('emoji-img-url');
+
         // Initialize the emoji panel
     }
     /**
@@ -230,8 +232,8 @@ class EmojiPicker {
         const row = emoji[1];
         const column = emoji[2];
         const name = emoji[3];
-        const filename = EmojiPicker.emojiSource + '/emoji_spritesheet_!.png';
-        const blankGifPath = EmojiPicker.emojiSource + '/blank.gif';
+        const filename = this.emojiSource + '/emoji_spritesheet_!.png';
+        const blankGifPath = this.emojiSource + '/blank.gif';
         const iconSize = 25;
         const xoffset = -(iconSize * column);
         const yoffset = -(iconSize * row);
