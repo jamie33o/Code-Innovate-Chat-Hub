@@ -13,8 +13,7 @@
             <form class="searchbar my-auto ml-2 header-search-form">
                 <input class="search_input header-search" 
                 type="text"
-                placeholder="Search..." 
-                data-csrf-token="{{ csrf_token }}" 
+                placeholder="Type @ for Users or # for Channels" 
                 data-profiles="{% url 'get_all_user_profiles' %}"
                 data-view-profile-url="{% url 'view_user_profile' 0 %}">
                 <a href="#" class="search_icon "><i class="fas fa-search"></i></a>
