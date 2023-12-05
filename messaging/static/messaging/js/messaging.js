@@ -2,6 +2,7 @@ let msgToBeDel = null;
 let deleteUrl = null;
 let deleteModelBody = null;
 const emojiPicker = new EmojiPicker()
+let messageTags = null;
 
 
 // ////////////////////////////// inbox functionality ////////////////////////////
@@ -253,10 +254,13 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
 }
 
 
-$('body').on('click', ".panel-search-form", function(){
-    autoComplete(".panel-search-form", messageTags, ".msg-input", function(tag){
-        let targetDiv = $(`[data-userId="${tag.id}"]`)
-        targetDiv.click()
-    })
+$('body').on('input', ".panel-search-form input", function(e){
+    e.preventDefault()
+    if($(this).val() == '@'){
+        autoComplete(".panel-search-form", messageTags, function(tag){
+            let targetDiv = $(`[data-userId="${tag.id}"]`)
+            targetDiv.click()
+        })
+    }
 })
 
