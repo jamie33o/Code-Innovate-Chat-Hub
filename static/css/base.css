@@ -476,7 +476,6 @@ nav > div a.nav-item.nav-link:focus
     text-decoration:none;
 }
 
-/* ///////////////// search box styles e.g. header, messages and tagging /////////////////// */
 .header-search-form {
     position: relative;
 }
@@ -492,8 +491,12 @@ nav > div a.nav-item.nav-link:focus
     border-radius: 20px;
 }
 
-.header-search-form .autocomplete-model {
-    top: 40px;
+.header-search-form .autocomplete-model, .panel-search-form .autocomplete-model {
+    top: 0;
+}
+
+.panel-search-form .autocomplete-model {
+    width: 100%;
 }
 
 .sn-form .autocomplete-model {
