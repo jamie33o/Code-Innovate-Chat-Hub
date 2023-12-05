@@ -191,7 +191,8 @@ class MessageListView(View):
                 'sender': message.sender,
                 'receiver': receiver,
                 'message' : message,
-                'conversation_id': conversation.id
+                'conversation_id': conversation.id,
+                'user': request.user,
             }
 
             html_content = render_to_string('messaging/single-message.html', context)

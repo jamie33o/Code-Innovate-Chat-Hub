@@ -11,9 +11,9 @@ from django.contrib.auth import get_user_model
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from user_profile.models import UserProfile
-from group_chat.models import (ChannelModel, 
-                               PostsModel, 
-                               ChannelLastViewedModel, 
+from group_chat.models import (ChannelModel,
+                               PostsModel,
+                               ChannelLastViewedModel,
                                CommentsModel,
                                UnseenPost)
 from group_chat.forms import PostsForm, CommentsForm
@@ -223,6 +223,7 @@ class PostsView(BaseChatView):
                     'channel': form.instance.post_channel,
                     'single_post': post,
                     'form': form,
+                    'user': request.user
                 }
 
                 unseen_post, created = UnseenPost.objects.get_or_create(
@@ -440,6 +441,7 @@ class CommentsView(BaseChatView):
                 context = {
                     'post': form.instance.comment_post,
                     'comment': comment,
+                    'user': request.user
                 }
 
                 html_content = render_to_string(self.single_comment_template, context)
