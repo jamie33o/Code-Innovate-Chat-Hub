@@ -18,10 +18,11 @@
                 <div class="single category">
                     <h3 class="side-title ">Channels<button data-target=".channels" class="btn toggleLinksButton pull-right p-0"> <i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
                     </h3>
-                    <ul class="list-unstyled channels ">
+                    <ul class="list-unstyled channels">
                         {% for channel in channels %}
-                            <li>
-                                <a class="channel-link btn-ci w-100 {% if last_viewed_channel_id == channel.id %}active{% endif %}" href="{% url 'channel_posts' channel.id %}">#{{channel.name}}
+                            <li data-channel-id="{{ channel.id }}">
+                                <a class="channel-link btn-ci w-100 {% if last_viewed_channel_id == channel.id %}active{% endif %}" 
+                                href="{% url 'channel_posts' channel.id %}">#{{channel.name}}
                                     <span class="pull-right">
                                         {% for key, value in user_statuses.items %}
                                             {% if key == channel.id %}
@@ -96,21 +97,23 @@
                 })
                 $('#channel-posts').addClass('d-flex');
             }
-        {% elif channel_id %}
-                let savedPostChannel = `{% url 'channel_posts' channel_id post_id %}`
+        {% elif channel_id and post_id %}
+            let savedPostChannel = `{% url 'channel_posts' channel_id post_id %}`
 
-                ajaxRequest(savedPostChannel, 'GET', '#channel-posts', null, function(response){
-                    $('#channel-posts').html(response)
-                    autoScroll(null, {{ post_id }})
+            ajaxRequest(savedPostChannel, 'GET', '#channel-posts', null, function(response){
+                $('#channel-posts').html(response)
+                autoScroll(null, {{ post_id }})
 
-                })
-                if(window.innerWidth < 575.5){
-                    $('#nav-bar').addClass('d-none')
-                    $('header').addClass('d-none')
-                    $('#channel-links-container').addClass('d-none');
-                }
-               
-                $('#channel-posts').addClass('d-flex');
+            })
+            if(window.innerWidth < 575.5){
+                $('#nav-bar').addClass('d-none')
+                $('header').addClass('d-none')
+                $('#channel-links-container').addClass('d-none');
+            }
+            
+            $('#channel-posts').addClass('d-flex');
+        {% else %}
+            $(`[data-channel-id={{channel_id}}] .channel-link`).click();
         {% endif %}
         //url for emojis spritesheet
         EmojiPicker.emojiSource = "{% static 'group_chat/tam-emoji/img' %}";
