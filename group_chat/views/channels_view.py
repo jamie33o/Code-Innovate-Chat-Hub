@@ -6,10 +6,12 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.http import JsonResponse
 from django.http import Http404
 from group_chat.models import ChannelModel, ChannelLastViewedModel
 from messaging.models import UnreadMessage, Conversation
+
 
 # pylint: disable=no-member
 
@@ -136,3 +138,19 @@ class AddUserToChannelView(View):
                 'status': 'Error',
                 'message': f'Could not add {user.username} to {channel.name}, Error: {str(e)}'
             })
+
+
+def get_all_channels(request):
+    channels = ChannelModel.objects.all().values('name', 'id')
+    # Create a list to store dictionaries representing each channel
+    channel_list = []
+
+    for channel in channels:
+        url = reverse('view_channel', args=[channel['id']])
+        
+        # Add the 'url' key to the channel dictionary
+        channel['url'] = url
+        # Add the channel dictionary to the list
+        channel_list.append(channel)
+    return JsonResponse(list(channels), safe=False)
+ 
