@@ -6,6 +6,7 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
+from django.contrib.auth import get_user_model
 from group_chat.models import SavedPost, PostsModel
 from .models import UserProfile
 from .forms import ProfileImageForm, EditProfileForm, StatusForm
@@ -159,3 +160,10 @@ def get_all_users_profiles(request):
     """
     user_profiles = UserProfile.objects.all().values('username', 'id', 'profile_picture')
     return JsonResponse(list(user_profiles), safe=False)
+
+def deleteUserAccount(request):
+    user = get_object_or_404(get_user_model(), id=request.user.id)
+    user.delete()
+
+    return JsonResponse({'status': 'Success', 'message': 'Account Deleted'})
+ 

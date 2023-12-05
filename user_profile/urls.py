@@ -6,7 +6,8 @@ from .views import (UserProfileView,
                     update_profile_image,
                     update_status,
                     remove_saved_post,
-                    get_all_users_profiles)
+                    get_all_users_profiles,
+                    deleteUserAccount)
 
 urlpatterns = [
     path('', UserProfileView.as_view(), name='user_profile'),
@@ -16,5 +17,5 @@ urlpatterns = [
     path('edit_user_profile/', ViewUserProfile.as_view(), name='edit_user_profile'),
     path('remove_saved_post/<int:post_id>/', remove_saved_post, name='remove_saved_post'),
     path('get_all_user_profiles/', get_all_users_profiles, name='get_all_user_profiles'),
+    path('delete_account/', deleteUserAccount, name='delete_account')
 ]
-
