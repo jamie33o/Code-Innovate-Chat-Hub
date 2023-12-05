@@ -1,39 +1,113 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+# Code Institute Chat Hub - Group Chat App
+<img src="" ><br>
+<hr>
 
-Welcome,
+## Table of contents
+- [Code Institute Chat Hub - Group Chat App](#code-institute-chat-hub---group-chat-app)
+  - [Table of contents](#table-of-contents)
+  - [Overview](#overview)
+  - [UX](#ux)
+    - [Strategy](#strategy)
+    - [Scope](#scope)
+    - [Structure](#structure)
+    - [Skeleton](#skeleton)
+    - [Surface](#surface)
 
-This is the Code Institute student template for Codeanywhere. If you are using Gitpod then you need [this template](https://github.com/Code-Institute-Org/gitpod-full-template) instead.  We have preinstalled all of the tools you need to get started. It's perfectly ok to use this template as the basis for your project submissions.
+## Overview
+The Code Institute Chat Hub is a Django-based web application designed for a coding course community. The home page features group chat functionality, allowing users to participate in discussions related to the Code Institute coding course. Users can create and join different chat channels, engaging in real-time conversations with fellow learners. The Direct Message section enables one-on-one communication, allowing users to connect and share information privately. Additionally, each user has a Profile Page for managing account settings, viewing activity, and accessing joined chat channels. The application prioritizes real-time updates, supports multimedia content, and incorporates authentication and authorization features for secure user interactions. The Code Institute Chat Hub aims to foster collaborative learning and communication within the coding community, offering a platform akin to popular communication tools like Slack.
+<br><br>
+The fully deployed project can be accessed here [Code Institute Chat Hub](https://ci-chathub-f163e2297a1b.herokuapp.com/).
+<br><br>
 
-You can safely delete this README.md file, or change it for your own project. Please do read it at least once, though! It contains some important information about Codeanywhere and the extensions we use. Some of this information has been updated since the video content was created. The last update to this file was: **August 30th, 2023**
+## UX
+This site was created respecting the Five Planes Of Website Design:<br>
+### Strategy<hr>
+**User Stories and Epics:** <br>
+User stories and epics can be viewed here on the project [kanban board ](https://github.com/users/jamie33o/projects/14?pane=issue&itemId=45978557)
 
-## Codeanywhere Reminders
 
-To run a frontend (HTML, CSS, Javascript only) application in Codeanywhere, in the terminal, type:
+**Project Goal:**<br>
+Create a website similar to Slack but specifically tailored for Code Institute.
 
-`python3 -m http.server`
+**Project Objectives:**<br> 
+* Develop a real-time messaging platform to facilitate seamless communication among Code Institute community members.
+* Implement a user-friendly interface with channels dedicated to various Code Institute topics, fostering organized discussions.
+* Enhance user engagement with multimedia support in direct messages and emoji reactions for interactive conversations.
+* Establish secure user authentication, authorization, and profile management features to ensure a personalized and protected user experience.
+<br><br>
 
-A button should appear to click: _Open Preview_ or _Open Browser_.
+### Scope<hr>
 
-To run a frontend (HTML, CSS, Javascript only) application in Codeanywhere with no-cache, you can use this alias for `python3 -m http.server`.
+**User Management**
+   - User registration and authentication.
+   - User roles and permissions for various levels of access.
+   - Profile creation and management.
 
-`http_server`
+**Communication Features**
+   - Real-time messaging functionality for group discussions in channels.
+   - Direct messaging for private one-on-one conversations.
+   - Multimedia support, including file attachments and emoji reactions.
 
-To run a backend Python file, type `python3 app.py`, if your Python file is named `app.py` of course.
+**Channel Management**
+   - Creation, joining, and leaving of channels.
+   - Categorization of channels based on Code Institute topics or modules.
+   - Ability to search and discover relevant channels.
 
-A button should appear to click: _Open Preview_ or _Open Browser_.
+**User Interface and Experience**
+   - Intuitive and user-friendly interface for seamless navigation.
+   - Responsive design for accessibility on various devices.
+   - Personalization options for user profiles.
 
-In Codeanywhere you have superuser security privileges by default. Therefore you do not need to use the `sudo` (superuser do) command in the bash terminal in any of the lessons.
+**Responsiveness**<br>
+* Create a responsive design for desktop, tablet and mobile devices.<br><br>
 
-To log into the Heroku toolbelt CLI:
+### Structure<hr>
+The structure of the website is divided into seven pages but with content depending on authentication and client/staff status <br>
 
-1. Log in to your Heroku account and go to _Account Settings_ in the menu under your avatar.
-2. Scroll down to the _API Key_ and click _Reveal_
-3. Copy the key
-4. In Codeanywhere, from the terminal, run `heroku_config`
-5. Paste in your API key when asked
+- **Register/Login/logout/email settings/password change** for this the Django app Allauth was used, the pages give the user the possibility to create an account, login or log out, add or remove emails and change there password.<br>
 
-You can now use the `heroku` CLI program - try running `heroku apps` to confirm it works. This API key is unique and private to you so do not share it. If you accidentally make it public then you can create a new one with _Regenerate API Key_.
+- The **Home** page consists of 3 sections channels/unread messages list, posts and comments.Posts and comments are loaded using ajax depending on the link the user clicks<br>
 
----
+- The **header** is visible on all pages on large screens and only on main pages e.g home,messages,profile on mobile it consists of a search bar and a settings icon <br>
 
-Happy coding!
+- The **header menu** consists of five links if the user is a staff member or four otherwise and it is only visible if the user is logged in
+  - *Add Channel*  *Only shows if the user is a staff member
+  - *Logout*
+  - *Change Password*
+  - *Email Settings*
+  - *Delete Account*
+  
+- The **Header Search bar** is used to find another user or find a specific channel the user is asked to type the @ symbol for users list or # for channels
+  
+- The **Admin panel** page is only available for staff members, here they can approve users also add channels or remove posts or comments <br>
+
+- **Messages** contains an inbox with a search bar to search for a specific conversation and then the direct private messages list between users<br>
+
+- The **Profile** page consists of three sections the users profile view which can be viewed by other user when they click on that users profile picture in anywhere trough the site, the edit profile section and the saved posts section <br>
+
+
+* FLOWCHARTS
+The Flowchart for my program was created using <b>LucidChart</b> and it visually represents how the system works.<br>
+[![N|Solid]()]()<br><br>
+
+
+### Skeleton<hr>
+**Wireframes**<br>
+The wireframes for mobile and desktop were created with [Balsamiq]() tool and can be viewed [here]()<br>
+
+**Database**<br>
+The project uses the PostgreSQL relational database for storing the data.<br>
+There were created two diagrams to represent the relation between the tables, the initial one and the final one.
+The first one was created before the actual development of the website which led to some changes to the attributes and tables for finding the most relevant and useful ones to be kept.
+
+<details>
+  <summary>Initial Schema</summary>
+<img src="" ><br>
+</details>
+
+<details>
+  <summary>Final Schema</summary>
+<img src=""><br>
+</details><br>
+
+### Surface<hr>
