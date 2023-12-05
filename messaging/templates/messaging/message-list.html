@@ -40,13 +40,11 @@
 <!-- JavaScript code -->
 <script>
     $(document).ready(function() {
-        csrfToken = $('body').data('csrf-token');
         let summernoteUrl = $('#message-list').data('summernote-url');
         let conversationId = $('#message-list').data('conversation-id');
 
-        EmojiPicker.emojiSource = $('body').data('emoji-img-url');
         // Initialize summernote enhancer class
-        summernoteEnhancerPosts.init('#messages-list-container', summernoteUrl, csrfToken)
+        summernoteEnhancerPosts.init('#messages-list-container', summernoteUrl)
         // Start the WebSocket for posts
         startWebSocket('messaging', conversationId)
 
