@@ -17,6 +17,8 @@ let userId = null;
 let sizeFactor = 1
 let imgToResize = null
 let htmlElement = null;
+let profileTags = [];
+let allChannels = [];
 
 /////////////////////// function for notification messages ///////////////////////////////
 
@@ -112,7 +114,7 @@ function websocketInit(socket) {
                         $(`.edit-post`).replaceWith(data.html);
                         // if its not the user that created it then remove dropdown menu on the edited post
                         if(data.created_by != currentUser){
-                            $('.post${data.edit_id} .dropdown').addClass('d-none')
+                            $(`.card[data-post-id=${data.edit_id}] .dropdown`).addClass('d-none')
                         }
                     }else{
                         $('#posts-list').append(data.html);
@@ -134,7 +136,7 @@ function websocketInit(socket) {
                         $(`.edit-post`).replaceWith(data.html);
                         // if its the user that created it then hide dropdown menu on comments
                         if(data.created_by != currentUser){
-                            $('.comment${data.edit_id} .dropdown').remove()
+                            $(`.comment${data.edit_id} .dropdown`).remove()
                         }
                     }else{
                         $('.comments-list').append(data.html);
@@ -149,18 +151,18 @@ function websocketInit(socket) {
                 }
             } else if (data.type === 'messaging_notification') {
                 if (data.html) {
-                    let msgId = $(data.html).data('msg-id')
+                    let msgId = $(data.html).data('msg-id');
                     if(data.edit_id){
                         $(`.edit-post`).replaceWith(data.html);
                     }else{
-                        $('#message-list').append(data.html)
+                        $('#message-list').append(data.html);
                     }
                 
                     // if its the user that created it add the class my-message
                     if(data.created_by === currentUser){
                         $('#message-list .new-message').removeClass('new-message').addClass('my-message');
                     }else{
-                        $('#message-list .new-message').removeClass('new-message')
+                        $('#message-list .new-message').removeClass('new-message');
                         $(`[data-msg-id=${msgId}] .dropdown`).remove();
                     }
                 }
@@ -294,7 +296,6 @@ function showModal(header, body,) {
             </div>
         </div>
     `);
-
         // Append the modal to the body
         $('body').append(modal);
     }
@@ -316,7 +317,6 @@ $(document).ready(function(){
             <h3 class="display-7 text-center mb-0 mx-auto">User Profile</h3>
             <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
         </div>
-
         `;
         let url = $(this).data('profile-url')
         ajaxRequest(url, 'GET', '#channel-posts', null, function(response){
@@ -373,27 +373,57 @@ $(document).on('click', '#yes-btn', function(event) {
 $(document).on('input', ".header-search-form input", function(){
     var inputValue = $(this).val();
     if(inputValue === '#'){
-      // getAllChannels(this)
+       getAllChannels($(this).parent())
+       $(this).val('')
     }else if(inputValue === '@'){
        getAllUserProfiles($(this).parent())
        $(this).val('')
     }
 })
+function getAllChannels(form){
+    let url = $('body').data('all-channels')
+    if(allChannels.length === 0){
+        ajaxRequest(url, 'GET', 'body', null, function(response){
+            response.forEach(function(channel) {
+                allChannels.push({name: channel.name, id: channel.id, label: channel.name, url: channel.url });
+            });
+
+            autoComplete(form, allChannels, function(tag){
+                window.location.href = tag.url;
+            })
+        });
+    }else{
+        autoComplete(form, allChannels, function(tag){
+            window.location.href = tag.url;
+        })
+    }
+}
 
 function getAllUserProfiles(form){
     let url = $('body').data('user-profiles')
-    let profileTags = [];
-    ajaxRequest(url, 'GET', 'body', null, function(response){
-        response.forEach(function(profile) {
-          profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
+    let header = `
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <h3 class="display-7 text-center mb-0 mx-auto">User Profile</h3>
+                    <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
+                </div>
+                `;
+
+    if(profileTags.length === 0){
+        ajaxRequest(url, 'GET', 'body', null, function(response){
+            response.forEach(function(profile) {
+                profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
+            });
+            autoComplete(form, profileTags, function(tag){
+                let viewProfileUrl = $('body').data('view-profile-url').replace('0', tag.id)
+
+                ajaxRequest(viewProfileUrl, 'GET', 'body', null, function(response){
+                    showModal(header, response)
+                    showModal()
+                });
+            })
         });
+    }else{
         autoComplete(form, profileTags, function(tag){
-            let header = `
-            <div class="d-flex justify-content-between align-items-center w-100">
-                <h3 class="display-7 text-center mb-0 mx-auto">User Profile</h3>
-                <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
-            </div>
-            `;
             let viewProfileUrl = $('body').data('view-profile-url').replace('0', tag.id)
 
             ajaxRequest(viewProfileUrl, 'GET', 'body', null, function(response){
@@ -401,14 +431,14 @@ function getAllUserProfiles(form){
                 showModal()
             });
         })
-
-    });
+    }
 }
 
 
 function autoComplete(formElement, availableTags, callBackFunction){
+    let htmlContent = null;
     $(formElement).append(`<div class="autocomplete-model">
-    <input class="search-input" placeholder="start typing"><div class="list"</div> </div>`)
+    <input class="search-input" placeholder="start typing"><div class="list"></div> </div>`)
     const $autocompleteModel = $(".autocomplete-model");
     const $autocompleteList = $(".list");
 
@@ -417,8 +447,8 @@ function autoComplete(formElement, availableTags, callBackFunction){
     $searchInput.focus()
 
     $searchInput.on("input", function () {
-        var inputText = $(this).val().toLowerCase();
-        var filteredTags = availableTags.filter(function (tag) {
+        let inputText = $(this).val().toLowerCase();
+        let filteredTags = availableTags.filter(function (tag) {
             return tag.label.toLowerCase().slice(0, inputText.length) === inputText;
         });
     
@@ -426,8 +456,13 @@ function autoComplete(formElement, availableTags, callBackFunction){
 
         if (filteredTags.length > 0) {
             $.each(filteredTags, function (index, tag) {
-                var $item = $("<div>").addClass("autocomplete-item")
-                    .html('<img src="' + tag.profile_img + '" class="autocomplete-img" />' + tag.label);
+                if(tag.profile_img){
+                    htmlContent = '<img src="' + tag.profile_img + '" class="autocomplete-img" /> ' + tag.label
+                }else{
+                    htmlContent = `<h3># ${tag.name}</h3>`
+                }
+                let $item = $("<div>").addClass("autocomplete-item")
+                    .html(htmlContent);
     
                 $item.on("click", function () {
                    callBackFunction(tag)
@@ -453,30 +488,39 @@ function autoComplete(formElement, availableTags, callBackFunction){
 
 $(document).on('click', '.delete-account', function(){
     let header = `
-    <div class="d-flex justify-content-between align-items-center w-100">
-        <h3 class="display-7 text-center mb-0 mx-auto">Delete Your Account!!</h3>
-        <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
-    </div>
-    `;
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <h3 class="display-7 text-center mb-0 mx-auto">Delete Your Account!!</h3>
+            <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
+        </div>`;
 
     let body = `
-    <H5>Are you sure you want to delete your account this can't be un-done 
-    ?
-    </h5
-    <form>
-        <div class="input-group text-center d-flex justify-content-between">
-            <button type="button" class="btn-oval btn btn-info" 
-            data-dismiss="modal" aria-label="Close">No</button>
+        <H5>Are you sure you want to delete your account this can't be undone 
+        ?
+        </h5
+        <form>
+            <div class="input-group text-center d-flex justify-content-between">
+                <button type="button" class="btn-oval btn btn-info" 
+                data-dismiss="modal" aria-label="Close">No</button>
 
-            <button id="yes-btn" 
-            class="btn btn-oval btn-info" data-dismiss="modal" 
-            type="button">Yes</button>
-        </div>
-    </form>`;
+                <button class="yes-delete-account-btn" 
+                class="btn btn-oval btn-info" data-dismiss="modal" 
+                type="button">Yes</button>
+            </div>
+        </form>`;
             
     showModal(header, body)
-
 })
+$(document).on('click', '.yes-delete-account-btn', function(){
+    let deleteAccountUrl = $('body').data('delete-account-url')
+    ajaxRequest(deleteAccountUrl, 'POST', 'body', null, function(response){
+        displayMessage(response, 'body')
+        setTimeout(function() {
+            window.location.reload()
+        }, 3000); 
+    });
+})
+
+
 
 ////// functionality for zooming in and out of images///////
 
@@ -487,26 +531,25 @@ $(document).on('click', '.delete-account', function(){
  *                         Use values greater than 1 to zoom in, and values between 0 and 1 to zoom out.
  * @param {HTMLElement} imgElement - The HTML element representing the image to be resized.
  */
-function resizeImage(factor, imgElement) {
+function resizeImage(factor) {
     // Update the size factor
     sizeFactor *= factor;
     // Apply the new size to the image
-    $(imgElement).css('width', 100 * sizeFactor + '%');
+    $(imgToResize).css('width', 100 * sizeFactor + '%');
 }
 
 // Event listener for the plus button on image zoom model
 $(document).on('click', '.zoom-in', function() {
-    resizeImage(1.2, imgToResize); // Increase size by 20%
+    resizeImage(1.2); // Increase size by 20%
 });
     
 // Event listener for the minus button on image zoom model
 $(document).on('click', '.zoom-out', function() {
-    resizeImage(0.8, imgToResize); // Decrease size by 20%
+    resizeImage(0.8); // Decrease size by 20%
 });
 
 // event listener for images 
 $(document).on('click', '.post-images img', function(e) {
-    imgToResize = $(this)[0]
     sizeFactor = 1
     
     let header =
@@ -524,6 +567,8 @@ $(document).on('click', '.post-images img', function(e) {
         </div>
         `;
     let img = $(e.currentTarget).clone()
+    imgToResize = img[0]
+
     showModal(header, img)
     resizeImage(.5, $('#modal').find('img')[0]); // Increase size by 20%
 })
