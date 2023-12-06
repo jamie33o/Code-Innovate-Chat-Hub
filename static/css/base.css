@@ -38,6 +38,8 @@ p {
     --ci-orange: #e8610e;
     --dark-grey: #353b48;
     --peach: rgba( 255, 229, 180);
+    --light-grey: rgba(220, 219, 219, 0.695);
+
   
     /* Utils */
     --sm-box-shadow: 1px -1px 7px 0 #00000061;
@@ -325,6 +327,9 @@ h1 {
     align-items: center;
 }
 
+.button-holder button {
+    b
+}
 
 .user_card {
     display: flex;
