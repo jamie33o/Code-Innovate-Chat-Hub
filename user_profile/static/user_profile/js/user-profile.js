@@ -39,11 +39,10 @@ $(document).ready(function () {
         ajaxRequest(url, 'POST', '.saved-posts-container', null, function(response){
             displayMessage(response, '.saved-posts-container')
             post.remove()
-
         })
     })
 
-    $('body').on('change', '#id_profile_picture', function () {
+    $('body').on('change', '#id_profile_picture', function (event) {
         var selectedFile = event.target.files[0];
         if (selectedFile) {
             // Get a temporary URL for the selected file
@@ -51,7 +50,8 @@ $(document).ready(function () {
             $('.modal-body .profile_pic').attr('src', imageURL)
         }
     })
-    $('body').on('click', '.sub-form', function () {
+
+    $('body').on('click', '.sub-form', function (event) {
         event.preventDefault();
 
         let url = $(this).parent().data('url')
@@ -62,30 +62,20 @@ $(document).ready(function () {
 
                 $('.status').html(`Current Status: ${response.message}`)
                 displayMessage(response, '.profile-container');
-                //$('#modal').hide()
 
             } else if (response.success === 'image') {
                 $('.profile_pic').attr('src', response.message);
                 displayMessage({ 'status': 'success', 'message': 'Profile picture updated' }, '.profile-container');
 
             } else {
-                alert(`Error updating ${response.success}.`);
-                console.log(response.errors);
+                displayMessage(response, '.profile-container');
             }
         })
-
-
     });
-
-
-
 
     $('.status-update-btn').on('click', function () {
         showModal('<h3>Update Your Status</h3>', statusModalBody)
-
     });
-
-
 
     $('.profile-img-modal').on('click', function () {
         showModal('<h3>Update Profile Picture</h3>', profileImgModal)
