@@ -19,7 +19,7 @@
     </div>
     {% endif %}
 
-    <div class="comments-list p-1">
+    <div class="comments-list p-1"  data-post-id="{{ post.id }}">
         {% for comment in comments %}
            {% include 'group_chat/single-comment.html' with comment=comment %}
         {% endfor %}
@@ -27,6 +27,7 @@
 
 </div>
 <script>
-    startWebSocket('post_comments', {{ post.id }})
+    let postId = $('.comments-list').data('post-id')
+    startWebSocket('post_comments', postId)
     summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)
 </script>
