@@ -19,6 +19,10 @@
 .sn-form {
     position: relative;
 }
+
+.button-color{
+    background-color: #117a8b !important;
+}
 /* ////////////// emoji modal //////////////// */
 /* emoji picker pop up */
 .popup {
@@ -49,7 +53,6 @@
 
 .tag-link-modal {
     display: none;
-   
 }
 
 .tag-user-link {

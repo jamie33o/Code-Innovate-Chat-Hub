@@ -156,6 +156,8 @@ class SummernoteEnhancer {
 
     $(`${this.divToLoadIn} .codeview`).on('click', function(e) {
       e.preventDefault()
+      $(this).toggleClass('button-color');
+
       let txt = self.$sn.summernote('code')
       let txtContent = $(txt).text()
       let pElement = null
