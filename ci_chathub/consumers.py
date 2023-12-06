@@ -87,14 +87,13 @@ class GlobalConsumer(AsyncWebsocketConsumer):
         try:
             user = await self.get_user(self.user_id)
             model = await self.get_model(model_mapping.get(model_name), model_id)
-
             # Customize the logic based on the model (e.g., PostModel, ChannelModel)
             if isinstance(model, ChannelModel):  # posts
                 users = await self.get_channel_users(model)
                 return user in users
             if isinstance(model, PostsModel):  # comments
                 commented_users = await self.get_commented_users(model)
-                return user in commented_users
+                return user.id in commented_users
             if isinstance(model, Conversation):  # messages
                 result = await self.get_converstion_users(user, model)
                 return result
@@ -123,7 +122,10 @@ class GlobalConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_commented_users(self, posts_model):
         from group_chat.models import  CommentsModel
-
-        return list(
+        commented_users = [
+            item['created_by'] for item in
             CommentsModel.objects.filter(comment_post=posts_model).values('created_by').distinct()
-        )
+        ]
+        if(posts_model.created_by.id not in commented_users):
+            commented_users.append(posts_model.created_by.id)
+        return commented_users
