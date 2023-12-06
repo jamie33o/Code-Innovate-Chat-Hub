@@ -484,31 +484,30 @@ function autoComplete(formElement, availableTags, callBackFunction){
 }
 
 
-
 $(document).on('click', '.delete-account', function(){
     let header = `
-        <div class="d-flex justify-content-between align-items-center w-100">
+        <div class="d-flex justify-content-between align-items-center w-100 bg-danger color-white">
             <h3 class="display-7 text-center mb-0 mx-auto">Delete Your Account!!</h3>
             <button class="btn btn-warning" data-dismiss="modal" type="button">X</button>
         </div>`;
 
     let body = `
-        <H5>Are you sure you want to delete your account this can't be undone 
-        ?
+        <H5>Are you sure you want to delete your account this can't be undone?
         </h5
         <form>
             <div class="input-group text-center d-flex justify-content-between">
                 <button type="button" class="btn-oval btn btn-info" 
                 data-dismiss="modal" aria-label="Close">No</button>
 
-                <button class="yes-delete-account-btn" 
-                class="btn btn-oval btn-info" data-dismiss="modal" 
+                <button class="yes-delete-account-btn btn btn-oval btn-info" 
+                data-dismiss="modal" 
                 type="button">Yes</button>
             </div>
         </form>`;
             
     showModal(header, body)
 })
+
 $(document).on('click', '.yes-delete-account-btn', function(){
     let deleteAccountUrl = $('body').data('delete-account-url')
     ajaxRequest(deleteAccountUrl, 'POST', 'body', null, function(response){
