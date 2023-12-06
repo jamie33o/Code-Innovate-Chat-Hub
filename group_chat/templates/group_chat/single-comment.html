@@ -7,9 +7,15 @@
         <div class="d-flex flex-dir-row justify-content-between">
             <div class="d-flex flex-dir-row">
                 {% if comment.created_by.userprofile and post.created_by.userprofile.profile_picture %}
-                    <img  class="rounded-circle shadow-1-strong mr-2 profile-pic profile-pic-medium" src="{{ comment.created_by.userprofile.profile_picture.url }}" alt="Profile Picture">
+                    <img class="rounded-circle shadow-1-strong mr-2 profile-pic profile-pic-medium" 
+                    src="{{ comment.created_by.userprofile.profile_picture.url }}" 
+                    alt="Profile Picture"
+                    data-profile-url="{% url 'view_user_profile' comment.created_by.userprofile.id %}">
                 {% else %}
-                    <img  class="rounded-circle shadow-1-strong mr-2 profile-pic profile-pic-medium"  src="{% static 'noimage.png' %}" alt="Profile Picture Placeholder">
+                    <img class="rounded-circle shadow-1-strong mr-2 profile-pic profile-pic-medium"  
+                    src="{% static 'noimage.png' %}" 
+                    alt="Profile Picture Placeholder"
+                    data-profile-url="{% url 'view_user_profile' comment.created_by.userprofile.id %}">
                 {% endif %}  
                 <div class="flex-column ml-2">
                     <h5 class="mb-1">{{ comment.created_by }}</h5>
