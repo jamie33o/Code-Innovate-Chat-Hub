@@ -28,5 +28,5 @@
 </div>
 <script>
     startWebSocket('post_comments', {{ post.id }})
-    summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`, '{{ csrf_token }}')
+    summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)
 </script>

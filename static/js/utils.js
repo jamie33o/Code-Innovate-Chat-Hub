@@ -271,7 +271,6 @@ function startWebSocket(type, id){
 
 $(document).ready(function(){
     startWebSocket('global_consumer', userId)
-
 })
 
     /**

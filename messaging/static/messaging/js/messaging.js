@@ -93,7 +93,7 @@ $('main').on('click', '.edit-btn', function(event) {
     card.find('.post-images').html('')
     // Append the HTML structure to the body
     
-    summernoteEnhancerEditPost.init('.edit-post .message-text', editPostUrl, csrfToken)
+    summernoteEnhancerEditPost.init('.edit-post .message-text', editPostUrl)
     summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
     $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button class="cancel-edit">Cancel</button>');
     
