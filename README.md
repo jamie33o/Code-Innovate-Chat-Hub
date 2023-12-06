@@ -12,6 +12,10 @@
     - [Structure](#structure)
     - [Skeleton](#skeleton)
     - [Surface](#surface)
+      - [Color Scheme](#color-scheme)
+      - [Fonts](#fonts)
+      - [Visual Effects](#visual-effects)
+  - [Agile Methodology](#agile-methodology)
 
 ## Overview
 The Code Institute Chat Hub is a Django-based web application designed for a coding course community. The home page features group chat functionality, allowing users to participate in discussions related to the Code Institute coding course. Users can create and join different chat channels, engaging in real-time conversations with fellow learners. The Direct Message section enables one-on-one communication, allowing users to connect and share information privately. Additionally, each user has a Profile Page for managing account settings, viewing activity, and accessing joined chat channels. The application prioritizes real-time updates, supports multimedia content, and incorporates authentication and authorization features for secure user interactions. The Code Institute Chat Hub aims to foster collaborative learning and communication within the coding community, offering a platform akin to popular communication tools like Slack.
@@ -111,3 +115,58 @@ The first one was created before the actual development of the website which led
 </details><br>
 
 ### Surface<hr>
+#### Color Scheme
+* The primary colour scheme was used for body, headers and nav elements<br> 
+<img src="docs/color-scheme/clr1.jpg" width="30%">
+<img src="docs/color-scheme/clr2.png" width="30%">
+<img src="docs/color-scheme/clr3.jpeg" width="30%">
+<img src="docs/color-scheme/clr4.png" width="30%">
+<img src="docs/color-scheme/clr5.png" width="30%">
+<br>
+
+* The secondary colour scheme was used for buttons, warnings, errors or for highlighting important information.<br>
+<img src="docs/color-scheme/clr6.png" width="30%">
+<img src="docs/color-scheme/clr7.png" width="30%">
+<img src="docs/color-scheme/clr8.png" width="30%">
+<img src="docs/color-scheme/clr9.png" width="30%">
+
+#### Fonts
+* The fonts I used for this site were imported from [Google Fonts](https://fonts.google.com/):<br>
+**H tags:** *EB Garamond, serif*<br>
+**body:** *Roboto, serif*<br>
+
+#### Visual Effects
+* **Box shadows** <br>
+Multiple box shadows were used for the cover, buttons and images. <br>
+* **Animation**<br>
+Some animations were used for creating a dynamic and attractive design
+<details>
+  <summary>Displaying notifications</summary>
+<img src="docs/animations/notification1.png">
+<img src="docs/animations/notification1.png"><br>
+</details>
+<details>
+  <summary>Search bar</summary>
+<img src="docs/animations/search-bar.png">
+<img src="docs/animations/search-bar1.png"><br>
+</details>
+
+## Agile Methodology
+This project was developed using the Agile methodology.<br>
+All epics and user stories implementation progress was registered using [Github issues](https://github.com/jamie33o/pp4/issues). As the user stories were accomplished, they were moved in the [Project Kanban board](https://github.com/users/jamie33o/projects/14) from **Epic**,**User stories**, **To Do**, to **In-progress**, **Testing** and **Done** lists. 
+<details>
+<summary>Sprints Details</summary>
+
+* **Sprint 1 - Epic #1**<br>
+  - Epic: #1 Create login and register page<br>
+  - complete the user stories for this epic <br>
+* **Sprint 2 - Epic #2**<br>
+  - Epic #2: Create a direct messaging page<br>
+  - complete the user stories for this epic<br>
+* **Sprint 3 - Epic #3**<br>
+  - Epic #3: Create a Profile page<br>
+  - complete the user stories for this epic<br>
+* **Sprint 4 - Epic #4**<br>
+  - Epic #4: Create a Group chat homepage<br>
+  - complete the user stories for this epic<br>
+</details><br><br>
