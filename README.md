@@ -16,6 +16,10 @@
       - [Fonts](#fonts)
       - [Visual Effects](#visual-effects)
   - [Agile Methodology](#agile-methodology)
+  - [Features](#features)
+    - [Existing Features](#existing-features)
+      - [Account pages](#account-pages)
+      - [Group chat/Homepage](#group-chathomepage)
 
 ## Overview
 The Code Institute Chat Hub is a Django-based web application designed for a coding course community. The home page features group chat functionality, allowing users to participate in discussions related to the Code Institute coding course. Users can create and join different chat channels, engaging in real-time conversations with fellow learners. The Direct Message section enables one-on-one communication, allowing users to connect and share information privately. Additionally, each user has a Profile Page for managing account settings, viewing activity, and accessing joined chat channels. The application prioritizes real-time updates, supports multimedia content, and incorporates authentication and authorization features for secure user interactions. The Code Institute Chat Hub aims to foster collaborative learning and communication within the coding community, offering a platform akin to popular communication tools like Slack.
@@ -170,3 +174,37 @@ All epics and user stories implementation progress was registered using [Github 
   - Epic #4: Create a Group chat homepage<br>
   - complete the user stories for this epic<br>
 </details><br><br>
+
+## Features
+### Existing Features<hr>
+#### Account pages
+Our website leverages the Django Allauth package for streamlined user authentication and registration. With Allauth, users can easily register using email confirmation. The package provides a secure and customizable solution, offering features such as password reset, email verification, and user-friendly account management views. We chose Allauth for its flexibility, robustness, and the ability to tailor the authentication process to our site's unique needs, ensuring a seamless and secure experience for our users.
+  - Sign in page<br><br>
+  <img src="docs/read-me-images/sign-in.png" width="60%"><br><br>
+  - Sign up page<br><br>
+  <img src="docs/read-me-images/sign-up.png" width="60%"><br><br>
+  - Sign out page<br><br>
+  <img src="docs/read-me-images/sign-out.png" width="60%"><br><br>
+  - Email settings page<br><br>
+  <img src="docs/read-me-images/email-settings.png" width="60%"><br><br>
+  - Change Password page<br><br>
+  <img src="docs/read-me-images/change-password.png" width="60%"><br><br>
+
+#### Group chat/Homepage
+* On the group chat homepage the page is divided into three sections. 
+  1. The channels/New messages list <br><br>
+     - The channels can be added by staff members and will appear in this list, it shows a count of the amount of members of the specific channel
+     - The New messages list is populated when the user has unread messages <br><br>
+  <img src="docs/read-me-images/channels-new-messages-list.png" width="60%"><br><br>
+  2. The posts for the channel the user has chosen to view <br><br>
+  <img src="docs/read-me-images/posts-list.png" width="60%"><br><br> 
+  3. comments on a specific post, the comments section only shows when the user clicks the comments link on any given post and the post the user clicks is brought into the comment section and comments can then be posted underneath it<br> 
+  - Comments visible<br><br>
+<img src="docs/read-me-images/group-chat-with-comments.png" width="60%"><br><br>
+  - Comments hidden<br><br>
+  <img src="docs/read-me-images/group-chat-homepage.png" width="60%"><br><br>
+<br>
+  <img src="docs/read-me-images/comments-list-commetns.png" width="60%"><br><br>
+
+* Both the posts section and the comments section have an editor Summer-note editor was used for this it was enhanced to also have emoji's and tagging functionality.
+
