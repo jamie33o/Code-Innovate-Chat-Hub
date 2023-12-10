@@ -9,11 +9,8 @@ from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
-from django.conf import settings
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-import boto3
-from botocore.exceptions import NoCredentialsError
 from .models import Message, UnreadMessage, Conversation, ImageModel
 
 # pylint: disable=no-member
@@ -101,7 +98,7 @@ class InboxView(View):
 
             return render(request, self.template_name, context)
         except Exception as e:
-            print(f"Error in InboxView GET request: {e}")
+            return JsonResponse({'status': 'Error', 'message': f"Error retreiving conversations: {e}"}, status=500 )
 
 
 
@@ -255,21 +252,21 @@ class MessageListView(View):
         formatted_time = timestamp.strftime('%H:%M')
         try:
             channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                    "global_consumer",
-                {
-                    'type': 'global_consumer',
-                    'timestamp': formatted_time,
-                    'message': message,
-                    'created_by': request.user.username,
-                    'img_url': request.user.userprofile.profile_picture.url,
-                    'model_id': model_id,
-                    'model_name': model_name,
-                }
-            )
+            context = {
+                'type': 'global_consumer',
+                'timestamp': formatted_time,
+                'message': message,
+                'created_by': request.user.username,
+                'img_url': 'static/noimage.png',
+                'model_id': model_id,
+                'model_name': model_name,
+            }
+            if request.user.userprofile.profile_picture:
+                context['img_url'] = request.user.userprofile.profile_picture.url
+            async_to_sync(channel_layer.group_send)("global_consumer", context)
+
             return JsonResponse({'status': 'success', 'message': 'message sent'})
         except Exception as e:
-            print(e)
             # Handle unexpected exceptions
             return JsonResponse({'status': 'error', 'message': str(e)})
 
@@ -278,8 +275,6 @@ class MessageListView(View):
 class MessageDeleteView(View):
     def delete(self, request, message_id):
         try:
-            print(message_id)
-
             # Retrieve the message to be deleted
             message = get_object_or_404(Message, id=message_id)
 
@@ -290,7 +285,7 @@ class MessageDeleteView(View):
             return JsonResponse({'status': 'success', 'message': 'Message deleted'})
         except Exception as e:
             # Handle exceptions
-            return JsonResponse({'status': 'error', 'message': f'Error deleting message: {str(e)}'})
+            return JsonResponse({'status': 'error', 'message': f'Error deleting message: {str(e)}'}, status=404)
 
 class ConversationDeleteView(View):
     def delete(self, request, conversation_id):
@@ -302,49 +297,10 @@ class ConversationDeleteView(View):
             conversation.delete()
 
             # Return a JSON response indicating success
-            return JsonResponse({'status': 'success', 'message': 'Conversation deleted'})
+            return JsonResponse({'status': 'success', 'message': 'Conversation deleted'},status=200)
         except Exception as e:
             # Handle exceptions
-            return JsonResponse({'status': 'error', 'message': f'Error deleting conversation: {str(e)}'})
-
-
-def delete_image_from_s3(image_key):
-    """
-    Delete an image from an S3 bucket.
-
-    Parameters:
-    - image_key (str): The key or path of the image to be deleted from the S3 bucket.
-
-    Returns:
-    - bool: True if the image was successfully deleted, False otherwise.
-
-    Raises:
-    - NoCredentialsError: If AWS credentials are not available.
-    """
-
-    try:
-        # Create an S3 client with the provided AWS credentials
-        s3 = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                          aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
-
-        # Get the name of the S3 bucket from Django settings
-        bucket_name = settings.AWS_STORAGE_BUCKET_NAME
-
-        # Delete the specified object (image) from the S3 bucket
-        s3.delete_object(Bucket=bucket_name, Key=image_key)
-
-        # Return True to indicate successful deletion
-        return True
-
-    except NoCredentialsError:
-        # Handle the case when AWS credentials are not available
-        print('Credentials not available')
-        return False
-
-    except Exception as e:
-        # Handle other exceptions and print an error message
-        print(f"Error deleting image from S3: {e}")
-        return False
+            return JsonResponse({'status': 'error', 'message': f'Error deleting conversation: {str(e)}'}, status=404)
 
 
 class ImageUploadView(View):
@@ -373,10 +329,10 @@ class ImageUploadView(View):
                 # Return the URL
                 return JsonResponse({'status':'Success', 'url': new_image.image.url}, status=200)
 
-            return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'})
+            return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'},status=400)
         except Exception as e:
             # Handle exceptions (e.g., database error, unexpected error)
-            return JsonResponse({'status': 'Error', 'message': f'Error uploading image: {str(e)}'})
+            return JsonResponse({'status': 'Error', 'message': f'Error uploading image: {str(e)}'}, staus=500)
 
 
 class AddOrUpdateEmojiView(View):
@@ -412,7 +368,7 @@ class AddOrUpdateEmojiView(View):
             if created:
                 # If a new instance is created, add the user
                 instance.incremented_by.add(user)
-                return JsonResponse({'status': 'added'})
+                return JsonResponse({'status': 'added'}, status=200)
 
             # Check if the EmojiModel exists
             if request.user in instance.incremented_by.all():
@@ -420,11 +376,12 @@ class AddOrUpdateEmojiView(View):
                 # Check if there are no more users and remove the instance if true
                 if instance.incremented_by.count() == 0:
                     message_model.emojis.remove(instance)
-                    return JsonResponse({'status': 'removed'})
-                return JsonResponse({'status': 'decremented'})
+                    return JsonResponse({'status': 'removed'}, status=200)
+                return JsonResponse({'status': 'decremented'}, status=200)
 
             # If it exists, increment the count and add the user
             instance.incremented_by.add(user)
-            return JsonResponse({'status': 'incremented'})
+            return JsonResponse({'status': 'incremented'}, status=200)
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+

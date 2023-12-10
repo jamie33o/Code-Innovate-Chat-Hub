@@ -9,9 +9,9 @@ Attributes:
 - urlpatterns (list): A list of URL patterns for the messaging app views.
 """
 from django.urls import path
-from .views import (InboxView, 
-                    MessageListView, 
-                    ImageUploadView, 
+from .views import (InboxView,
+                    MessageListView,
+                    ImageUploadView,
                     MessageDeleteView,
                     AddOrUpdateEmojiView,
                     ConversationDeleteView)
