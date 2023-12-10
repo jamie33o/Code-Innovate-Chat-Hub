@@ -293,3 +293,14 @@ As a **registered user**, I want to use emojis in messages, posts, and comments 
 |-------------|------------|---------------------|-------------------|
 | Use Emojis in Messages, Posts, and Comments | User selects emoji and adds it to the text | Emojis are displayed in the messages, posts, and comments | Works as expected |
 <br><br>
+
+
+### Additional Manual Testing
+#### Error Handling
+
+* Ensure that **403 HTTP** errors display custom 403.html.
+    - **Stress Test:** Input a route in the URL for accessing another user content
+* Ensure that **404 HTTP** errors display the custom 404.html.
+    - **Stress Test:** Input a random route in the URL that can't be found in the declared paths of the project
+* Ensure that **500 HTTP** errors display the custom 500.html.
+    - **Stress Test:** Set debug to false and try to access a path that has been broken intentionally.
