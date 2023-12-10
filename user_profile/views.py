@@ -7,9 +7,11 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_POST
 from group_chat.models import SavedPost, PostsModel
 from .models import UserProfile
 from .forms import ProfileImageForm, EditProfileForm, StatusForm
+from django.core.exceptions import PermissionDenied
 
 # pylint: disable=no-member
 @method_decorator(login_required, name='dispatch')
@@ -42,7 +44,7 @@ class UserProfileView(View):
             'posts': posts,
         }
         return render(request, self.template_name, context)
-    
+
 
 @method_decorator(login_required, name='dispatch')
 class ViewUserProfile(View):
@@ -80,6 +82,7 @@ class ViewUserProfile(View):
 
         return render(request, self.template_name, {'Edit_profile_form': edit_profile_form})
 
+@require_POST
 @login_required
 def update_profile_image(request):
     """
@@ -90,15 +93,18 @@ def update_profile_image(request):
     """
     if request.method == 'POST':
         form = ProfileImageForm(request.POST, request.FILES, instance=request.user.userprofile)
+
         if form.is_valid():
             image = form.save()
-            return JsonResponse({'success': 'image', 'message': image.profile_picture.url})
-        return JsonResponse({'success': False, 'message': 'Error updating profile picture', 
-                             'errors': form.errors})
+            return JsonResponse({'success': 'image',
+                                 'message': image.profile_picture.url}, status=200)
+        return JsonResponse({'status': 'error',
+                             'message': 'Error updating profile picture',
+                             'errors': form.errors}, status=400)
     form = ProfileImageForm(instance=request.user.userprofile)
-    return JsonResponse({'success': False, 'message': 'Invalid request'})
+    return '403.html'
 
-
+@require_POST
 @login_required
 def update_status(request):
     """
@@ -114,14 +120,13 @@ def update_status(request):
         form = StatusForm(request.POST, instance=request.user.userprofile)
         if form.is_valid():
             status = form.save()
-            return JsonResponse({'status': 'success', 'message': status.status })
-        return JsonResponse({'success': False,
-                             'message': 'Error updating status', 
-                             'errors': form.errors})
+            return JsonResponse({'status': 'success', 'message': status.status }, status=200)
+        return JsonResponse({'status': 'error',
+                             'message': f'Error updating status: {form.errors}'}, status=400)
     form = StatusForm(instance=request.user.userprofile)
-    return JsonResponse({'success': False, 'message': 'Invalid request'})
+    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=500)
 
-
+@require_POST
 @login_required
 def remove_saved_post(request, post_id):
     """
@@ -133,7 +138,7 @@ def remove_saved_post(request, post_id):
     Returns:
         JsonResponse: A JSON response indicating success or failure.
     """
-    if request.method == 'POST':
+    try:
         # Retrieve the post instance
         post = get_object_or_404(PostsModel, id=post_id)
 
@@ -143,13 +148,13 @@ def remove_saved_post(request, post_id):
         if saved_posts.exists():
             # If the post is saved, remove it
             saved_posts.delete()
-            return JsonResponse({'status': 'Success', 'message': 'Post removed'})
-       
+            return JsonResponse({'status': 'Success', 'message': 'Post removed'}, status=200)
+  
         # If the post is not saved, return an error
-        return JsonResponse({'status': 'Error', 'message': 'Post does not exist'})
-
-    # Return an error for non-POST requests
-    return JsonResponse({'status': 'Error', 'message': 'Invalid request method'})
+        return JsonResponse({'status': 'Error', 'message': 'Post does not exist'}, status=400)
+    except Exception:
+        # Return an error for non-POST requests
+        return JsonResponse({'status': 'Error', 'message': 'Invalid request method'}, status=500)
 
 
 def get_all_users_profiles(request):
@@ -158,12 +163,37 @@ def get_all_users_profiles(request):
     of username, id and profile_picture url for search bar in 
     the header section of site
     """
-    user_profiles = UserProfile.objects.all().values('username', 'id', 'profile_picture')
-    return JsonResponse(list(user_profiles), safe=False)
+    if request.is_ajax():
+        try:
+            user_profiles = UserProfile.objects.all().values('username', 'id', 'profile_picture')
+            return JsonResponse(list(user_profiles), safe=False)
+        except Exception:
+            return JsonResponse({'status': 'Error', 'message': 'Invalid request method'}, status=500)
+    raise PermissionDenied
 
-def deleteUserAccount(request):
-    user = get_object_or_404(get_user_model(), id=request.user.id)
-    user.delete()
 
-    return JsonResponse({'status': 'Success', 'message': 'Account Deleted'})
- 
+
+@require_POST
+@login_required  # Ensure that only authenticated users can access this endpoint
+def delete_user_account(request):
+    """
+    Deletes the user account of the authenticated user.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    A JSON response indicating the status of the operation.
+    """
+    try:
+        # Retrieve the authenticated user
+        user = get_object_or_404(get_user_model(), id=request.user.id)
+
+        # Delete the user account
+        user.delete()
+
+        return JsonResponse({'status': 'Success', 'message': 'Account Deleted'}, status=200)
+
+    except Exception as e:
+        # Handle exceptions and return an appropriate error response
+        return JsonResponse({'status': 'Error', 'message': str(e)}, status=500)
