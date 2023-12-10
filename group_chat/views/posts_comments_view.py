@@ -99,19 +99,22 @@ class BaseChatView(View):
             JsonResponse: JSON response indicating the status of the broadcast.
         """
         formatted_time = timestamp.strftime('%H:%M')
-        try:
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                    "global_consumer",
-                {
+        context = {
                     'type': 'global_consumer',
                     'timestamp': formatted_time,
                     'message': message,
                     'created_by': request.user.username,
-                    'img_url': request.user.userprofile.profile_picture.url,
                     'model_id': model_id,
                     'model_name': model_name,
                 }
+        if request.user.userprofile.profile_picture:
+            context['img_url'] = request.user.userprofile.profile_picture.url
+
+
+        try:
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                    "global_consumer", context
             )
             return JsonResponse({'status': 'success', 'message': 'message sent'})
         except Exception as e:
@@ -162,7 +165,7 @@ class PostsView(BaseChatView):
             if request.user in channel.users.all():
                 self.update_user_status(request, channel_id)
 
-            unseen_post, created = UnseenPost.objects.get_or_create(
+            unseen_post, _ = UnseenPost.objects.get_or_create(
                 channel=channel,
             )
 
@@ -226,7 +229,7 @@ class PostsView(BaseChatView):
                     'user': request.user
                 }
 
-                unseen_post, created = UnseenPost.objects.get_or_create(
+                unseen_post, _ = UnseenPost.objects.get_or_create(
                     channel= channel,
                 )
                 users_in_channel = channel.users.all()
