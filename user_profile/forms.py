@@ -98,3 +98,22 @@ class EditProfileForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.label_suffix = ''
             field.widget.attrs['placeholder'] = f'Enter your {field_name}'
+
+
+class ContactForm(forms.Form):
+    """
+    A Django form for handling contact information.
+
+    Fields:
+    - subject (CharField): The subject of the contact message (max length: 100).
+    - email (EmailField): The email address of the sender.
+    - message (CharField): The message content (text area).
+
+    Usage Example:
+    form = ContactForm(request.POST)
+    if form.is_valid():
+        # Process the valid form data
+    """
+    subject = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
