@@ -88,6 +88,25 @@ p {
     height: 45px;
 }
 
+.profile-pic-medium:hover {
+    border: 1px solid var(--ci-orange);
+    box-shadow: var(--sm-box-shadow);
+}
+
+.profile-pic-small {
+    height: 25px;
+    width: 25px;
+}
+
+.profile-pic-small:hover {
+    border: 1px solid var(--ci-orange);
+    box-shadow: var(--sm-box-shadow);
+}
+.small-pic {
+    width: 45px;
+    height: 45px;
+}
+
 .user-online {
     position: relative;
 }
@@ -119,20 +138,7 @@ p {
     border-radius: 50%;
 }
 
-.profile-pic-medium:hover {
-    border: 1px solid var(--ci-orange);
-    box-shadow: var(--sm-box-shadow);
-}
 
-.profile-pic-small {
-    height: 25px;
-    width: 25px;
-}
-
-.profile-pic-small:hover {
-    border: 1px solid var(--ci-orange);
-    box-shadow: var(--sm-box-shadow);
-}
 
 .btn-ci {
     display: block;
@@ -149,10 +155,6 @@ p {
     border-radius: 10px;
 }
 
-.small-pic {
-    width: 45px;
-    height: 45px;
-}
 
 .btn-ci:hover {
     background-color: white;
@@ -325,10 +327,6 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.button-holder button {
-    b
 }
 
 .user_card {
