@@ -1,11 +1,10 @@
 from django.http import JsonResponse
 from django.views import View
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import DeleteView
+from django.core.exceptions import PermissionDenied
 from django.apps import apps
 from group_chat.models import PostsModel, ImageModel, SavedPost
-
-
 
 
 # pylint: disable=no-member
@@ -27,8 +26,16 @@ class ImageUploadView(View):
             JsonResponse: JSON response indicating the status of the image upload.
         """
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
+            allowed_file_types = ['image/jpeg', 'image/png',
+                                  'image/gif', 'image/bmp',
+                                  'image/webp', 'image/tiff']
             if request.FILES.get('file'):
                 image_file = request.FILES['file']
+                if image_file.content_type not in allowed_file_types:
+                    return JsonResponse({'status': 'Error',
+                                         'message': 'File type not allowed'},status=400)
 
                 # Create a new ImageModel instance
                 new_image = ImageModel.objects.create(image=image_file)
@@ -37,9 +44,11 @@ class ImageUploadView(View):
                 return JsonResponse({'status': 'Success', 'url': new_image.image.url})
 
             return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'})
-        except Exception as e:
-            # Handle exceptions (e.g., database error, unexpected error)
-            return JsonResponse({'status': 'Error', 'message': f'Error uploading image: {str(e)}'})
+        except Exception:
+            request.session['message'] = {'status': 'Error',
+                                          'message': 'Unexpected error occurred while uploading image,\
+                                              Please contact us!!!'}
+            return redirect('contact')
 
 
 class AddOrUpdateEmojiView(View):
@@ -60,6 +69,8 @@ class AddOrUpdateEmojiView(View):
             JsonResponse: JSON response indicating the status of the operation.
         """
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
             user = request.user
             emoji_colon_name = request.POST.get('emoji_colon_name')
 
@@ -92,9 +103,11 @@ class AddOrUpdateEmojiView(View):
             # If it exists, increment the count and add the user
             instance.users_who_incremented.add(user)
             return JsonResponse({'status': 'incremented'})
-        except Exception as e:
-            # Handle exceptions (e.g., model not found, database error)
-            return JsonResponse({'status': 'error', 'message': str(e)})
+        except Exception:
+            request.session['message'] = {'status': 'Error',
+                                          'message': 'Unexpected error occurred while updating emoji,\
+                                              Please contact us!!!'}
+            return redirect('contact')
 
 
 class GenericObjectDeleteView(DeleteView):
@@ -148,9 +161,12 @@ class GenericObjectDeleteView(DeleteView):
             obj.delete()
             # Override the delete method to return a JSON response
             return JsonResponse({'status': 'success', 'message': f'{model_name[:-6]} deleted'})
-        except Exception as e:
-            # Handle other exceptions
-            return JsonResponse({'status': 'error', 'message': f'Error deleting object: {str(e)}'})
+        except Exception:
+            request.session['message'] = {'status': 'Error',
+                                          'message': 'Unexpected error occurred while deleting object,\
+                                              Please contact us!!!'}
+            return redirect('contact')
+        
 
     def get_context_data(self, **kwargs):
         """
@@ -183,6 +199,8 @@ class SavePostView(View):
         """
 
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
             # Retrieve the post using its ID
             post = get_object_or_404(PostsModel, id=post_id)
 
@@ -198,6 +216,8 @@ class SavePostView(View):
         except PostsModel.DoesNotExist:
             # Handle the case where the specified post does not exist
             return JsonResponse({'status': 'Error', 'message': 'Post does not exist'}, status=404)
-        except Exception as e:
-            # Handle other exceptions
-            return JsonResponse({'status': 'Error', 'message': f'Error: {str(e)}'})
+        except Exception:
+            request.session['message'] = {'status': 'Error',
+                                          'message': 'Unexpected error occurred while saving post,\
+                                              Please contact us!!!'}
+            return redirect('contact')

@@ -2,12 +2,13 @@
 this module is for messaging views
 """
 from datetime import datetime
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.core.exceptions import PermissionDenied
 from django.utils.decorators import method_decorator
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -49,7 +50,6 @@ class InboxView(View):
 
             unread_messages = UnreadMessage.objects.filter(conversation__participants=request.user)\
                                                     .values_list('conversation', flat=True)
-
 
             # Retrieve the messages in the conversation
             messages_by_conversation = []
@@ -97,8 +97,17 @@ class InboxView(View):
                 context['receiver'] = receiver
 
             return render(request, self.template_name, context)
-        except Exception as e:
-            return JsonResponse({'status': 'Error', 'message': f"Error retreiving conversations: {e}"}, status=500 )
+        except Conversation.DoesNotExist:
+            return JsonResponse({'status': 'error',
+                                 'message': 'The conversation does not exist!!'}, status= 404)
+        except Message.DoesNotExist:
+            return JsonResponse({'status': 'error',
+                                 'message': 'The Message does not exist!!'}, status= 404)
+        except Exception:
+            request.session['message'] = {'status': 'error',
+                                          'message': 'There has been an Unexpected error\
+                                            retrieving messaging inbox, Please contact us!'}
+            return redirect('contact')
 
 
 
@@ -124,6 +133,8 @@ class MessageListView(View):
         - HttpResponse: Rendered message list template with relevant context.
         """
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
             messages = None
             # Find the conversation involving both the sender and receiver
             conversation = get_object_or_404(Conversation, id=conversation_id)
@@ -131,7 +142,6 @@ class MessageListView(View):
             # Get the receiver excluding the current user from participants
             receiver = conversation.participants.exclude(id=request.user.id).first()
 
-            
             # Retrieve messages in the conversation and order by timestamp
             messages = conversation.messages.all().order_by('timestamp')
 
@@ -145,10 +155,16 @@ class MessageListView(View):
 
             if messages:
                 context['messages'] =  messages
-         
+
             return render(request, self.template_name, context)
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': f'Conversation does not exist!! Error: {e}'}, status=500)
+        except Conversation.DoesNotExist:
+            return JsonResponse({'status': 'error',
+                                 'message': 'The conversation does not exist!!'}, status= 404)
+        except Exception:
+            request.session['message'] = {'status': 'error',
+                                          'message': 'There has been an Unexpected error\
+                                            retrieving messages, Please contact us!'}
+            return redirect('contact')
 
 
     def post(self, request, conversation_id=None, message_id=None):
@@ -164,10 +180,12 @@ class MessageListView(View):
         - JsonResponse: JSON response indicating the status of the request.
         """
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
             content = request.POST.get('post', '')
             url_list = request.POST.getlist('urls[]')
             images = ",".join(url_list)
-           
+
             conversation = get_object_or_404(Conversation, id=conversation_id)
             receiver = conversation.participants.exclude(id=request.user.id).first()
 
@@ -193,17 +211,29 @@ class MessageListView(View):
             }
 
             html_content = render_to_string('messaging/single-message.html', context)
-            self.broadcast_message(request, html_content, conversation.id, message_id)
-            self.notification_msg(request, message.timestamp,
+            msg_broadcast = self.broadcast_message(request,
+                                                   html_content,
+                                                   conversation.id,
+                                                   message_id)
+            msg_notification = self.notification_msg(request, message.timestamp,
                                   message.content, 'conversation',
                                   conversation.id)
-
-            return JsonResponse({'status': 'success'}, status= 200)
-        except Exception as e:
-            print(f"Error in MessageListView post request: {e}")
-
-            return JsonResponse({'status': 500, 'error': 'Internal Server Error'})
-
+            if msg_broadcast and msg_notification:
+                return JsonResponse({'status': 'success'}, status= 200)
+            return JsonResponse({'status': 'error',
+                                 'message': 'Error broadcasting message Please try again!!'},
+                                 status= 500)
+        except Conversation.DoesNotExist:
+            return JsonResponse({'status': 'error',
+                                 'message': 'The conversation does not exist!!'}, status= 404)
+        except Message.DoesNotExist:
+            return JsonResponse({'status': 'error',
+                                 'message': 'The Message does not exist!!'}, status= 404)
+        except Exception:
+            request.session['message'] = {'status': 'error',
+                                          'message': 'There has been an Unexpected error\
+                                            sending your message, Please contact us!'}
+            return redirect('contact')
 
     def broadcast_message(self, request, instance_html, conversation_id, edit_id):
         """
@@ -230,10 +260,9 @@ class MessageListView(View):
                     'edit_id': edit_id,
                 }
             )
-            
-        except Exception as e:
-            # Handle unexpected exceptions
-            print({'status': 'error', 'message': str(e)})
+            return True
+        except Exception:
+            return False
 
 
     def notification_msg(self, request, timestamp, message, model_name, model_id):
@@ -265,16 +294,42 @@ class MessageListView(View):
                 context['img_url'] = request.user.userprofile.profile_picture.url
             async_to_sync(channel_layer.group_send)("global_consumer", context)
 
-            return JsonResponse({'status': 'success', 'message': 'message sent'})
-        except Exception as e:
+            return True
+        except Exception:
             # Handle unexpected exceptions
-            return JsonResponse({'status': 'error', 'message': str(e)})
-
+            return False
 
 
 class MessageDeleteView(View):
+    """
+    View class for handling the deletion of a message via a DELETE request.
+
+    This view expects an AJAX DELETE request to delete a message based on its ID.
+
+    Usage:
+    1. Ensure the request is an AJAX DELETE request.
+    2. Specify the `message_id` in the URL path to identify the message to be deleted.
+
+    Returns:
+    - JsonResponse: JSON response indicating the status of the operation.
+      - 'status': 'success' if the message is deleted successfully.
+      - 'status': 'error' if an error occurs during the deletion.
+      - 'message': Additional details about the status.
+    """
     def delete(self, request, message_id):
+        """
+        Handle DELETE requests to delete a message.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            message_id (int): The ID of the message to be deleted.
+
+        Returns:
+            JsonResponse: JSON response indicating the status of the operation.
+        """
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
             # Retrieve the message to be deleted
             message = get_object_or_404(Message, id=message_id)
 
@@ -282,14 +337,36 @@ class MessageDeleteView(View):
             message.delete()
 
             # Return a JSON response indicating success
-            return JsonResponse({'status': 'success', 'message': 'Message deleted'})
-        except Exception as e:
+            return JsonResponse({'status': 'success', 'message': 'Message deleted'}, status=200)
+        except Message.DoesNotExist:
+            return JsonResponse({'status': 'error',
+                                 'message': 'Message does not exist!'}, status=404)
+        except Exception:
             # Handle exceptions
-            return JsonResponse({'status': 'error', 'message': f'Error deleting message: {str(e)}'}, status=404)
+            request.session['message'] = {'status': 'error',
+                                          'message': 'There has been an Unexpected error\
+                                            deleting the message, Please contact us!'}
+            return redirect('contact')
+
 
 class ConversationDeleteView(View):
+    """
+    View class for handling the deletion of a conversation via a POST request.
+    """
     def delete(self, request, conversation_id):
+        """
+        Handle DELETE requests to delete a conversation.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            conversation_id (int): The ID of the conversation to be deleted.
+
+        Returns:
+            JsonResponse: JSON response indicating the status of the operation.
+        """
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
             # Retrieve the message to be deleted
             conversation = get_object_or_404(Conversation, id=conversation_id)
 
@@ -297,10 +374,17 @@ class ConversationDeleteView(View):
             conversation.delete()
 
             # Return a JSON response indicating success
-            return JsonResponse({'status': 'success', 'message': 'Conversation deleted'},status=200)
-        except Exception as e:
+            return JsonResponse({'status': 'success', 
+                                 'message': 'Conversation deleted'}, status=200)
+        except Conversation.DoesNotExist:
+            return JsonResponse({'status': 'error',
+                                 'message': 'Conversation does not exist'}, status=404)
+        except Exception:
             # Handle exceptions
-            return JsonResponse({'status': 'error', 'message': f'Error deleting conversation: {str(e)}'}, status=404)
+            request.session['message'] = {'status': 'error',
+                                          'message': 'There has been an Unexpected error\
+                                            deleting conversation, Please contact us!'}
+            return redirect('contact')
 
 
 class ImageUploadView(View):
@@ -320,8 +404,17 @@ class ImageUploadView(View):
             JsonResponse: JSON response indicating the status of the image upload.
         """
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
+            allowed_file_types = ['image/jpeg', 'image/png',
+                                  'image/gif', 'image/bmp',
+                                  'image/webp', 'image/tiff']
+
             if request.FILES.get('file'):
                 image_file = request.FILES['file']
+                if image_file.content_type not in allowed_file_types:
+                    return JsonResponse({'status': 'Error',
+                                         'message': 'File type not allowed'},status=400)
 
                 # Create a new ImageModel instance
                 new_image = ImageModel.objects.create(image=image_file)
@@ -329,11 +422,13 @@ class ImageUploadView(View):
                 # Return the URL
                 return JsonResponse({'status':'Success', 'url': new_image.image.url}, status=200)
 
-            return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'},status=400)
-        except Exception as e:
-            # Handle exceptions (e.g., database error, unexpected error)
-            return JsonResponse({'status': 'Error', 'message': f'Error uploading image: {str(e)}'}, staus=500)
-
+            return JsonResponse({'status': 'Error',
+                                 'message': 'Image could not be uploaded'},status=400)
+        except Exception:
+            request.session['message'] = {'status': 'error',
+                                          'message': 'There has been an Unexpected \
+                                            error adding your image, Please contact us!'}
+            return redirect('contact')
 
 class AddOrUpdateEmojiView(View):
     """
@@ -353,9 +448,11 @@ class AddOrUpdateEmojiView(View):
             JsonResponse: JSON response indicating the status of the operation.
         """
         try:
+            # Ensure the request is an AJAX request
+            if not request.is_ajax():
+                raise PermissionDenied
             user = request.user
             emoji_colon_name = request.POST.get('emoji_colon_name')
-
 
             message_model = get_object_or_404(Message, pk=instance_id)
 
@@ -382,6 +479,8 @@ class AddOrUpdateEmojiView(View):
             # If it exists, increment the count and add the user
             instance.incremented_by.add(user)
             return JsonResponse({'status': 'incremented'}, status=200)
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-
+        except Exception:
+            request.session['message'] = {'status': 'error',
+                                          'message': 'There has been an Unexpected \
+                                            error updating the emoji, Please contact us!'}
+            return redirect('contact')

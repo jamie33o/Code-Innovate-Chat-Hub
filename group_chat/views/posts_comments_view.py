@@ -1,6 +1,6 @@
 import bleach
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.utils import timezone
@@ -8,6 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from user_profile.models import UserProfile
@@ -152,11 +153,9 @@ class PostsView(BaseChatView):
             channel = self.get_channel(channel_id)
             posts = self.get_posts(channel)
             if post_id:
-                try:
-                    post_index = next((index for index, post in enumerate(posts) if post.id == post_id), None)
-                    page_number = post_index // self.posts_per_page + 1
-                except Exception as e:
-                    print(e)
+                post_index = next((index for index, post in enumerate(posts) if post.id == post_id), None)
+                page_number = post_index // self.posts_per_page + 1
+
             page = int(request.GET.get('page')) if request.GET.get('page') else (page_number if page_number is not None else None)
             paginated_posts, prev_page_num, last_page_num = self.get_paginated_posts(posts, page)
             post_comments_users = self.users_that_commented(paginated_posts)
@@ -191,10 +190,11 @@ class PostsView(BaseChatView):
 
             return render(request, self.posts_template, context)
 
-        except Exception as e:
-            # Handle unexpected exceptions
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-
+        except Exception:
+            request.session['message'] = {'status': 'Error',
+                                          'message': 'Unexpected error retrieving posts,\
+                                              Please contact us!!!'}
+            return redirect('contact')
     def post(self, request, channel_id, post_id=None):
         """
         Handle POST requests to submit or update posts in a channel.
@@ -211,6 +211,8 @@ class PostsView(BaseChatView):
             based on the success or failure of the operation.
         """
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
             channel = get_object_or_404(ChannelModel, id=channel_id)
             # If post_id is None, it's a new post; otherwise, it's an edit
             if post_id is None:
@@ -239,25 +241,26 @@ class PostsView(BaseChatView):
 
                 try:
                     html_content = render_to_string(self.single_post_template, context)
-                except Exception as e:
-                    return JsonResponse({'status' : 'error', 'message': e}, status=500)
 
-                self.broadcast_message(request, 'post', html_content, channel_id, post_id)
-                self.notification_msg(request, post.created_date, post.post, 'channel', channel.id)
-
-                if post_id is None:
-                    return JsonResponse({'status': 'Success'}, status=200)
+                    self.broadcast_message(request, 'post', html_content, channel_id, post_id)
+                    self.notification_msg(request, post.created_date, post.post, 'channel', channel.id)
+                except Exception:
+                    return JsonResponse({'status' : 'error',
+                                         'message': 'error sending post Please try again'},
+                                         status=500)
 
                 return JsonResponse({'status' : 'Success'}, status=200)
 
-
             # Return JSON response with validation errors
             return JsonResponse({'status': 'Error', 'message': form.errors})
-
-        except Exception as e:
-            # Handle unexpected exceptions
-            return JsonResponse({'status': 'Error', 'message': str(e)}, status=500)
-
+        
+        except ChannelModel.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Channel does not exist'}, status=404)
+        except Exception:
+            request.session['message'] = {'status': 'Error',
+                                          'message': 'Unexpected error sending post,\
+                                              Please contact us!!!'}
+            return redirect('contact')
 
 
     def get_channel(self, channel_id):
@@ -399,19 +402,31 @@ class CommentsView(BaseChatView):
         Returns:
             HttpResponse: Rendered HTML template with comments.
         """
-        post = get_object_or_404(PostsModel, id=post_id)
-        comments = CommentsModel.objects.filter(comment_post=post)
+        try:
+            if not request.is_ajax():
+                raise PermissionDenied
+            post = get_object_or_404(PostsModel, id=post_id)
+            comments = CommentsModel.objects.filter(comment_post=post)
 
-        form = CommentsForm()
+            form = CommentsForm()
 
-        context = {
-            'post': post,
-            'comments': comments,
-            'form': form,
-            'channel': post.post_channel
-        }
+            context = {
+                'post': post,
+                'comments': comments,
+                'form': form,
+                'channel': post.post_channel
+            }
 
-        return render(request, self.comments_template, context)
+            return render(request, self.comments_template, context)
+        except CommentsModel.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Comment does not exist'}, status=404)
+        except PostsModel.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Post does not exist'}, status=404)
+        except Exception:
+            request.session['message'] = {'status': 'Error',
+                                          'message': 'Unexpected error retrieving comments,\
+                                              Please contact us!!!'}
+            return redirect('contact')
 
     def post(self, request, post_id, comment_id=None):
         """
@@ -428,9 +443,11 @@ class CommentsView(BaseChatView):
             HttpResponse: Redirect or JSON response based on the success or failure 
             of the operation.
         """
-        post_model = get_object_or_404(PostsModel, id=post_id)
-
         try:
+            if not request.is_ajax():
+                raise PermissionDenied
+            post_model = get_object_or_404(PostsModel, id=post_id)
+
             if comment_id is None:
                 form = CommentsForm(request.POST)
             else:
@@ -456,7 +473,12 @@ class CommentsView(BaseChatView):
 
             # Return JSON response with validation errors
             return JsonResponse({'status': 'error', 'message': form.errors})
-
-        except Exception as e:
-            # Handle unexpected exceptions
-            return JsonResponse({'status': 'error', 'message': str(e)})
+        except PostsModel.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Post does not exist'}, status=404)
+        except CommentsModel.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Comment does not exist'}, status=404)
+        except Exception:
+            request.session['message'] = {'status': 'Error',
+                                          'message': 'Unexpected error adding your comment,\
+                                              Please contact us!!!'}
+            return redirect('contact')
