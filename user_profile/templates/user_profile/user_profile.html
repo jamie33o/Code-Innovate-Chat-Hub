@@ -69,6 +69,10 @@
                 <button class="sub-form" type="submit" data-dismiss="modal">Update Status</button>
              </form>
             `;
+
+            {% if notification %}
+                 displayMessage({ status: '{{ notification.status }}', message: '{{ notification.message }}'}, 'body')
+            {% endif %}
     </script>
 
 {% endblock %}
