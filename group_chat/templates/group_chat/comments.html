@@ -27,7 +27,7 @@
 
 </div>
 <script>
-    let postId = $('.comments-list').data('post-id')
+    postId = $('.comments-list').data('post-id')
     startWebSocket('post_comments', postId)
     summernoteEnhancerComments.init('#post-comments', `{% url 'post_comments' post.id %}`)
 </script>

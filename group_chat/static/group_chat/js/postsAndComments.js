@@ -20,6 +20,7 @@ let deleteModelBody = null;
 let prevPageNum = null;
 let lastPageNum = null;
 let paginatedPostsUrl = null;
+let postId = null;
 
 
 

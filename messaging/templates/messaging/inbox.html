@@ -40,7 +40,7 @@
                                     src="{% if message.sender == user %}{{ message.receiver.userprofile.profile_picture.url }}{% else %}{{ message.sender.userprofile.profile_picture.url }}{% endif %}">
                                 </div>
                             {% else %}
-                                <img alt="profile picture" class="img-circle medium-image" src="{% static 'noimage.png'}">
+                                <img alt="profile picture" class="img-circle medium-image" src="{% static 'noimage.png' %}">
                             {% endif %}
                         </div>
 
@@ -108,7 +108,7 @@
                     {
                         label: '{{ user.username }}',
                         value: '{{ user.username }}',
-                        profile_img: '{{ user.userprofile.profile_picture.url }}',
+                        profile_img: '{% if user.userprofile.profile_picture %}{{ user.userprofile.profile_picture.url }}{% else %}{% static "noimage.png" %}{% endif %}',
                         id: {{ user.id }}
                     },
                 {% endif %}

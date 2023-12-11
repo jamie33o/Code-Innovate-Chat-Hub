@@ -15,7 +15,7 @@ from django.contrib.auth import get_user_model
 from .models import UserProfile
 
 # pylint: disable=no-member
-# pylint: disable=unused-argument 
+# pylint: disable=unused-argument
 
 @receiver(post_save, sender=get_user_model())
 def create_profile(sender, instance, created, **kwargs):
