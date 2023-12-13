@@ -11,7 +11,7 @@
             <h2>Contact Us</h2>
             <hr>
             {% if notification %}
-                <p class="p-3{% if notification.status == 'error' %} bg-danger{% else %} bg-success{% endif %}"> {{ notification.status }}: {{ notification.message }}</p>
+                <p class="p-3{% if notification.status|lower == 'error' %} bg-danger text-white{% else %} bg-success text-white{% endif %}"> {{ notification.status }}: {{ notification.message }}</p>
             {% else %}
                 <p>Have a question or feedback? Fill out the form below to get in touch with us.</p>
             {% endif %}

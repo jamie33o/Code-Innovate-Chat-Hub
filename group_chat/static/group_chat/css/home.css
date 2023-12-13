@@ -122,7 +122,6 @@
 .comments-close-btn:hover, .posts-close-btn:hover {
     background-color: var(--background);
     box-shadow: var(--sm-box-shadow);
-
 }
 
 /* posts/comments card */
@@ -131,7 +130,7 @@
 }
 
 .card-header {
-    background-color: var(--peach)
+    background-color: var(--peach) !important;
 }
 
 .card-text  {
@@ -287,8 +286,8 @@
     border-radius: 50%;
     width: 10px;
     height: 12px;
-    padding: none;
-    margin: none;
+    padding: 0;
+    margin: 0;
     line-height: normal;
 }
 
@@ -307,14 +306,12 @@
 }
 
 .added-emoji-btn {
-    border: 2px solid var(--ci-orange);
-    border-radius: 30%;
-    background-color: var(--background);
-    padding: 0;
-    width: fit-content;
-    height: 30px;
-    padding: 0 5px ;
-    margin-bottom: 5px;
+    border: 2px solid var(--ci-orange) !important;
+    border-radius: 30% !important;
+    background-color: var(--background) !important;
+    width: fit-content !important;
+    line-height: normal;
+    padding: 3px 5px !important;
 }
 
 /* ///////////////// CSS to style the add to channel overlay  //////////////////// */

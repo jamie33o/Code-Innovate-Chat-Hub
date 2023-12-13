@@ -540,8 +540,8 @@
   border-radius: 50%;
   width: 10px;
   height: 12px;
-  padding: none;
-  margin: none;
+  padding: 0;
+  margin: 0;
   line-height: normal;
 }
 
