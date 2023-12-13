@@ -11,11 +11,13 @@ class YourAppNameConfig(AppConfig):
     Configuration class for the 'user_profile' app.
 
     Attributes:
-        default_auto_field (str): The default auto-generated field for models.
+        default_auto_field (str): The default
+        auto-generated field for models.
         name (str): The name of the app.
 
     Methods:
-        ready(): Method called when the app is ready to perform initialization tasks.
+        ready(): Method called when the app is ready
+        to perform initialization tasks.
     """
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'user_profile'

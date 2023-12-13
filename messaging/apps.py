@@ -3,12 +3,15 @@
 """
 from django.apps import AppConfig
 
+
 class MessagingConfig(AppConfig):
     """
     AppConfig class for the messaging app.
 
-    This class defines configuration settings for the messaging app. It specifies the
-    default auto field and the app's name. The `ready` method is utilized to import
+    This class defines configuration settings for
+    the messaging app. It specifies the
+    default auto field and the app's name. The `ready`
+    method is utilized to import
     signals when the app is ready.
 
     Attributes:
@@ -16,7 +19,8 @@ class MessagingConfig(AppConfig):
     - name (str): The name of the app.
 
     Methods:
-    - ready: Method called when the app is ready, used for importing signals.
+    - ready: Method called when the app is ready,
+    used for importing signals.
 
     """
     default_auto_field = 'django.db.models.BigAutoField'
@@ -26,7 +30,8 @@ class MessagingConfig(AppConfig):
         """
         Method called when the app is ready.
 
-        This method is used for additional setup when the app is loaded. In this case,
+        This method is used for additional setup when the app is loaded.
+        In this case,
         it imports signals from the messaging module.
 
         """

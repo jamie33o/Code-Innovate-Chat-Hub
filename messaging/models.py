@@ -1,9 +1,12 @@
 """
 Models module for the messaging app.
 
-This module defines Django models that represent various entities in the messaging app,
-including images, emojis, conversations, messages, and unread messages. Each model
-has specific attributes and methods to capture and manage relevant data.
+This module defines Django models that represent
+various entities in the messaging app,
+including images, emojis, conversations, messages,
+and unread messages. Each model
+has specific attributes and methods to capture and
+manage relevant data.
 
 Models:
 - ImageModel: Model for storing images.
@@ -12,7 +15,8 @@ Models:
 - Message: Model for storing messages.
 - UnreadMessage: Model for storing unread messages.
 
-For detailed information about each model and its attributes, refer to the individual
+For detailed information about each model and its attributes,
+refer to the individual
 docstrings within the respective class definitions.
 
 """
@@ -22,6 +26,7 @@ from django.contrib.auth import get_user_model
 # pylint: disable=no-member
 
 user = get_user_model()
+
 
 class ImageModel(models.Model):
     """
@@ -39,17 +44,21 @@ class EmojiModel(models.Model):
     Model for storing emojis.
 
     Attributes:
-    - emoji_colon_name: Text field for storing the colon representation of the emoji.
-    - users_who_incremented: Many-to-Many relationship with users who incremented the emoji.
+    - emoji_colon_name: Text field for storing the
+    colon representation of the emoji.
+    - users_who_incremented: Many-to-Many relationship
+    with users who incremented the emoji.
 
     Methods:
     - get_incremented_users: Returns the users who incremented the emoji.
 
     """
     emoji_colon_name = models.TextField(unique=False)
-    incremented_by = models.ManyToManyField(user, 
-                                            related_name='%(class)s_incremented_by',
-                                            blank=True)
+    incremented_by = models.ManyToManyField(
+        user,
+        related_name='%(class)s_incremented_by',
+        blank=True
+    )
 
     def get_incremented_users(self):
         """
@@ -58,23 +67,27 @@ class EmojiModel(models.Model):
         """
         return self.users_who_incremented.all()
 
+
 class Conversation(models.Model):
     """
     Model for storing conversation details.
 
     Attributes:
-    - participants (ManyToManyField): Relationship with users participating in the conversation.
+    - participants (ManyToManyField): Relationship
+    with users participating in the conversation.
 
     """
     participants = models.ManyToManyField(user)
 
     def delete(self, *args, **kwargs):
         """
-        Overrides the delete method to delete all messages related to this conversation.
+        Overrides the delete method to delete all
+        messages related to this conversation.
 
         """
         self.messages.all().delete()
         super(Conversation, self).delete(*args, **kwargs)
+
 
 class Message(models.Model):
     """
@@ -94,8 +107,12 @@ class Message(models.Model):
     - get_image_urls: Returns a list of image URLs.
 
     """
-    sender = models.ForeignKey(user, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(user, on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey(user,
+                               on_delete=models.CASCADE,
+                               related_name='sent_messages')
+    receiver = models.ForeignKey(user,
+                                 on_delete=models.CASCADE,
+                                 related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     images = models.TextField(blank=True, default="")
@@ -120,7 +137,6 @@ class Message(models.Model):
 
         """
         return [url.strip() for url in self.images.split(',') if url.strip()]
-
 
 
 class UnreadMessage(models.Model):

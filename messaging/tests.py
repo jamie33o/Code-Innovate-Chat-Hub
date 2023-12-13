@@ -9,19 +9,21 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from .models import Conversation, Message, ImageModel
 
 
-class InboxViewTest(TestCase):
+class MessagingTests(TestCase):
     """
     Test case for the InboxView.
     """
-    
+
     def setUp(self):
         """
         Set up common test data.
         """
         # Create a test user
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.receiver = User.objects.create_user(username='testuser1', password='testpassword1')
-         # Log in the user
+        self.user = User.objects.create_user(username='testuser',
+                                             password='testpassword')
+        self.receiver = User.objects.create_user(username='testuser1',
+                                                 password='testpassword1')
+        # Log in the user
         self.client.login(username='testuser', password='testpassword')
 
     def create_conversation_and_message(self):
@@ -45,7 +47,6 @@ class InboxViewTest(TestCase):
         )
 
         return conversation, message
-    
 
     def test_get_inbox_view(self):
         """
@@ -55,7 +56,8 @@ class InboxViewTest(TestCase):
         conversation, message = self.create_conversation_and_message()
 
         # Call the InboxView
-        response = self.client.get(reverse('inbox'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse('inbox'),
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Check if the response is successful
         self.assertEqual(response.status_code, 200)
@@ -65,36 +67,43 @@ class InboxViewTest(TestCase):
         self.assertEqual(response.context['messages'][0], message)
         # unread message is created in signals.py when a new message created
         self.assertEqual(len(response.context['unread_messages']), 1)
-        self.assertEqual(response.context['unread_messages'][0], conversation.id)
+        self.assertEqual(response.context['unread_messages'][0],
+                         conversation.id)
         self.assertEqual(len(response.context['conversation_users']), 2)
-        self.assertEqual(response.context['conversation_users'][0], self.user)
+        self.assertEqual(response.context['conversation_users'][0],
+                         self.user)
 
         # Check if the rendered template is correct
         self.assertTemplateUsed(response, 'messaging/inbox.html')
-
 
     def test_get_message_list_view(self):
         """
         Test the GET request for the message list view.
         """
-         # Create a conversation and message
+        # Create a conversation and message
         conversation, message = self.create_conversation_and_message()
 
         # Call the MessageListView for the conversation
-        response = self.client.get(reverse('message_list', args=[conversation.id]), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse(
+            'message_list',
+            args=[conversation.id]),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
 
         # Check if the response is successful
         self.assertEqual(response.status_code, 200)
 
         # Check if the rendered context contains the expected data
         self.assertEqual(len(response.context['messages']), 1)
-        self.assertEqual(response.context['messages'][0], message)
-        self.assertEqual(response.context['receiver'], self.receiver)
-        self.assertEqual(response.context['conversation_id'], conversation.id)
+        self.assertEqual(response.context['messages'][0],
+                         message)
+        self.assertEqual(response.context['receiver'],
+                         self.receiver)
+        self.assertEqual(response.context['conversation_id'],
+                         conversation.id)
 
         # Check if the rendered template is correct
         self.assertTemplateUsed(response, 'messaging/message-list.html')
-
 
     def test_post_message_list_view(self):
         """
@@ -109,14 +118,15 @@ class InboxViewTest(TestCase):
         # Call the MessageListView with a POST request to send a new message
         response = self.client.post(reverse('message_list',
                                             args=[conversation.id]),
-                                    {'post': message_content}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+                                    {'post': message_content},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Check if the response is successful
         self.assertEqual(response.status_code, 200)
 
         # Check if the message is created
-        self.assertTrue(Message.objects.filter(content=message_content).exists())
-
+        self.assertTrue(Message.objects.filter(
+            content=message_content).exists())
 
     def test_delete_message_view(self):
         """
@@ -129,7 +139,10 @@ class InboxViewTest(TestCase):
         url = reverse('delete_message', args=[message.id])
 
         # Make a DELETE request to delete the message
-        response = self.client.delete(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.delete(
+            url,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
 
         # Check if the response status code is 200 (success)
         self.assertEqual(response.status_code, 200)
@@ -139,7 +152,8 @@ class InboxViewTest(TestCase):
             Message.objects.get(id=message.id)
 
         # Check the JSON response for success
-        expected_response = {'status': 'success', 'message': 'Message deleted'}
+        expected_response = {'status': 'success',
+                             'message': 'Message deleted'}
         self.assertEqual(response.json(), expected_response)
 
     def test_delete_conversation_view(self):
@@ -148,11 +162,13 @@ class InboxViewTest(TestCase):
         """
         # Create a conversation and message
         conversation, _ = self.create_conversation_and_message()
-        # Get the URL for the ConversationDeleteView with the conversation_id parameter
+        # Get the URL for the ConversationDeleteView with
+        # the conversation_id parameter
         url = reverse('delete_conversation', args=[conversation.id])
 
         # Make a DELETE request to delete the conversation
-        response = self.client.delete(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.delete(url,
+                                      HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Check if the response status code is 200 (success)
         self.assertEqual(response.status_code, 200)
@@ -162,9 +178,9 @@ class InboxViewTest(TestCase):
             Conversation.objects.get(id=conversation.id)
 
         # Check the JSON response for success
-        expected_response = {'status': 'success', 'message': 'Conversation deleted'}
+        expected_response = {'status': 'success',
+                             'message': 'Conversation deleted'}
         self.assertEqual(response.json(), expected_response)
-
 
     def test_upload_image_view(self):
         """
@@ -172,13 +188,17 @@ class InboxViewTest(TestCase):
         """
         # Create a sample image file for testing
         image_content = b'fake image content'
-        image_file = SimpleUploadedFile("test_image.jpg", image_content, content_type='image/png')
+        image_file = SimpleUploadedFile("test_image.jpg",
+                                        image_content,
+                                        content_type='image/png')
 
         # Get the URL for the ImageUploadView
         url = reverse('image_upload')
 
         # Make a POST request to upload the image
-        response = self.client.post(url, {'file': image_file}, format='multipart', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post(url, {'file': image_file},
+                                    format='multipart',
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Check if the response status code is 200 (success)
         self.assertEqual(response.status_code, 200)
@@ -188,7 +208,8 @@ class InboxViewTest(TestCase):
 
         # Check the JSON response for success
         new_image = ImageModel.objects.first()
-        expected_response = {'status': 'Success', 'url': new_image.image.url}
+        expected_response = {'status': 'Success',
+                             'url': new_image.image.url}
         self.assertEqual(response.json(), expected_response)
 
     def test_upload_no_file_view(self):
@@ -199,10 +220,12 @@ class InboxViewTest(TestCase):
         url = reverse('image_upload')
 
         # Make a POST request without a file to simulate an error
-        response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post(url,
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertEqual(response.status_code, 400)
 
         # Check the JSON response for an error message
-        expected_response = {'status': 'Error', 'message': 'Image could not be uploaded'}
+        expected_response = {'status': 'Error',
+                             'message': 'Image could not be uploaded'}
         self.assertEqual(response.json(), expected_response)

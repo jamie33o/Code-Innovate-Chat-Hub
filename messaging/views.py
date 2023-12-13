@@ -16,6 +16,7 @@ from .models import Message, UnreadMessage, Conversation, ImageModel
 
 # pylint: disable=no-member
 
+
 @method_decorator(login_required, name='dispatch')
 class InboxView(View):
     """
@@ -32,7 +33,8 @@ class InboxView(View):
 
         Parameters:
         - request (HttpRequest): The request object.
-        - receiver_id (int, optional): The ID of the receiver user for starting a new conversation.
+        - receiver_id (int, optional): The ID of the receiver
+        user for starting a new conversation.
 
         Returns:
         - HttpResponse: Rendered inbox template with relevant context.
@@ -44,27 +46,34 @@ class InboxView(View):
                 receiver = get_object_or_404(User, id=receiver_id)
 
             # Retrieve conversations involving the current user
-            conversations = Conversation.objects.filter(participants=request.user)
+            conversations = Conversation.objects.filter(
+                participants=request.user
+                )
 
-            conversation_users = User.objects.filter(conversation__in=conversations).distinct()
+            conversation_users = User.objects.filter(
+                conversation__in=conversations).distinct()
 
-            unread_messages = UnreadMessage.objects.filter(conversation__participants=request.user)\
-                                                    .values_list('conversation', flat=True)
+            unread_messages = UnreadMessage.objects.filter(
+                conversation__participants=request.user
+            ).values_list('conversation', flat=True)
 
             # Retrieve the messages in the conversation
             messages_by_conversation = []
             if conversations.exists():
                 for conversation in conversations:
                     # Retrieve the latest message in the conversation
-                    latest_message = conversation.messages.order_by('-timestamp').first()
+                    latest_message = conversation.messages.order_by(
+                        '-timestamp').first()
 
-                    # Check if there is a latest message before adding it to the list
+                    # Check if there is a latest message
+                    # before adding it to the list
                     if latest_message:
                         messages_by_conversation.append(latest_message)
 
                     if (
                         receiver_id and
-                        receiver_id in conversation.participants.values_list('id', flat=True) and
+                        receiver_id in conversation.participants.values_list(
+                            'id', flat=True) and
                         latest_message
                     ):
                         message_exists = True
@@ -98,17 +107,22 @@ class InboxView(View):
 
             return render(request, self.template_name, context)
         except Conversation.DoesNotExist:
-            return JsonResponse({'status': 'error',
-                                 'message': 'The conversation does not exist!!'}, status= 404)
+            return JsonResponse(
+                {'status': 'error',
+                 'message': 'The conversation does not exist!!'},
+                status=404)
         except Message.DoesNotExist:
-            return JsonResponse({'status': 'error',
-                                 'message': 'The Message does not exist!!'}, status= 404)
+            return JsonResponse(
+                {'status': 'error',
+                 'message': 'The Message does not exist!!'},
+                status=404)
         except Exception:
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected error\
-                                            retrieving messaging inbox, Please contact us!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected error\
+                            retrieving messaging inbox, Please contact us!'
+                }
             return redirect('contact')
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -123,7 +137,8 @@ class MessageListView(View):
 
     def get(self, request, conversation_id):
         """
-        Handle GET requests to retrieve and display the list of messages in a conversation.
+        Handle GET requests to retrieve and display
+        the list of messages in a conversation.
 
         Parameters:
         - request (HttpRequest): The request object.
@@ -140,7 +155,9 @@ class MessageListView(View):
             conversation = get_object_or_404(Conversation, id=conversation_id)
 
             # Get the receiver excluding the current user from participants
-            receiver = conversation.participants.exclude(id=request.user.id).first()
+            receiver = conversation.participants.exclude(
+                                                id=request.user.id
+                                                ).first()
 
             # Retrieve messages in the conversation and order by timestamp
             messages = conversation.messages.all().order_by('timestamp')
@@ -149,23 +166,27 @@ class MessageListView(View):
 
             context = {
                 'receiver': receiver,
-                'messages' : None,
+                'messages': None,
                 'conversation_id': conversation.id
             }
 
             if messages:
-                context['messages'] =  messages
+                context['messages'] = messages
 
             return render(request, self.template_name, context)
         except Conversation.DoesNotExist:
-            return JsonResponse({'status': 'error',
-                                 'message': 'The conversation does not exist!!'}, status= 404)
+            return JsonResponse(
+                {'status': 'error',
+                 'message': 'The conversation does not exist!!'},
+                status=404)
+        except PermissionDenied:
+            return render(request, '403.html')
         except Exception:
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected error\
-                                            retrieving messages, Please contact us!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected error\
+                            retrieving messages, Please contact us!'}
             return redirect('contact')
-
 
     def post(self, request, conversation_id=None, message_id=None):
         """
@@ -187,7 +208,9 @@ class MessageListView(View):
             images = ",".join(url_list)
 
             conversation = get_object_or_404(Conversation, id=conversation_id)
-            receiver = conversation.participants.exclude(id=request.user.id).first()
+            receiver = conversation.participants.exclude(
+                                        id=request.user.id
+                                        ).first()
 
             if not message_id:
                 message = Message(sender=request.user,
@@ -205,37 +228,49 @@ class MessageListView(View):
             context = {
                 'sender': message.sender,
                 'receiver': receiver,
-                'message' : message,
+                'message': message,
                 'conversation_id': conversation.id,
                 'user': request.user,
             }
 
-            html_content = render_to_string('messaging/single-message.html', context)
+            html_content = render_to_string('messaging/single-message.html',
+                                            context)
             msg_broadcast = self.broadcast_message(request,
                                                    html_content,
                                                    conversation.id,
                                                    message_id)
-            msg_notification = self.notification_msg(request, message.timestamp,
-                                  message.content, 'conversation',
-                                  conversation.id)
+            msg_notification = self.notification_msg(request,
+                                                     message.timestamp,
+                                                     message.content,
+                                                     'conversation',
+                                                     conversation.id)
             if msg_broadcast and msg_notification:
-                return JsonResponse({'status': 'success'}, status= 200)
-            return JsonResponse({'status': 'error',
-                                 'message': 'Error broadcasting message Please try again!!'},
-                                 status= 500)
+                return JsonResponse({'status': 'success'}, status=200)
+            return JsonResponse(
+                {'status': 'error',
+                 'message': 'Error broadcasting message Please try again!!'},
+                status=500)
+        except PermissionDenied:
+            return render(request, '403.html')
         except Conversation.DoesNotExist:
-            return JsonResponse({'status': 'error',
-                                 'message': 'The conversation does not exist!!'}, status= 404)
+            return JsonResponse(
+                {'status': 'error',
+                 'message': 'The conversation does not exist!!'},
+                status=404)
         except Message.DoesNotExist:
-            return JsonResponse({'status': 'error',
-                                 'message': 'The Message does not exist!!'}, status= 404)
+            return JsonResponse(
+                {'status': 'error',
+                 'message': 'The Message does not exist!!'},
+                status=404)
         except Exception:
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected error\
-                                            sending your message, Please contact us!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected error\
+                            sending your message, Please contact us!'}
             return redirect('contact')
 
-    def broadcast_message(self, request, instance_html, conversation_id, edit_id):
+    def broadcast_message(self, request,
+                          instance_html, conversation_id, edit_id):
         """
         Broadcast a message to the channel layer.
 
@@ -264,8 +299,8 @@ class MessageListView(View):
         except Exception:
             return False
 
-
-    def notification_msg(self, request, timestamp, message, model_name, model_id):
+    def notification_msg(self, request,
+                         timestamp, message, model_name, model_id):
         """
         Broadcast a message to the channel layer.
 
@@ -291,7 +326,8 @@ class MessageListView(View):
                 'model_name': model_name,
             }
             if request.user.userprofile.profile_picture:
-                context['img_url'] = request.user.userprofile.profile_picture.url
+                context['img_url'] = request.user.\
+                                     userprofile.profile_picture.url
             async_to_sync(channel_layer.group_send)("global_consumer", context)
 
             return True
@@ -304,11 +340,13 @@ class MessageDeleteView(View):
     """
     View class for handling the deletion of a message via a DELETE request.
 
-    This view expects an AJAX DELETE request to delete a message based on its ID.
+    This view expects an AJAX DELETE request
+    to delete a message based on its ID.
 
     Usage:
     1. Ensure the request is an AJAX DELETE request.
-    2. Specify the `message_id` in the URL path to identify the message to be deleted.
+    2. Specify the `message_id` in the
+    URL path to identify the message to be deleted.
 
     Returns:
     - JsonResponse: JSON response indicating the status of the operation.
@@ -337,15 +375,21 @@ class MessageDeleteView(View):
             message.delete()
 
             # Return a JSON response indicating success
-            return JsonResponse({'status': 'success', 'message': 'Message deleted'}, status=200)
+            return JsonResponse({'status': 'success',
+                                 'message': 'Message deleted'},
+                                status=200)
+        except PermissionDenied:
+            return render(request, '403.html')
         except Message.DoesNotExist:
             return JsonResponse({'status': 'error',
-                                 'message': 'Message does not exist!'}, status=404)
+                                 'message': 'Message does not exist!'},
+                                status=404)
         except Exception:
             # Handle exceptions
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected error\
-                                            deleting the message, Please contact us!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected error\
+                            deleting the message, Please contact us!'}
             return redirect('contact')
 
 
@@ -374,16 +418,21 @@ class ConversationDeleteView(View):
             conversation.delete()
 
             # Return a JSON response indicating success
-            return JsonResponse({'status': 'success', 
-                                 'message': 'Conversation deleted'}, status=200)
+            return JsonResponse({'status': 'success',
+                                 'message': 'Conversation deleted'},
+                                status=200)
+        except PermissionDenied:
+            return render(request, '403.html')
         except Conversation.DoesNotExist:
             return JsonResponse({'status': 'error',
-                                 'message': 'Conversation does not exist'}, status=404)
+                                 'message': 'Conversation does not exist'},
+                                status=404)
         except Exception:
             # Handle exceptions
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected error\
-                                            deleting conversation, Please contact us!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected error\
+                            deleting conversation, Please contact us!'}
             return redirect('contact')
 
 
@@ -401,7 +450,8 @@ class ImageUploadView(View):
             kwargs: Additional keyword arguments.
 
         Returns:
-            JsonResponse: JSON response indicating the status of the image upload.
+            JsonResponse: JSON response indicating
+            the status of the image upload.
         """
         try:
             if not request.is_ajax():
@@ -414,29 +464,38 @@ class ImageUploadView(View):
                 image_file = request.FILES['file']
                 if image_file.content_type not in allowed_file_types:
                     return JsonResponse({'status': 'Error',
-                                         'message': 'File type not allowed'},status=400)
+                                         'message': 'File type not allowed'},
+                                        status=400)
 
                 # Create a new ImageModel instance
                 new_image = ImageModel.objects.create(image=image_file)
 
                 # Return the URL
-                return JsonResponse({'status':'Success', 'url': new_image.image.url}, status=200)
+                return JsonResponse({'status': 'Success',
+                                     'url': new_image.image.url},
+                                    status=200)
 
             return JsonResponse({'status': 'Error',
-                                 'message': 'Image could not be uploaded'},status=400)
+                                 'message': 'Image could not be uploaded'},
+                                status=400)
+        except PermissionDenied:
+            return render(request, '403.html')
         except Exception:
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected \
-                                            error adding your image, Please contact us!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected \
+                            error adding your image, Please contact us!'}
             return redirect('contact')
+
 
 class AddOrUpdateEmojiView(View):
     """
-    View class for adding or updating an emoji in a message model instance. 
+    View class for adding or updating an emoji in a message model instance.
     """
     def post(self, request, instance_id, *args, **kwargs):
         """
-        Handle POST requests to add or update an emoji in message model instance.
+        Handle POST requests to add or update
+        an emoji in message model instance.
 
         Args:
             request (HttpRequest): The HTTP request object.
@@ -470,7 +529,8 @@ class AddOrUpdateEmojiView(View):
             # Check if the EmojiModel exists
             if request.user in instance.incremented_by.all():
                 instance.incremented_by.remove(user)
-                # Check if there are no more users and remove the instance if true
+                # Check if there are no more users
+                # and remove the instance if true
                 if instance.incremented_by.count() == 0:
                     message_model.emojis.remove(instance)
                     return JsonResponse({'status': 'removed'}, status=200)
@@ -479,8 +539,14 @@ class AddOrUpdateEmojiView(View):
             # If it exists, increment the count and add the user
             instance.incremented_by.add(user)
             return JsonResponse({'status': 'incremented'}, status=200)
+        except PermissionDenied:
+            return render(request, '403.html')
+        except Message.DoesNotExist:
+            return JsonResponse({'status': 'Error',
+                                'message': 'Message not found'}, status=404)
         except Exception:
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected \
-                                            error updating the emoji, Please contact us!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected \
+                            error updating the emoji, Please contact us!'}
             return redirect('contact')

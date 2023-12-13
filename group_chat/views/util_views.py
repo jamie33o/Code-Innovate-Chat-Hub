@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views import View
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DeleteView
 from django.core.exceptions import PermissionDenied
 from django.apps import apps
@@ -19,11 +19,10 @@ class ImageUploadView(View):
 
         Args:
             request (HttpRequest): The HTTP request object.
-            args: Additional positional arguments.
-            kwargs: Additional keyword arguments.
 
         Returns:
-            JsonResponse: JSON response indicating the status of the image upload.
+            JsonResponse: JSON response indicating
+            the status of the image upload.
         """
         try:
             if not request.is_ajax():
@@ -35,35 +34,43 @@ class ImageUploadView(View):
                 image_file = request.FILES['file']
                 if image_file.content_type not in allowed_file_types:
                     return JsonResponse({'status': 'Error',
-                                         'message': 'File type not allowed'},status=400)
+                                         'message': 'File type not allowed'},
+                                        status=400)
 
                 # Create a new ImageModel instance
                 new_image = ImageModel.objects.create(image=image_file)
 
                 # Return the URL
-                return JsonResponse({'status': 'Success', 'url': new_image.image.url})
+                return JsonResponse(
+                    {'status': 'Success',
+                     'url': new_image.image.url}
+                )
 
-            return JsonResponse({'status': 'Error', 'message': 'Image could not be uploaded'})
+            return JsonResponse({'status': 'Error',
+                                 'message': 'Image could not be uploaded'})
+        except PermissionDenied:
+            return render(request, '403.html')
         except Exception:
             request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error occurred while uploading image,\
-                                              Please contact us!!!'}
+                                          'message': 'Unexpected error\
+                                           occurred while uploading image, \
+                                            Please contact us!!!'}
             return redirect('contact')
 
 
 class AddOrUpdateEmojiView(View):
     """
-    View class for adding or updating an emoji in a post or comments model instance. 
+    View class for adding or updating an emoji in a
+    post or comments model instance.
     """
     def post(self, request, instance_id, *args, **kwargs):
         """
-        Handle POST requests to add or update an emoji in a post or comments model instance.
+        Handle POST requests to add or update an
+        emoji in a post or comments model instance.
 
         Args:
             request (HttpRequest): The HTTP request object.
             instance_id (int): The ID of the model instance.
-            args: Additional positional arguments.
-            kwargs: Additional keyword arguments.
 
         Returns:
             JsonResponse: JSON response indicating the status of the operation.
@@ -76,7 +83,8 @@ class AddOrUpdateEmojiView(View):
 
             # Get the model class based on the URL parameter
             model_name = self.kwargs['model']
-            model = apps.get_model(app_label='group_chat', model_name=model_name)
+            model = apps.get_model(app_label='group_chat',
+                                   model_name=model_name)
 
             obj = get_object_or_404(model, pk=instance_id)
 
@@ -94,7 +102,8 @@ class AddOrUpdateEmojiView(View):
             # Check if the EmojiModel exists
             if request.user in instance.users_who_incremented.all():
                 instance.users_who_incremented.remove(user)
-                # Check if there are no more users and remove the instance if true
+                # Check if there are no more users and
+                # remove the instance if true
                 if instance.users_who_incremented.count() == 0:
                     obj.emojis.remove(instance)
                     return JsonResponse({'status': 'removed'})
@@ -104,23 +113,17 @@ class AddOrUpdateEmojiView(View):
             instance.users_who_incremented.add(user)
             return JsonResponse({'status': 'incremented'})
         except Exception:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error occurred while updating emoji,\
-                                              Please contact us!!!'}
-            return redirect('contact')
+            return JsonResponse({'status': 'Error',
+                                 'message': 'Unexpected error updating emoji'}, status=500)
 
 
 class GenericObjectDeleteView(DeleteView):
     """
     View class for deleting a generic object based on the URL parameters.
     """
-
     def get_object(self, queryset=None):
         """
         Retrieve the object to be deleted based on the URL parameters.
-
-        Args:
-            queryset: The queryset to use for retrieving the object.
 
         Returns:
             Model: The object to be deleted.
@@ -128,7 +131,8 @@ class GenericObjectDeleteView(DeleteView):
         try:
             # Get the model class based on the URL parameter
             model_name = self.kwargs['model']
-            model = apps.get_model(app_label='group_chat', model_name=model_name)
+            model = apps.get_model(app_label='group_chat',
+                                   model_name=model_name)
 
             # Get the object to be deleted
             obj_pk = self.kwargs['pk']
@@ -136,9 +140,9 @@ class GenericObjectDeleteView(DeleteView):
 
             return obj
         except (LookupError, ValueError, KeyError) as e:
-            # Handle lookup errors, value errors, or key errors
-            return JsonResponse({'status': 'error',
-                                 'message': f'Error retrieving object: {str(e)}'})
+            return JsonResponse(
+                {'status': 'error',
+                 'message': f'Error retrieving object: {str(e)}'})
 
     def delete(self, request, *args, **kwargs):
         """
@@ -146,8 +150,6 @@ class GenericObjectDeleteView(DeleteView):
 
         Args:
             request (HttpRequest): The HTTP request object.
-            args: Additional positional arguments.
-            kwargs: Additional keyword arguments.
 
         Returns:
             JsonResponse: JSON response indicating the status of the operation.
@@ -160,13 +162,15 @@ class GenericObjectDeleteView(DeleteView):
             # Delete the object
             obj.delete()
             # Override the delete method to return a JSON response
-            return JsonResponse({'status': 'success', 'message': f'{model_name[:-6]} deleted'})
+            return JsonResponse({'status': 'success',
+                                 'message': f'{model_name[:-6]} deleted'})
         except Exception:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error occurred while deleting object,\
-                                              Please contact us!!!'}
+            request.session['message'] = {
+                'status': 'Error',
+                'message': 'Unexpected error occurred while deleting object,\
+                Please contact us!!!'
+            }
             return redirect('contact')
-        
 
     def get_context_data(self, **kwargs):
         """
@@ -180,12 +184,10 @@ class GenericObjectDeleteView(DeleteView):
         return context
 
 
-
 class SavePostView(View):
     """
     View class for saving a post for a user.
     """
-
     def post(self, request, post_id):
         """
         Handle POST requests to save a post for the user.
@@ -197,7 +199,6 @@ class SavePostView(View):
         Returns:
             JsonResponse: JSON response indicating the status of the operation.
         """
-
         try:
             if not request.is_ajax():
                 raise PermissionDenied
@@ -206,18 +207,27 @@ class SavePostView(View):
 
             # Check if the post is already saved by the user
             if SavedPost.objects.filter(user=request.user, post=post).exists():
-                return JsonResponse({'status': 'Error', 'message': 'Post already saved'})
+                return JsonResponse({'status': 'Error',
+                                     'message': 'Post already saved'})
 
             # Save the post for the user
             saved_post = SavedPost(user=request.user, post=post)
             saved_post.save()
 
-            return JsonResponse({'status': 'Success', 'message': 'Post saved'},status=200)
+            return JsonResponse({'status': 'Success',
+                                 'message': 'Post saved'}, status=200)
+        except PermissionDenied:
+            return render(request, '403.html')
         except PostsModel.DoesNotExist:
             # Handle the case where the specified post does not exist
-            return JsonResponse({'status': 'Error', 'message': 'Post does not exist'}, status=404)
+            return JsonResponse({'status': 'Error',
+                                 'message': 'Post does not exist'}, status=404)
+        except PermissionDenied:
+            return render(request, '403.html')
         except Exception:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error occurred while saving post,\
-                                              Please contact us!!!'}
+            request.session['message'] = {
+                'status': 'Error',
+                'message': 'Unexpected error occurred while saving post,\
+                Please contact us!!!'
+            }
             return redirect('contact')

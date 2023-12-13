@@ -22,7 +22,7 @@ class ChannelsView(View):
 
     template_name = 'group_chat/home.html'
 
-    def get(self, request, channel_id=None,post_id=None):
+    def get(self, request, channel_id=None, post_id=None):
         """
         Handle GET requests to display the list of channels.
 
@@ -34,8 +34,8 @@ class ChannelsView(View):
 
             channels = ChannelModel.objects.all()
             if not channel_id:
-                last_viewed_channel_id = request.user.userprofile.last_viewed_channel_id
-
+                last_viewed_channel_id = request.user.userprofile.\
+                                         last_viewed_channel_id
 
             # Create an empty dictionary to store user_status for each channel
             user_statuses = {}
@@ -44,10 +44,11 @@ class ChannelsView(View):
             for channel in channels:
                 try:
                     if request.user in channel.users.all():
-                        user_status, _ = ChannelLastViewedModel.objects.get_or_create(
-                            user=request.user,
-                            channel=channel,
-                        )
+                        user_status, _ = ChannelLastViewedModel.objects.\
+                                            get_or_create(
+                                                user=request.user,
+                                                channel=channel,
+                                            )
                         user_statuses[channel.id] = user_status.last_visit
                 except ChannelLastViewedModel.DoesNotExist:
                     # Handle the case where ChannelLastViewedModel
@@ -55,7 +56,6 @@ class ChannelsView(View):
                     user_statuses[channel.id] = None
 
             unread_messages = self.get_unread_messages(request)
-
 
             context = {
                 'channels': channels,
@@ -67,12 +67,14 @@ class ChannelsView(View):
             }
 
             return render(request, self.template_name, context)
-        except Exception:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error retrieving homepage,\
-                                              Please contact us!!!'}
-            return redirect('contact')
 
+        except Exception:
+            request.session['message'] = {
+                'status': 'Error',
+                'message': 'Unexpected error retrieving homepage,\
+                                              Please contact us!!!'
+            }
+            return redirect('contact')
 
     def get_unread_messages(self, request):
         """
@@ -82,7 +84,8 @@ class ChannelsView(View):
             request (HttpRequest): The HTTP request object.
 
         Returns:
-            List[Message]: List of the latest unread messages in each conversation.
+            List[Message]: List of the latest unread messages
+            in each conversation.
         """
         try:
             # Get the latest unread message for each conversation
@@ -95,32 +98,39 @@ class ChannelsView(View):
             messages_by_conversation = []
             if conversations.exists():
                 for conversation in conversations:
-                    conv = Conversation.objects.get(id=conversation['conversation'])
+                    conv = Conversation.objects.get(
+                            id=conversation['conversation']
+                           )
 
                     # Retrieve the latest message in the conversation
-                    latest_message = conv.messages.order_by('-timestamp').first()
+                    latest_message = conv.messages.order_by(
+                        '-timestamp'
+                        ).first()
 
-                    # Check if there is a latest message before adding it to the list
-                    if latest_message and latest_message.receiver == request.user:
+                    # Check if there is a latest message
+                    # before adding it to the list
+                    if latest_message and \
+                       latest_message.receiver == request.user:
                         messages_by_conversation.append(latest_message)
 
             return messages_by_conversation
-            
+
         except Exception:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error retrieving unread messages,\
-                                              Please contact us!!!'}
+            request.session['message'] = {
+                'status': 'Error',
+                'message': 'Unexpected error retrieving unread messages,\
+                            Please contact us!!!'}
             return redirect('contact')
-        
+
 
 @method_decorator(login_required, name='dispatch')
 class AddUserToChannelView(View):
     """
     View class for adding a user to a channel.
     """
-
     def post(self, request, channel_id, user_id):
-        # NOTE: The request parameter is not used in this method, but it is kept for consistency.
+        # NOTE: The request parameter is not used in this method,
+        # but it is kept for consistency.
 
         """
         Handle POST requests to add a user to a channel.
@@ -156,10 +166,14 @@ class AddUserToChannelView(View):
                 'status': 'Error',
                 'message': 'User does not exist'
             }, status=404)
+        except PermissionDenied:
+            return render(request, '403.html')
         except Exception:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error adding you to channel,\
-                                              Please contact us!!!'}
+            request.session['message'] = {
+                'status': 'Error',
+                'message': 'Unexpected error adding you to channel,\
+                            Please contact us!!!'}
+
             return redirect('contact')
 
 
@@ -168,31 +182,35 @@ def get_all_channels(request):
     Get a list of all channels with their names, IDs, and corresponding URLs.
 
     Returns:
-    - JsonResponse: JSON response containing a list of dictionaries representing each channel.
+    - JsonResponse: JSON response containing a list of
+    dictionaries representing each channel.
       Each dictionary includes 'name', 'id', and 'url' keys.
       - 'status': 'success' if the operation is successful.
       - 'message': Additional details about the status.
     """
     try:
         if not request.is_ajax():
-                raise PermissionDenied
+            raise PermissionDenied
         channels = ChannelModel.objects.all().values('name', 'id')
-        
+
         # Create a list to store dictionaries representing each channel
         channel_list = []
 
         for channel in channels:
             # Get the URL for viewing the channel details
             url = reverse('view_channel', args=[channel['id']])
-            
+
             # Add the 'url' key to the channel dictionary
             channel['url'] = url
             # Add the channel dictionary to the list
             channel_list.append(channel)
 
         return JsonResponse(list(channels), safe=False)
+    except PermissionDenied:
+        return render(request, '403.html')
     except Exception:
-        request.session['message'] = {'status': 'Error',
-                                                'message': 'Unexpected error your profile does not exist,\
-                                                    contact us or create a new profile'}
+        request.session['message'] = {
+            'status': 'Error',
+            'message': 'Unexpected error your profile does not exist,\
+                        contact us or create a new profile'}
         return redirect('contact')

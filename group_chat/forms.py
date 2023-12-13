@@ -1,6 +1,7 @@
 from django import forms
 from .models import PostsModel, CommentsModel
 
+
 class PostsForm(forms.ModelForm):
     """
     This class is for the summernote editor form
@@ -10,8 +11,7 @@ class PostsForm(forms.ModelForm):
     """
     class Meta:
         model = PostsModel
-        fields = ['post', 'images']  # Include the 'images' field in the form
-
+        fields = ['post', 'images']
 
 
 class CommentsForm(forms.ModelForm):
@@ -23,5 +23,4 @@ class CommentsForm(forms.ModelForm):
     """
     class Meta:
         model = CommentsModel
-        fields =  ['post', 'images']
-
+        fields = ['post', 'images']

@@ -31,7 +31,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'DEVELOPMENT' in os.environ
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','ci-chathub-f163e2297a1b.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost',
+                 'ci-chathub-f163e2297a1b.herokuapp.com']
 
 
 # Application definition
@@ -59,7 +60,6 @@ INSTALLED_APPS = [
     'messaging',
     # for emoji
     'emoji',
-    
 ]
 
 MIDDLEWARE = [
@@ -112,7 +112,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',  # required by allauth
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -132,29 +132,34 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-# SITE_ID is a setting that specifies the ID of the current site in a multi-site configuration.
-# By default, Django assumes a single-site configuration with a SITE_ID of 1,
-# but you can configure and manage multiple sites within a single Django project if needed.
+# SITE_ID is a setting that specifies the ID of the
+# current site in a multi-site configuration.
+# By default, Django assumes a single-site
+# configuration with a SITE_ID of 1,
+# but you can configure and manage multiple
+# sites within a single Django project if needed.
 SITE_ID = 1
 
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-# These three email settings here make it so that an email is required to register for the site.
+# These three email settings here make it so that an
+# email is required to register for the site.
 ACCOUNT_EMAIL_REQUIRED = True
-# Verifying your email is mandatory so we know users are using a real email.
+# Verifying your email is mandatory so we
+# know users are using a real email.
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
- # And they're gonna be required to enter their email twice on the registration page
+# And they're gonna be required to enter
+# their email twice on the registration page
 ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
 # to make sure that they haven't made any typos.
 
-# Finally we're setting a minimum username length of four characters.
+# Finally we're setting a minimum username
+# length of four characters.
 ACCOUNT_USERNAME_MIN_LENGTH = 4
 # And specifying a login url
 LOGIN_URL = '/accounts/login/'
 # url to redirect back to after logging in
 LOGIN_REDIRECT_URL = '/'
-
-
 
 WSGI_APPLICATION = 'ci_chathub.wsgi.application'
 
@@ -169,7 +174,6 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-   
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -236,7 +240,6 @@ if 'USE_AWS' in os.environ:
     # Override static and media URLs in production
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/'
-    
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

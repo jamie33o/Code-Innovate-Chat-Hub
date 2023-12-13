@@ -55,16 +55,19 @@ class UserProfileView(View):
             request.session['message'] = None
             return render(request, self.template_name, context)
         except UserProfile.DoesNotExist:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error your profile does not exist,\
-                                              contact us or create a new profile'}
+            request.session['message'] = {
+                'status': 'Error',
+                'message': 'Unexpected error your profile does not exist,\
+                            contact us or create a new profile'
+                }
             return redirect('contact')
         except Exception:
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected error:\
-                                              Please contact us!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected error:\
+                            Please contact us!'
+                }
             return redirect('contact')
-
 
     def post(self, request):
         """
@@ -74,21 +77,35 @@ class UserProfileView(View):
             HttpResponse: The rendered user profile page or a redirect.
         """
         try:
-            edit_profile_form = EditProfileForm(request.POST, instance=request.user.userprofile)
+            edit_profile_form = EditProfileForm(
+                request.POST,
+                instance=request.user.userprofile
+            )
+
             if edit_profile_form.is_valid():
                 edit_profile_form.save()
 
-                request.session['message'] = {'status': 'success',
-                                              'message': 'Updated successfully'}
+                request.session['message'] = {
+                    'status': 'success',
+                    'message': 'Updated successfully'
+                }
+
                 return redirect('user_profile')
-            request.session['message'] = {'status': 'Error',
-                                          'message': f'{edit_profile_form.error}'}
+            request.session['message'] = {
+                'status': 'Error',
+                'message': f'{edit_profile_form.error}'
+            }
+
             return redirect('user_profile')
         except Exception:
-            request.session['message'] = {'status': 'error',
-                                          'message': 'There has been an Unexpected error \
-                                            updating your profile! Please Contact Us!!!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected error \
+                            updating your profile! Please Contact Us!!!'
+            }
+
             return redirect('contact')
+
 
 @method_decorator(login_required, name='dispatch')
 class ViewUserProfile(View):
@@ -116,12 +133,18 @@ class ViewUserProfile(View):
             return render(request, self.template_name, context)
 
         except UserProfile.DoesNotExist:
-            return JsonResponse({'status': 'Error',
-                                 'message': 'User profile not found'}, status=404)
+            return JsonResponse(
+                {'status': 'Error',
+                 'message': 'User profile not found'},
+                status=404
+            )
         except Exception:
-            request.session['message'] = {'status': 'error',
-                                        'message': 'There has been an Unexpected error trying \
-                                            to view the users profile! Please Contact Us!!!'}
+            request.session['message'] = {
+                'status': 'error',
+                'message': 'There has been an Unexpected error trying \
+                            to view the users profile! Please Contact Us!!!'
+            }
+
             return redirect('contact')
 
 
@@ -138,17 +161,30 @@ def update_profile_image(request):
         # Ensure the request is an AJAX request
         if not request.is_ajax():
             raise PermissionDenied
-        form = ProfileImageForm(request.POST, request.FILES, instance=request.user.userprofile)
+        form = ProfileImageForm(request.POST,
+                                request.FILES,
+                                instance=request.user.userprofile)
 
         if form.is_valid():
             image = form.save()
-            return JsonResponse({'success': 'image',
-                                 'message': image.profile_picture.url}, status=200)
-        return JsonResponse({'status': 'error',
-                             'message': f'Error updating profile picture: {form.errors}'}, status=400)
-    except Exception as e:
-        return JsonResponse({'status': 'error',
-                             'message': f'Error updating profile picture: {e}'}, status=500)
+            return JsonResponse(
+                {'success': 'image',
+                 'message': image.profile_picture.url},
+                status=200)
+
+        return JsonResponse(
+            {'status': 'error',
+             'message': f'Error updating profile picture: {form.errors}'},
+            status=400)
+
+    except PermissionDenied:
+        return render(request, '403.html')
+    except Exception:
+        return JsonResponse(
+            {'status': 'error',
+                'message': 'Error updating profile picture'},
+            status=500)
+
 
 @require_POST
 @login_required
@@ -169,11 +205,21 @@ def update_status(request):
         form = StatusForm(request.POST, instance=request.user.userprofile)
         if form.is_valid():
             status = form.save()
-            return JsonResponse({'status': 'success', 'message': status.status }, status=200)
-        return JsonResponse({'status': 'error',
-                             'message': f'Error updating status: {form.errors}'}, status=400)
+            return JsonResponse(
+                {'status': 'success',
+                 'message': status.status},
+                status=200)
+        return JsonResponse(
+            {'status': 'error',
+             'message': f'Error updating status: {form.errors}'},
+            status=400)
+    except PermissionDenied:
+        return render(request, '403.html')
     except Exception:
-        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=500)
+        return JsonResponse({'status': 'error',
+                             'message': 'Invalid request'},
+                            status=500)
+
 
 @require_POST
 @login_required
@@ -195,43 +241,61 @@ def remove_saved_post(request, post_id):
         post = get_object_or_404(PostsModel, id=post_id)
 
         # Check if the post is saved by the user
-        saved_posts = SavedPost.objects.filter(user=request.user, post=post)
+        saved_posts = SavedPost.objects.filter(user=request.user,
+                                               post=post)
 
         if saved_posts.exists():
             # If the post is saved, remove it
             saved_posts.delete()
-            return JsonResponse({'status': 'Success', 'message': 'Post removed'}, status=200)
+            return JsonResponse({'status': 'Success',
+                                 'message': 'Post removed'},
+                                status=200)
 
         # If the post is not saved, return an error
-        return JsonResponse({'status': 'Error', 'message': 'Saved Post not found'}, status=400)
+        return JsonResponse({'status': 'Error',
+                             'message': 'Saved Post not found'},
+                            status=400)
+    except PermissionDenied:
+        return render(request, '403.html')
     except PostsModel.DoesNotExist:
-        return JsonResponse({'status': 'Error', 'message': 'Post not found'}, status=404)
+        return JsonResponse({'status': 'Error',
+                             'message': 'Post not found'},
+                            status=404)
     except Exception:
         # Return an error for non-POST requests
-        return JsonResponse({'status': 'Error', 'message': 'Invalid request'}, status=500)
+        return JsonResponse({'status': 'Error',
+                             'message': 'Invalid request'},
+                            status=500)
 
 
 def get_all_users_profiles(request):
     """
-    view for retrieving all users profiles and creating a list 
-    of username, id and profile_picture url for search bar in 
+    view for retrieving all users profiles and creating a list
+    of username, id and profile_picture url for search bar in
     the header section of site
     """
     try:
         # Ensure the request is an AJAX request
         if not request.is_ajax():
             raise PermissionDenied
-        user_profiles = UserProfile.objects.all().values('username', 'id', 'profile_picture')
+        user_profiles = UserProfile.objects.all().values('username',
+                                                         'id',
+                                                         'profile_picture')
         return JsonResponse(list(user_profiles), safe=False)
+    except PermissionDenied:
+        return render(request, '403.html')
     except (DatabaseError, OperationalError):
-        return JsonResponse({'status': 'Error', 'message': 'Database error'}, status=500)
+        return JsonResponse({'status': 'Error',
+                             'message': 'Database error'},
+                            status=500)
     except Exception:
-        return JsonResponse({'status': 'Error', 'message': 'Invalid request'}, status=500)
-
+        return JsonResponse({'status': 'Error',
+                             'message': 'Invalid request'},
+                            status=500)
 
 
 @require_POST
-@login_required  # Ensure that only authenticated users can access this endpoint
+@login_required
 def delete_user_account(request):
     """
     Deletes the user account of the authenticated user.
@@ -248,18 +312,28 @@ def delete_user_account(request):
             raise PermissionDenied
 
         # Retrieve the authenticated user
-        user = get_object_or_404(get_user_model(), id=request.user.id)
+        user = get_object_or_404(get_user_model(),
+                                 id=request.user.id)
 
         # Delete the user account
         user.delete()
 
-        return JsonResponse({'status': 'Success', 'message': 'Account Deleted'}, status=200)
+        return JsonResponse({'status': 'Success',
+                             'message': 'Account Deleted'},
+                            status=200)
     except get_user_model().DoesNotExist:
-        return JsonResponse({'status': 'Error', 'message': 'User not found'}, status=404)
+        return JsonResponse(
+            {'status': 'Error',
+             'message': 'User not found'},
+            status=404)
+    except PermissionDenied:
+        return render(request, '403.html')
     except Exception:
         # Handle exceptions and return an appropriate error response
-        return JsonResponse({'status': 'Error', 'message': 'Bad request'}, status=500)
-    
+        return JsonResponse({'status': 'Error',
+                             'message': 'Bad request'},
+                            status=500)
+
 
 def contact_view(request):
     """
@@ -278,21 +352,22 @@ def contact_view(request):
                 subject = form.cleaned_data['subject']
                 message = form.cleaned_data['message']
                 sender = form.cleaned_data['email']
-                recipients = [settings.DEFAULT_FROM_EMAIL]  # Add your contact email here
-
+                recipients = [settings.DEFAULT_FROM_EMAIL]
                 send_mail(subject, message, sender, recipients)
-                request.session['message'] = {'status': 'success', 'message': 'Message sent'}
+                request.session['message'] = {'status': 'success',
+                                              'message': 'Message sent'}
                 return redirect('contact')
         else:
             form = ContactForm()
 
             notification = request.session.get('message')
 
-            # Assign an empty dictionary to 'message' to avoid KeyError in the next request
+            # Assign an empty dictionary to 'message' to
+            # avoid KeyError in the next request
             request.session['message'] = None
 
             context = {'form': form, 'notification': notification}
             return render(request, 'user_profile/contact.html', context)
 
     except Exception:
-            return render(request, '500.html', status=500)
+        return render(request, '500.html', status=500)

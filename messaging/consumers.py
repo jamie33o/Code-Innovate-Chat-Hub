@@ -16,10 +16,11 @@ class MessageConsumer(AsyncWebsocketConsumer):
     """
     WebSocket consumer for handling real-time messaging.
 
-    This consumer class extends the AsyncWebsocketConsumer provided by the Channels library.
-    It is responsible for handling WebSocket connections, receiving and sending messages
+    This consumer class extends the AsyncWebsocketConsumer
+    provided by the Channels library.
+    It is responsible for handling WebSocket connections,
+    receiving and sending messages
     in real-time.
-    
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,17 +29,20 @@ class MessageConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         """
-        Called when the WebSocket is handshaking as part of the connection process.
+        Called when the WebSocket is handshaking as
+        part of the connection process.
         """
         self.room_group_name = self.get_room_group_name()
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_add(self.room_group_name,
+                                           self.channel_name)
         await self.accept()
 
     async def disconnect(self, code):
         """
         Called when the WebSocket closes for any reason.
         """
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_discard(self.room_group_name,
+                                               self.channel_name)
 
     async def messaging_notification(self, event):
         """
