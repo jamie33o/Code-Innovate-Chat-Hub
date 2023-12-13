@@ -5,23 +5,11 @@ let emojiUrl = null;
 let emojiPicker = new EmojiPicker();
 // boolean to check if user scrolled to top
 let scrolledToTop = false;
-// url to delete a post
-let deleteUrl = null;
-// outer html of the card class of post to be deleted
-let cardBeingDeleted = null;
-// small screen size breakpoint
-const SM_BRAKE_POINT = 575.98;
-// medium screen size breakpoint
-const MD_BRAKE_POINT = 991.98;
 // large screen size breakpoint
 const LG_BRAKE_POINT = 1111.98;
-// html form with csrf
-let deleteModelBody = null;
 let prevPageNum = null;
 let lastPageNum = null;
 let paginatedPostsUrl = null;
-let postId = null;
-
 
 
 ///////////////// event listeners ////////////////////////////
@@ -33,7 +21,7 @@ $('main').on('click', '.comments-link', function(event) {
     let url = $(this).attr('href');  // Use $(this) to access the clicked element
     ajaxRequest(url, 'GET', '#post-comments', null, function(response){
         $('#post-comments').html(response);
-    })
+    });
 
     if(window.innerWidth < LG_BRAKE_POINT){
         $('#channel-posts').removeClass('d-flex');
@@ -47,15 +35,15 @@ $('main').on('click', '.comments-close-btn', function() {
         $('#channel-posts').addClass('d-flex');
     }
     $('#post-comments').removeClass('d-flex');
-    $('#post-comments').html('')
+    $('#post-comments').html('');
 });
 
 // Click event for the x button to close posts 
 $('main').on('click', '.posts-close-btn', function() {
     $('#channel-posts').removeClass('d-flex');
     $('#channel-links-container').removeClass('d-none');
-    $('#nav-bar').removeClass('d-none')
-    $('header').removeClass('d-none')
+    $('#nav-bar').removeClass('d-none');
+    $('header').removeClass('d-none');
 });
 
 // event listener for the add user button to 
@@ -73,13 +61,13 @@ $('main').on('submit', '#add-user-form', function(event) {
 // event listener for the delete button on post and comments
 $(document).on('click', '.delete-btn', function() {
     // Get the URL of the image
-    let deleteUrl = $(this).data('delete-url')
+    let deleteUrl = $(this).data('delete-url');
     // get card to be deleted
     let cardBeingDeleted = $(this).closest('.card');
-    deleteObject(deleteUrl, cardBeingDeleted, 'post', '#channel-posts')
+    deleteObject(deleteUrl, cardBeingDeleted, 'post', '#channel-posts');
 
     if($(cardBeingDeleted)[0].className.includes('post')){
-        $('.comments-close-btn').click()
+        $('.comments-close-btn').click();
     }
 });
 
@@ -92,45 +80,45 @@ $('main').on('click', '.save-post-btn', function(event) {
     let savePostUrl = $(this).data('save-post-url');
 
     // Make an AJAX request to save the post
-    ajaxRequest(savePostUrl, 'POST', '#channel-posts')
+    ajaxRequest(savePostUrl, 'POST', '#channel-posts');
 });
 
 // listener for edit button on posts and comments dropdown menu
 $('main').on('click', '.edit-btn', function(event) {
     // cancel any other post that is in edit mode
     if($('.cancel-edit').length > 0){
-        $('.cancel-edit').click()
+        $('.cancel-edit').click();
     }else if($('.edit-post').length > 0 ){
-        $('.card.edit-post').removeClass('edit-post')
+        $('.card.edit-post').removeClass('edit-post');
     }
     // Find the closest ancestor with the class 'card'
     var card = $(this).closest('.card');
-    let carbody = card.find('.card-body').html()
+    let carbody = card.find('.card-body').html();
     let cardText = card.find('.card-text').html();
-    let cardImages = card.find('.post-images').html()
-    card.addClass('edit-post')
-    let postId = card.data("post-id")
-    let editPostUrl = card.data('post-url')
-    card.find('.card-body').html('')
+    let cardImages = card.find('.post-images').html();
+    card.addClass('edit-post');
+    let postId = card.data("post-id");
+    let editPostUrl = card.data('post-url');
+    card.find('.card-body').html('');
     // Append the HTML structure to the body
-    editPostUrl += postId + '/'
-    summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl)
+    editPostUrl += postId + '/';
+    summernoteEnhancerEditPost.init('.edit-post .card-body', editPostUrl);
 
-    summernoteEnhancerEditPost.addToSummernoteeditorField(cardText)
+    summernoteEnhancerEditPost.addToSummernoteeditorField(cardText);
 
     $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button class="cancel-edit">Cancel</button>');
     
     $('main').on('click', '.cancel-edit', function(event) {
-        event.preventDefault()
-        $('.edit-post .card-body').html(carbody)
-        $('.card.edit-post').removeClass('edit-post')
-    })
+        event.preventDefault();
+        $('.edit-post .card-body').html(carbody);
+        $('.card.edit-post').removeClass('edit-post');
+    });
 
     if(cardImages){
         $(cardImages).each(function () {
             let src = $(this).attr('src');
             if(src != undefined){
-                summernoteEnhancerEditPost.addimageToSummernote(src)
+                summernoteEnhancerEditPost.addimageToSummernote(src);
             }
         }); 
     }
@@ -139,22 +127,22 @@ $('main').on('click', '.edit-btn', function(event) {
 ////////////////////////// functions for posts ///////////////////////////////////
 
 $('main').on('click', '.load-new-posts', function(){
-    console.log(lastPageNum)
     let newPostsUrl = paginatedPostsUrl.replace(/0/g, lastPageNum);
-    $(this).addClass('d-none')
+    $(this).addClass('d-none');
     ajaxRequest(newPostsUrl, 'GET', '#channel-posts', null, function(response){
         // Update the div with the returned template
-        $('#posts-list').html(response)
-        autoScroll(true)
-    })
-})
+        $('#posts-list').html(response);
+        autoScroll(true);
+    });
+});
+
 /**
  * Load older posts when scrolling to the top of the page.
  * This function is triggered by a scroll event.
  */
 function loadOldPosts(){
-    paginatedPostsUrl = $('#posts-list').data('posts-url')
-    let $scrollElement = $(this)
+    paginatedPostsUrl = $('#posts-list').data('posts-url');
+    let $scrollElement = $(this);
 
     // Attach scroll event to load older posts when scrolling to the top
     if ($scrollElement.scrollTop() === 0 && !scrolledToTop && prevPageNum != "") {
@@ -162,9 +150,9 @@ function loadOldPosts(){
         let olderPostsUrl = paginatedPostsUrl.replace(/0/g, prevPageNum);
         ajaxRequest(olderPostsUrl, 'GET', '#channel-posts', null, function(response){
             // Update the div with the returned template
-            $('#posts-list').prepend(response)
-            autoScroll()
-        })
+            $('#posts-list').prepend(response);
+            autoScroll();
+        });
     }else if($scrollElement.scrollTop() > $scrollElement[0].scrollHeight - $scrollElement.innerHeight()-2 && lastPageNum != ""){
         let loadPostsBtn = $('.load-new-posts');
         loadPostsBtn.removeClass('d-none');
@@ -213,45 +201,45 @@ function changeGroup(){
     if ($('.card').length < 10 && prevPageNum != "") {
         let olderPostsUrl = $('#posts-list').data('posts-url').replace(/0/g, prevPageNum);
         ajaxRequest(olderPostsUrl, 'GET', '#channel-posts', null, function(response){
-            $('#posts-list').prepend(response)
-            autoScroll()
-        })
+            $('#posts-list').prepend(response);
+            autoScroll();
+        });
     }
     // Scroll to the bottom of the posts list
-    scrollTo()
-    $('#posts-list').scroll(loadOldPosts)
-    let summernoteUrl = $('#posts-list').data('summernote-url')
+    scrollTo();
+    $('#posts-list').scroll(loadOldPosts);
+    let summernoteUrl = $('#posts-list').data('summernote-url');
     // Initialize summernote enhancer class
-    summernoteEnhancerPosts.init('#channel-posts', summernoteUrl)
+    summernoteEnhancerPosts.init('#channel-posts', summernoteUrl);
      // Get the channel id using a Django template literal for use in the JS file and for the websocket
     let channel_id = $('#posts-list').data('channel-id'); 
     
     // Start the WebSocket for channel posts
-    startWebSocket('channel_posts', channel_id)
+    startWebSocket('channel_posts', channel_id);
 }
 
 ///////////////// Emoji functionality //////////////////////
 // event listener for the emoji button on posts and comments
 $('main').on('click', '.card-emoji-btn', function(event) {
-    event.preventDefault()
-    emojiUrl = $(this).data('emoji-url')
-    emojiPicker.addListener(event, emojiPickerCallback) 
-    emojiPicker.$panel.show() 
-})
+    event.preventDefault();
+    emojiUrl = $(this).data('emoji-url');
+    emojiPicker.addListener(event, emojiPickerCallback);
+    emojiPicker.$panel.show();
+});
 
 // event listener for emojis that are added to posts or comments
 $('main').on({
     click: function(event) {
         event.preventDefault();
-        const emojiCode = $(this).data('emoji-code')
+        const emojiCode = $(this).data('emoji-code');
         const url = $(this).data('emoji-url');
         const self = this;
         data = {
             emoji_colon_name: emojiCode,
-        }
+        };
          // Send a post request to Django with the emoji information
     ajaxRequest(url, 'POST', 'main', data, function(response){
-        updateEmoji(emojiCode, null, self, response, url)
+        updateEmoji(emojiCode, null, self, response, url);
     });
     },
     mouseenter: function() {
@@ -280,12 +268,13 @@ $('main').on({
 function emojiPickerCallback(emoji) {
     // Extract the emoji's colon name
     let emojiColonName = emoji.alt;
+
     let data = {
         emoji_colon_name: emojiColonName,
-    }
+    };
     // Send a post request to Django with the emoji information
     ajaxRequest(emojiUrl, 'POST', 'main', data, function(response){
-        updateEmoji(emojiColonName, emoji, null, response, emojiUrl)
+        updateEmoji(emojiColonName, emoji, null, response, emojiUrl);
     });
 }
 
@@ -301,12 +290,12 @@ function emojiPickerCallback(emoji) {
 function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
     let id = url.match(/\d+/g);
     let spanElement;
-    let emojiUlClass = `.emoji-list${id}`
-    const emojiClass = emojiColonName.slice(1,-1)
+    let emojiUlClass = `.emoji-list${id}`;
+    const emojiClass = emojiColonName.slice(1,-1);
     if(clickedBtn){
         spanElement = $(clickedBtn).find('span');
     }
-    let currentNumber = null
+    let currentNumber = null;
     // Handle success
     switch (response.status) {
         case "added":
@@ -368,6 +357,6 @@ function updateEmoji(emojiColonName, emojiImg, clickedBtn, response, url) {
 
             break;
         case "removed":
-                $(emojiUlClass).find(`.${emojiClass}`).parent().remove()
+                $(emojiUlClass).find(`.${emojiClass}`).parent().remove();
     }
 }

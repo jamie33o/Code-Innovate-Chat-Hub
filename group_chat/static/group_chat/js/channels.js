@@ -25,7 +25,6 @@ $('main').on('click', '.channel-link', function(event) {
 
     $(this).find('.unread-indicator').remove();
     $(this).addClass('active');
-    lastChannel = $(this);
     let url = event.currentTarget.href;
     ajaxRequest(url, 'Get', '#channel-posts', null, function(response){
         $('#channel-posts').html(response);
