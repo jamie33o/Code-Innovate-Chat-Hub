@@ -27,10 +27,8 @@ class EmojiPicker {
         this.icons = {};
         this.reverseIcons = {};
         this.$panel = null;
-        this.emojiClickedCallback = null; //  callback function to send emoji to summernote.js
+        this.emojiClickedCallback = null; 
         this.emojiSource = $('body').data('emoji-img-url');
-
-        // Initialize the emoji panel
     }
     /**
      * Adds event listeners for emoji selection.
@@ -42,9 +40,9 @@ class EmojiPicker {
         if(this.$panel == null){
             this.emojiPanel();
         }
-        this.setContainerPos(event)
+        this.setContainerPos(event);
 
-        this.emojiClickedCallback = emojiClickedCallback
+        this.emojiClickedCallback = emojiClickedCallback;
         const KEY_ESC = 27;
         const KEY_TAB = 9;
 
@@ -88,11 +86,11 @@ class EmojiPicker {
             });
             self.updateEmojisList(index);
         });
-        $(document).off('click', `.emoji-menu .emoji-items a`)
+        $(document).off('click', `.emoji-menu .emoji-items a`);
         
         $(document).on('click', `.close-modal`, function () {
-            self.$panel.hide()
-        })
+            self.$panel.hide();
+        });
 
         $(document).on('click', `.emoji-menu .emoji-items a`, function () {
             const emoji = $('.label', $(this)).text();

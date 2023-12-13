@@ -31,7 +31,7 @@ class SummernoteEnhancer {
     this.divToLoadIn = null;
     this.$sn = null;  // Initialize as null
     this.snSubmitForm = null;
-    this.djangoUrl = null
+    this.djangoUrl = null;
     this.snForm = null;
     this.divsection = null;
     this.$storeText = null;
@@ -50,11 +50,11 @@ class SummernoteEnhancer {
    */
   init(divToLoadIn, djangoUrl) {
     let self = this;
-    this.divToLoadIn = divToLoadIn
-    this.djangoUrl = djangoUrl
-    this.emojiPicker = new EmojiPicker()
+    this.divToLoadIn = divToLoadIn;
+    this.djangoUrl = djangoUrl;
+    this.emojiPicker = new EmojiPicker();
 
-    this.createForm()
+    this.createForm();
 
     this.$sn = $(`${this.divToLoadIn} textarea`);  
 
@@ -77,12 +77,12 @@ class SummernoteEnhancer {
                   if (($snText.slice(-1) === '@' || $snText.slice(-1) === '#')&& ($snText.slice(-2, -1) === ' ' || $snText.slice(-2, -1) === ';')){
                       self.tagUser($snText.slice(-1));
                   }else{
-                    self.atRemoved = self.$sn.summernote('code')
+                    self.atRemoved = self.$sn.summernote('code');
                   }
                   
 
                   if(e.target.lastChild){
-                    self.parentDiv = $(e.target.lastChild.classList)                
+                    self.parentDiv = $(e.target.lastChild.classList);              
                   }
               }); 
           
@@ -98,9 +98,9 @@ class SummernoteEnhancer {
 
 
     // summernote submit button
-    this.snSubmitForm = $(`${this.divToLoadIn} .sn-submit-btn`)
+    this.snSubmitForm = $(`${this.divToLoadIn} .sn-submit-btn`);
     // summernote form 
-    this.snForm = $(`${this.divToLoadIn} .sn-form`)
+    this.snForm = $(`${this.divToLoadIn} .sn-form`);
     // submit btn listener
     this.snSubmitForm.click((event) => {
       event.preventDefault();
@@ -124,13 +124,13 @@ class SummernoteEnhancer {
     
       let plainText = tempDiv.text().trim();
       if (!plainText) {
-        displayMessage({'status': 'summernote-error'})
+        displayMessage({'status': 'summernote-error'});
       }else{
         this.submitForm(self.djangoUrl);
       }
   });
 
-    this.divsection = $(this.divToLoadIn)
+    this.divsection = $(this.divToLoadIn);
 
     //@ symbol event listener
     $(`${this.divToLoadIn} .at-symbol`).click(() => {
@@ -144,38 +144,38 @@ class SummernoteEnhancer {
     });
 
     $(`${this.divToLoadIn} .note-resizebar`).on('mousedown',() => {
-      this.resizeEditor()
+      this.resizeEditor();
     });
 
     $(`${this.divToLoadIn} .note-toolbar button`).on('click',(e) => {
-      e.preventDefault()
+      e.preventDefault();
       $(e.currentTarget).addClass('btn-info');
-    })
+    });
 
-    $(`${this.divToLoadIn} .note-toolbar .note-misc button:first`).off().addClass('codeview')
+    $(`${this.divToLoadIn} .note-toolbar .note-misc button:first`).off().addClass('codeview');
 
     $(`${this.divToLoadIn} .codeview`).on('click', function(e) {
-      e.preventDefault()
+      e.preventDefault();
       $(this).toggleClass('button-color');
 
-      let txt = self.$sn.summernote('code')
-      let txtContent = $(txt).text()
-      let pElement = null
+      let txt = self.$sn.summernote('code');
+      let txtContent = $(txt).text();
+      let pElement = null;
       if(self.parentDiv[0] === 'codeview-div'){
-        pElement = $(`<p class="p-1"></p>`)[0]
+        pElement = $(`<p class="p-1"></p>`)[0];
         self.$sn.summernote('editor.insertNode', pElement);
-        self.parentDiv = ''
+        self.parentDiv = '';
       }else{
         if(txtContent.length === 0){
-          pElement = $(`<p class="codeview-div p-2">${txtContent}</p>`)[0]
+          pElement = $(`<p class="codeview-div p-2">${txtContent}</p>`)[0];
           self.$sn.summernote(`code`, pElement );
         }else{
-          pElement = $(`<p class="codeview-div p-2"></p>`)[0]
+          pElement = $(`<p class="codeview-div p-2"></p>`)[0];
           self.$sn.summernote(`editor.insertNode`, pElement );
         }
       }
-      self.$sn.summernote(`focus`)
-  })
+      self.$sn.summernote(`focus`);
+  });
 
     //overlay event listener to close modals
     $(`.hide-modal`).click(() => {
@@ -186,10 +186,10 @@ class SummernoteEnhancer {
 
     // Add this code to bind the click event of existing button
     $(`${this.divToLoadIn} .emoji-popup-btn`).on('click', function (event) {      
-      $(`.hide-modal`).show()
+      $(`.hide-modal`).show();
         self.emojiPicker.addListener(event, function(emoji){
         self.$sn.summernote('editor.insertNode', emoji);
-        $(`.hide-modal`).hide()
+        $(`.hide-modal`).hide();
       });
       self.emojiPicker.$panel.show();
     });
@@ -204,7 +204,7 @@ class SummernoteEnhancer {
              // Remove the element at the corresponding index
              self.uploadImageUrls.splice(index, 1);
          }
-      })
+      });
         // Remove the parent element
       $(this).parent().remove();
     });
@@ -215,17 +215,17 @@ class SummernoteEnhancer {
    * Tags a user in the Summernote editor.
    */
   tagUser(symbol) {
-    let self = this
+    let self = this;
       if(symbol === '@'){
-        let profileTags = []
-        let userProfileUrl = $('body').data('user-profiles')
+        let profileTags = [];
+        let userProfileUrl = $('body').data('user-profiles');
   
         ajaxRequest(userProfileUrl, 'GET', 'body', null, function(response){
           response.forEach(function(profile) {
             profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
           });
           autoComplete(self.$sn.closest('form'), profileTags, function(tag){
-            let profileUrl = $('body').data('view-profile-url').replace('0', tag.id)
+            let profileUrl = $('body').data('view-profile-url').replace('0', tag.id);
   
             const tagLink = $('<a>', {
               'data-profile-url': profileUrl,
@@ -238,15 +238,15 @@ class SummernoteEnhancer {
   
           $(self.atRemoved).each(function(){
             self.$sn.summernote(`editor.insertNode`, this);
-          })
+          });
             
           self.$sn.summernote(`editor.insertNode`, tagLink[0]);
         });
-      })
+      });
 
       }else if (symbol === '#'){
-        let channelTags = []
-        let allChannelsUrl = $('body').data('all-channels')
+        let channelTags = [];
+        let allChannelsUrl = $('body').data('all-channels');
 
   
         ajaxRequest(allChannelsUrl, 'GET', 'body', null, function(response){
@@ -265,15 +265,12 @@ class SummernoteEnhancer {
     
             $(self.atRemoved).each(function(){
               self.$sn.summernote(`editor.insertNode`, this);
-            })
+            });
               
             self.$sn.summernote(`editor.insertNode`, tagLink[0]);
         });
-      })
-        
-      }
-      
-    
+      });
+     }
   }
 
   /**
@@ -297,11 +294,11 @@ class SummernoteEnhancer {
 
     ajaxRequest(djangoUrl, 'POST', 'body', formData, function(response){
       self.$sn.summernote('code', "");
-      $(`${self.divToLoadIn} div.note-editing-area .sn-img`).remove()
+      $(`${self.divToLoadIn} div.note-editing-area .sn-img`).remove();
 
-    })
+    });
   
-    self.uploadImageUrls = []
+    self.uploadImageUrls = [];
 
   }
 
@@ -320,7 +317,7 @@ class SummernoteEnhancer {
    * @param {string} src - The source URL of the image.
    */
   addimageToSummernote(src){
-    this.uploadImageUrls.push(src)
+    this.uploadImageUrls.push(src);
     // Append the image and icon to the specified container
     $(`${this.divToLoadIn} div.note-editing-area`).append(`
       <div class="sn-img">
@@ -334,7 +331,7 @@ class SummernoteEnhancer {
    * Adjusts the height of the editor.
    */
   resizeEditor() {
-      const fullScreen = 400
+      const fullScreen = 400;
       if($('.note-editable').height() < fullScreen-30){
         $('.note-editable').css({height:` ${fullScreen}px`});
       }else {
@@ -351,14 +348,14 @@ class SummernoteEnhancer {
    */
   uploadImage(file, editor, welEditable) {
       // Create a FormData object to send the file to the server
-      let uploadUrl = $('body').data('upload-image')
+      let uploadUrl = $('body').data('upload-image');
       var formData = new FormData();
       formData.append("file", file);
-      let self = this
+      let self = this;
 
       ajaxRequest(uploadUrl, 'POST', 'body', formData, function(response){
-        self.addimageToSummernote(response.url)         
-      })
+        self.addimageToSummernote(response.url);
+      });
   }
   /**
    * Creates the structure of the Summernote editor form.
@@ -405,9 +402,9 @@ class SummernoteEnhancer {
       `;
       let $htmlStructure = $(htmlStructure);
   
-    $(this.divToLoadIn).append($htmlStructure)  
+    $(this.divToLoadIn).append($htmlStructure);
        if(window.innerWidth < 575.98){ 
-        $('.add-image').removeClass("d-none")
+        $('.add-image').removeClass("d-none");
        }
     }
 
