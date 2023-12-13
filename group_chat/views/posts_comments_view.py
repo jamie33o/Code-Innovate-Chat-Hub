@@ -203,12 +203,11 @@ class PostsView(BaseChatView):
         except PermissionDenied:
             return render(request, '403.html')
         except Exception:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error \
-                                          retrieving posts, \
-                                          Please contact us!!!'
-                                          }
-            return redirect('contact')
+           return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error \
+                                    retrieving posts, \
+                                    Please contact us!!!'},
+                                status=500)
 
     def post(self, request, channel_id, post_id=None):
         """
@@ -285,11 +284,10 @@ class PostsView(BaseChatView):
         except PermissionDenied:
             return render(request, '403.html')
         except Exception:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error sending post,\
-                    Please contact us!!!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error sending post,\
+                                 Please contact us!!!'},
+                                status=500)
 
     def get_channel(self, channel_id):
         """
@@ -458,11 +456,10 @@ class CommentsView(BaseChatView):
                                  'message': 'Post does not exist'},
                                 status=404)
         except Exception:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error retrieving comments,\
-                    Please contact us!!!'}
-            return redirect('contact')
+              return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error retrieving comments,\
+                                 Please contact us!!!'},
+                                status=500)
 
     def post(self, request, post_id, comment_id=None):
         """
@@ -533,8 +530,7 @@ class CommentsView(BaseChatView):
                                  'message': 'Comment does not exist'},
                                 status=404)
         except Exception:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error adding your comment,\
-                            Please contact us!!!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error adding your comment,\
+                                 Please contact us!!!'},
+                                status=500)

@@ -99,95 +99,94 @@ function displayMessage(response, divClass){
  */
 function websocketInit(socket) {
         
-        // Open event listener
-        socket.addEventListener('open', function (event) {
-            console.log(event);
-        });
+    // Open event listener
+    socket.addEventListener('open', function (event) {
+        console.log(event);
+    });
 
-          // Message event listener
-          socket.addEventListener('message', function (event) {
-             // when a new message is broadcast, this websocket will receive it
-            // and create and add the post/comment/message/notification to the list
-            const data = JSON.parse(event.data);
-            if (data.type === 'post_notification') {
-                if (data.html) {
-                    if(data.edit_id){
-                        $(`.edit-post`).replaceWith(data.html);
-                        // if its not the user that created it then remove dropdown menu on the edited post
-                        if(data.created_by != currentUser){
-                            $(`.card[data-post-id=${data.edit_id}] .dropdown`).addClass('d-none');
-                        }
-                    }else{
-                        $('#posts-list').append(data.html);
-                        
-                        if(data.created_by === currentUser){
-                            // auto scroll if its the user that created it
-                            autoScroll(true);
-                        }else {
-                            // otherwise display message to user that there is a new post
-                            displayMessage({status: 'Success', message : data.message}, '#channel-posts');
-                             // if its not the user that created it then hide dropdown menu on the edited post
-                            $('#posts-list .card:last .dropdown').addClass('d-none');
-                        } 
-                    }                
-                }            
-            } else if (data.type === 'comment_notification') {
-                if (data.html) {
-                    if(data.edit_id){
-                        $(`.edit-post`).replaceWith(data.html);
-                        // if its the user that created it then hide dropdown menu on comments
-                        if(data.created_by != currentUser){
-                            $(`.comment${data.edit_id} .dropdown`).remove();
-                        }
-                    }else{
-                        $('.comments-list').append(data.html);
-                        
-                        if(data.created_by === currentUser){
-                            autoScroll(true);
-                        }else {
-                            displayMessage({status: 'Success', message : data.message}, '.comments-list');
-                            $('.comment${data.edit_id} .dropdown').remove();
-                        }
+        // Message event listener
+        socket.addEventListener('message', function (event) {
+            // when a new message is broadcast, this websocket will receive it
+        // and create and add the post/comment/message/notification to the list
+        const data = JSON.parse(event.data);
+        if (data.type === 'post_notification') {
+            if (data.html) {
+                if(data.edit_id){
+                    $(`.edit-post`).replaceWith(data.html);
+                    // if its not the user that created it then remove dropdown menu on the edited post
+                    if(data.created_by != currentUser){
+                        $(`.card[data-post-id=${data.edit_id}] .dropdown`).addClass('d-none');
                     }
-                }
-            } else if (data.type === 'messaging_notification') {
-                if (data.html) {
-                    let msgId = $(data.html).data('msg-id');
-                    if(data.edit_id){
-                        $(`.edit-post`).replaceWith(data.html);
-                    }else{
-                        $('#message-list').append(data.html);
-                    }
-                
-                    // if its the user that created it add the class my-message
+                }else{
+                    $('#posts-list').append(data.html);
+                    
                     if(data.created_by === currentUser){
-                        $('#message-list .new-message').removeClass('new-message').addClass('my-message');
-                    }else{
-                        $('#message-list .new-message').removeClass('new-message');
-                        $(`[data-msg-id=${msgId}] .dropdown`).remove();
+                        // auto scroll if its the user that created it
+                        autoScroll(true);
+                    }else {
+                        // otherwise display message to user that there is a new post
+                        displayMessage({status: 'Success', message : data.message}, '#channel-posts');
+                            // if its not the user that created it then hide dropdown menu on the edited post
+                        $('#posts-list .card:last .dropdown').addClass('d-none');
+                    } 
+                }                
+            }            
+        } else if (data.type === 'comment_notification') {
+            if (data.html) {
+                if(data.edit_id){
+                    $(`.edit-post`).replaceWith(data.html);
+                    // if its the user that created it then hide dropdown menu on comments
+                    if(data.created_by != currentUser){
+                        $(`.comment${data.edit_id} .dropdown`).remove();
+                    }
+                }else{
+                    $('.comments-list').append(data.html);
+                    
+                    if(data.created_by === currentUser){
+                        autoScroll(true);
+                    }else {
+                        displayMessage({status: 'Success', message : data.message}, '.comments-list');
+                        $('.comment${data.edit_id} .dropdown').remove();
                     }
                 }
-            } else if (data.type === 'global_consumer') {
-                if(data.created_by != currentUser){
-                    displayMessage(data, 'body');
-                }
-            }else {
-                    console.error('Unknown notification type:', data.type);
+            }
+        } else if (data.type === 'messaging_notification') {
+            if (data.html) {
+                let msgId = $(data.html).data('msg-id');
+                if(data.edit_id){
+                    $(`.edit-post`).replaceWith(data.html);
+                }else{
+                    $('#message-list').append(data.html);
                 }
             
-        });
-
-        socket.addEventListener('error', function(event) {
-            setTimeout(() => websocketInit(this), 1000);
-        });
-
-        socket.addEventListener('close', function(event) {
-            // Attempt to reconnect after a delay if the socket ends due to error 
-            if(!event.wasClean){
-                setTimeout(() => websocketInit(this), 1000);
+                // if its the user that created it add the class my-message
+                if(data.created_by === currentUser){
+                    $('#message-list .new-message').removeClass('new-message').addClass('my-message');
+                }else{
+                    $('#message-list .new-message').removeClass('new-message');
+                    $(`[data-msg-id=${msgId}] .dropdown`).remove();
+                }
             }
-        });
+        } else if (data.type === 'global_consumer') {
+            if(data.created_by != currentUser){
+                displayMessage(data, 'body');
+            }
+        }else {
+                console.error('Unknown notification type:', data.type);
+            }
+        
+    });
 
+    socket.addEventListener('error', function(event) {
+        setTimeout(() => websocketInit(this), 1000);
+    });
+
+    socket.addEventListener('close', function(event) {
+        // Attempt to reconnect after a delay if the socket ends due to error 
+        if(!event.wasClean){
+            setTimeout(() => websocketInit(this), 1000);
+        }
+    });
 }
 
 /**
@@ -215,7 +214,12 @@ function ajaxRequest(url, type, divClass, data, callBackFunction) {
             }
         },
         error: function(error) {
-            displayMessage({status:'error', message: error.statusText}, divClass);
+            console.log(error)
+            if(error.status === 500){
+                window.location.href = $('body').data('contact-url').replace('0', error.responseJSON.message)
+            }else{
+                displayMessage(response, divClass);     
+            }
         }
     };
     if (data instanceof FormData) {

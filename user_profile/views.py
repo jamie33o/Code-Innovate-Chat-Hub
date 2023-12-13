@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db import DatabaseError, OperationalError
 from group_chat.models import SavedPost, PostsModel
@@ -50,24 +51,15 @@ class UserProfileView(View):
                 'posts': posts,
             }
 
-            if 'message' in request.session and request.session['message']:
-                context['notification'] = request.session.pop('message', None)
-            request.session['message'] = None
             return render(request, self.template_name, context)
         except UserProfile.DoesNotExist:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error your profile does not exist,\
-                            contact us or create a new profile'
-                }
-            return redirect('contact')
+            return redirect('contact',
+                            'Unexpected error your profile does not exist,\
+                            contact us or create a new profile')
         except Exception:
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected error:\
-                            Please contact us!'
-                }
-            return redirect('contact')
+            return redirect('contact',
+                            'Unexpected error your profile\
+                              does not exist, contact us or create a new profile')
 
     def post(self, request):
         """
@@ -84,27 +76,16 @@ class UserProfileView(View):
 
             if edit_profile_form.is_valid():
                 edit_profile_form.save()
-
-                request.session['message'] = {
-                    'status': 'success',
-                    'message': 'Updated successfully'
-                }
-
+                
+                messages.success(request, 'Updated successfully')
                 return redirect('user_profile')
-            request.session['message'] = {
-                'status': 'Error',
-                'message': f'{edit_profile_form.error}'
-            }
 
+            messages.error(request, f'{edit_profile_form.error}')
             return redirect('user_profile')
         except Exception:
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected error \
-                            updating your profile! Please Contact Us!!!'
-            }
-
-            return redirect('contact')
+            return redirect('contact',
+                            'There has been an Unexpected error \
+                            updating your profile! Please Contact Us!!!')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -139,13 +120,12 @@ class ViewUserProfile(View):
                 status=404
             )
         except Exception:
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected error trying \
-                            to view the users profile! Please Contact Us!!!'
-            }
-
-            return redirect('contact')
+            return JsonResponse(
+                {'status': 500,
+                 'message': 'Unexpected error retrieving \
+                    user profile, Please Contact us!!!'},
+                status=500
+            )
 
 
 @require_POST
@@ -181,8 +161,9 @@ def update_profile_image(request):
         return render(request, '403.html')
     except Exception:
         return JsonResponse(
-            {'status': 'error',
-                'message': 'Error updating profile picture'},
+            {'status': 500,
+                'message': 'Unexpected Error updating \
+                profile picture, Please contact us'},
             status=500)
 
 
@@ -216,8 +197,9 @@ def update_status(request):
     except PermissionDenied:
         return render(request, '403.html')
     except Exception:
-        return JsonResponse({'status': 'error',
-                             'message': 'Invalid request'},
+        return JsonResponse({'status': 500,
+                             'message': 'Unexpected error updating\
+                             status, Please contact us!!!'},
                             status=500)
 
 
@@ -263,8 +245,9 @@ def remove_saved_post(request, post_id):
                             status=404)
     except Exception:
         # Return an error for non-POST requests
-        return JsonResponse({'status': 'Error',
-                             'message': 'Invalid request'},
+        return JsonResponse({'status': 500,
+                             'message': 'Unexpected erro removing\
+                             saved post, Please contact us'},
                             status=500)
 
 
@@ -289,8 +272,9 @@ def get_all_users_profiles(request):
                              'message': 'Database error'},
                             status=500)
     except Exception:
-        return JsonResponse({'status': 'Error',
-                             'message': 'Invalid request'},
+        return JsonResponse({'status': 500,
+                             'message': 'Unexpected error retrieving\
+                             user profiles, Please contact us!!!'},
                             status=500)
 
 
@@ -330,12 +314,12 @@ def delete_user_account(request):
         return render(request, '403.html')
     except Exception:
         # Handle exceptions and return an appropriate error response
-        return JsonResponse({'status': 'Error',
-                             'message': 'Bad request'},
+        return JsonResponse({'status': 500,
+                             'message': 'Error: deleting your account, please contact us!!!'},
                             status=500)
 
 
-def contact_view(request):
+def contact_view(request, error=None):
     """
     View for handling contact form submissions.
 
@@ -360,13 +344,12 @@ def contact_view(request):
         else:
             form = ContactForm()
 
-            notification = request.session.get('message')
-
             # Assign an empty dictionary to 'message' to
             # avoid KeyError in the next request
-            request.session['message'] = None
-
-            context = {'form': form, 'notification': notification}
+            
+            context = {'form': form}
+            if error:
+                context['message'] = error
             return render(request, 'user_profile/contact.html', context)
 
     except Exception:

@@ -117,12 +117,9 @@ class InboxView(View):
                  'message': 'The Message does not exist!!'},
                 status=404)
         except Exception:
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected error\
-                            retrieving messaging inbox, Please contact us!'
-                }
-            return redirect('contact')
+            return redirect('contact',
+                           'There has been an Unexpected error\
+                            retrieving messaging inbox, Please contact us!')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -182,11 +179,10 @@ class MessageListView(View):
         except PermissionDenied:
             return render(request, '403.html')
         except Exception:
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected error\
-                            retrieving messages, Please contact us!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'There has been an Unexpected error\
+                                 retrieving messages, Please contact us!'},
+                                 status=500)
 
     def post(self, request, conversation_id=None, message_id=None):
         """
@@ -248,7 +244,7 @@ class MessageListView(View):
                 return JsonResponse({'status': 'success'}, status=200)
             return JsonResponse(
                 {'status': 'error',
-                 'message': 'Error broadcasting message Please try again!!'},
+                 'message': 'Error broadcasting message, Please Contact us!!'},
                 status=500)
         except PermissionDenied:
             return render(request, '403.html')
@@ -263,11 +259,10 @@ class MessageListView(View):
                  'message': 'The Message does not exist!!'},
                 status=404)
         except Exception:
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected error\
-                            sending your message, Please contact us!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'There has been an Unexpected error\
+                                 sending your message, Please contact us!'},
+                                status=500)
 
     def broadcast_message(self, request,
                           instance_html, conversation_id, edit_id):
@@ -385,12 +380,10 @@ class MessageDeleteView(View):
                                  'message': 'Message does not exist!'},
                                 status=404)
         except Exception:
-            # Handle exceptions
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected error\
-                            deleting the message, Please contact us!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'There has been an Unexpected error\
+                                 deleting the message, Please contact us!'},
+                                status=500)
 
 
 class ConversationDeleteView(View):
@@ -429,11 +422,11 @@ class ConversationDeleteView(View):
                                 status=404)
         except Exception:
             # Handle exceptions
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected error\
-                            deleting conversation, Please contact us!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'There has been an Unexpected error\
+                                 deleting conversation, Please contact us!'},
+                                status=500)
+        
 
 
 class ImageUploadView(View):
@@ -481,11 +474,10 @@ class ImageUploadView(View):
         except PermissionDenied:
             return render(request, '403.html')
         except Exception:
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected \
-                            error adding your image, Please contact us!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'There has been an Unexpected \
+                                  error adding your image, Please contact us!'},
+                                status=500)
 
 
 class AddOrUpdateEmojiView(View):
@@ -545,8 +537,7 @@ class AddOrUpdateEmojiView(View):
             return JsonResponse({'status': 'Error',
                                 'message': 'Message not found'}, status=404)
         except Exception:
-            request.session['message'] = {
-                'status': 'error',
-                'message': 'There has been an Unexpected \
-                            error updating the emoji, Please contact us!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'There has been an Unexpected \
+                                 error updating the emoji, Please contact us!'},
+                                status=500)

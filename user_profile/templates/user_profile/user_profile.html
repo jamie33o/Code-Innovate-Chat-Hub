@@ -68,9 +68,10 @@
              </form>
             `;
 
-            {% if notification %}
-                 displayMessage({ status: '{{ notification.status }}', message: '{{ notification.message }}'}, 'body')
-            {% endif %}
+        {% for message in messages %}
+            displayMessage({'status': '{{ message.tags }}', 'message': '{{ message }}'}, 'body')
+        {% endfor %}
+
     </script>
 
 {% endblock %}

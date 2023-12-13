@@ -69,12 +69,9 @@ class ChannelsView(View):
             return render(request, self.template_name, context)
 
         except Exception:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error retrieving homepage,\
-                                              Please contact us!!!'
-            }
-            return redirect('contact')
+            return redirect('contact',
+                             'Unexpected error retrieving homepage,\
+                            Please contact us!!!')
 
     def get_unread_messages(self, request):
         """
@@ -116,11 +113,7 @@ class ChannelsView(View):
             return messages_by_conversation
 
         except Exception:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error retrieving unread messages,\
-                            Please contact us!!!'}
-            return redirect('contact')
+            return None
 
 
 @method_decorator(login_required, name='dispatch')
@@ -169,12 +162,11 @@ class AddUserToChannelView(View):
         except PermissionDenied:
             return render(request, '403.html')
         except Exception:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error adding you to channel,\
-                            Please contact us!!!'}
+            return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error adding you to channel,\
+                                 Please contact us!!!'},
+                                status=500)
 
-            return redirect('contact')
 
 
 def get_all_channels(request):
@@ -209,8 +201,7 @@ def get_all_channels(request):
     except PermissionDenied:
         return render(request, '403.html')
     except Exception:
-        request.session['message'] = {
-            'status': 'Error',
-            'message': 'Unexpected error your profile does not exist,\
-                        contact us or create a new profile'}
-        return redirect('contact')
+        return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error retrieving channels,\
+                                 Please contact us!!!'},
+                                status=500)

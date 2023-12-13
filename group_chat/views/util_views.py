@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views import View
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import DeleteView
 from django.core.exceptions import PermissionDenied
 from django.apps import apps
@@ -51,11 +51,11 @@ class ImageUploadView(View):
         except PermissionDenied:
             return render(request, '403.html')
         except Exception:
-            request.session['message'] = {'status': 'Error',
-                                          'message': 'Unexpected error\
-                                           occurred while uploading image, \
-                                            Please contact us!!!'}
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error\
+                                 occurred while uploading image, \
+                                 Please contact us!!!'},
+                                status=500)
 
 
 class AddOrUpdateEmojiView(View):
@@ -113,8 +113,10 @@ class AddOrUpdateEmojiView(View):
             instance.users_who_incremented.add(user)
             return JsonResponse({'status': 'incremented'})
         except Exception:
-            return JsonResponse({'status': 'Error',
-                                 'message': 'Unexpected error updating emoji'}, status=500)
+            return JsonResponse({'status': 500,
+                                'message': 'Unexpected error occurred \
+                                while updating emoji, Please contact us!!!'},
+                            status=500)
 
 
 class GenericObjectDeleteView(DeleteView):
@@ -139,10 +141,10 @@ class GenericObjectDeleteView(DeleteView):
             obj = get_object_or_404(model, pk=obj_pk)
 
             return obj
-        except (LookupError, ValueError, KeyError) as e:
+        except (LookupError, ValueError, KeyError):
             return JsonResponse(
                 {'status': 'error',
-                 'message': f'Error retrieving object: {str(e)}'})
+                 'message': f'Error retrieving object'})
 
     def delete(self, request, *args, **kwargs):
         """
@@ -165,12 +167,10 @@ class GenericObjectDeleteView(DeleteView):
             return JsonResponse({'status': 'success',
                                  'message': f'{model_name[:-6]} deleted'})
         except Exception:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error occurred while deleting object,\
-                Please contact us!!!'
-            }
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error occurred while deleting object,\
+                                 Please contact us!!!'},
+                                status=500)
 
     def get_context_data(self, **kwargs):
         """
@@ -225,9 +225,7 @@ class SavePostView(View):
         except PermissionDenied:
             return render(request, '403.html')
         except Exception:
-            request.session['message'] = {
-                'status': 'Error',
-                'message': 'Unexpected error occurred while saving post,\
-                Please contact us!!!'
-            }
-            return redirect('contact')
+            return JsonResponse({'status': 500,
+                                 'message': 'Unexpected error occurred while saving post,\
+                                 Please contact us!!!'},
+                                status=500)
