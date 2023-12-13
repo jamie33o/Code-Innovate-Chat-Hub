@@ -4,10 +4,7 @@
 
 <!-- Include CSS links for the groupchat app -->
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'group_chat/css/summernote.css' %}"> 
-    <link href="{% static 'group_chat/css/emoji.css' %}" rel="stylesheet">
     <link href="{% static 'messaging/css/messaging.css' %}" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -88,10 +85,6 @@
 {% endblock %}
 
 {% block postloadjs %}
-    <!-- Include group chat app scripts  -->
-    <script src="{% static 'group_chat/js/config.js' %}"></script>
-    <script src="{% static 'group_chat/js/tam-emoji.js' %}"></script>
-    <script src="{% static 'group_chat/js/summernote.js' %}"></script>
     <script src="{% static 'messaging/js/messaging.js' %}"></script>
 
     <script>     

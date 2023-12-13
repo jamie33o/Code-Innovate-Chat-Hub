@@ -4,8 +4,6 @@
 <!-- groupchat app css links -->
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'group_chat/css/home.css' %}">
-    <link rel="stylesheet" href="{% static 'group_chat/css/summernote.css' %}"> 
-    <link href="{% static 'group_chat/css/emoji.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -75,9 +73,6 @@
 
 {% block postloadjs %}
     <!-- group chat app scripts  -->
-    <script src="{% static 'group_chat/js/config.js' %}"></script>
-    <script src="{% static 'group_chat/js/tam-emoji.js' %}"></script>
-    <script src="{% static 'group_chat/js/summernote.js' %}"></script>
     <script src="{% static 'group_chat/js/postsAndComments.js' %}"></script>
     <script src="{% static 'group_chat/js/channels.js' %}"></script>
 
@@ -115,9 +110,6 @@
         {% else %}
             $(`[data-channel-id={{channel_id}}] .channel-link`).click();
         {% endif %}
-        //url for emojis spritesheet
-        EmojiPicker.emojiSource = "{% static 'group_chat/tam-emoji/img' %}";
-
     });
 
     </script>
