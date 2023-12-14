@@ -344,14 +344,14 @@
 }
 
 .message-info > h5 {
-  color: #a2b8c5;
+  color: var(--dark-grey);
   font-size: 12px;
   width: fit-content;
   padding: 0;
 }
 
 .message-info > h4 {
-  color: #65addd;
+  color: var(--dark-grey);
   width: fit-content;
   padding-right: 10px;
   font-size: 1.2em;
@@ -426,6 +426,16 @@
 
 }
 
+.message-text > p > a {
+  background-color: var(--background);
+  border-radius: 10px;
+  padding: 3px 5px;
+  color: #0068d9;
+}
+
+.message-text > p > a:hover {
+  text-decoration: underline;
+}
 /* ///////////////////////////// incoming messages ///////////////////////// */
 
 .message .message-text {
@@ -433,7 +443,9 @@
   padding: 3px 13px 10px 13px;
   font-size: 14px;
   word-wrap: break-word;
+  color: var(--dark-grey);
 }
+
 
 .message .message-body {
   position: relative;

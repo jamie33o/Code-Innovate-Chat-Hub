@@ -5,6 +5,7 @@
   <head>
 
     {% block meta %}
+        <meta name="description" content="Code Institute: Learn coding skills with our online courses. Join a vibrant community of learners. Start your coding journey today">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,6 +15,7 @@
     {% endblock %}
 
     {% block corecss %}
+        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}" >
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css">
@@ -45,7 +47,7 @@
     <title>Code Institute Chat Hub {% block extra_title %}{% endblock %}</title>
   </head>
   <body data-csrf-token="{{ csrf_token }}" 
-        data-emoji-img-url="{% static 'group_chat/tam-emoji/img' %}"
+        data-emoji-img-url="{% static 'emoji-sprite-sheets/img' %}"
         data-user-profiles="{% url 'get_all_user_profiles' %}"
         data-all-channels="{% url 'get_all_channels' %}"
         data-view-profile-url="{% url 'view_user_profile' 0 %}"
@@ -88,11 +90,10 @@
         {% endblock %}
     </footer>
     <script>
-
-         userId = {{ request.user.id }};
-         currentUser = '{{ user }}';
-
-        
+        {% if request.user.is_authenticated %}
+            userId = '{{ request.user.id }}';
+            currentUser = '{{ user }}';
+        {% endif %}
     </script>
     {% block postloadjs %}
     

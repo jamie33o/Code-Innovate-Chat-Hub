@@ -21,8 +21,8 @@
                 <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>                     
                 {% if message.sender == user %}
                     <div class="dropdown message-dropdown">
-                        <button class="btn btn-link dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-ellipsis-h"></i>
+                        <button class="btn btn-link dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-label="menu dropdown">
+                            <i class="fa-solid fa-bars"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right p-0">
                             <div class="links-container m-0 p-0">
@@ -44,7 +44,7 @@
                 <div class="post-images">
                     {% for image_url in message.get_image_urls %}
                         {% if image_url %}
-                            <img src="{{ image_url }}">
+                            <img src="{{ image_url }}" alt="message image">
                         {% endif %}
                     {% endfor %}
                 </div>

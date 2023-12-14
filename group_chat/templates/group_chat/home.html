@@ -14,7 +14,10 @@
             <div class="col-sm-12">    
                 <!-- channels list -->
                 <div class="single category">
-                    <h3 class="side-title ">Channels<button data-target=".channels" class="btn toggleLinksButton pull-right p-0"> <i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
+                    <h3 class="side-title ">Channels
+                        <button aria-label="toggle channels list" data-target=".channels" class="btn toggleLinksButton pull-right p-0">
+                            <i class="fa-solid fa-greater-than fa-rotate-90"></i>
+                        </button>
                     </h3>
                     <ul class="list-unstyled channels">
                         {% for channel in channels %}
@@ -37,7 +40,11 @@
                     </ul>
                 </div>
                 <div class="single category">
-                    <h3 class="side-title">New Messages<button data-target=".messages" class="btn toggleLinksButton pull-right p-0"><i class="fa-solid fa-greater-than fa-rotate-90"></i></button></h3>
+                    <h3 class="side-title">New Messages
+                        <button aria-label="toggle messages list" data-target=".messages" class="btn toggleLinksButton pull-right p-0">
+                            <i class="fa-solid fa-greater-than fa-rotate-90"></i>
+                        </button>
+                    </h3>
                     <ul class="list-unstyled messages">
                         {% if unread_messages %}
                             {% for message in unread_messages %}

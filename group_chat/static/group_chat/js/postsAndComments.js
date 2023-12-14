@@ -234,7 +234,7 @@ $('main').on({
         const emojiCode = $(this).data('emoji-code');
         const url = $(this).data('emoji-url');
         const self = this;
-        data = {
+        let data = {
             emoji_colon_name: emojiCode,
         };
          // Send a post request to Django with the emoji information

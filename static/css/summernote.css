@@ -233,6 +233,10 @@ div.note-editing-area ul, div.note-editing-area ol {
     padding: 0 20px;
 }
 
+.note-placeholder {
+    color: #727272;
+}
+
 /* /////////////////////// media queries ///////////////////////// */
 /* CSS for small screens (up to the "lg" breakpoint) */
 @media (max-width: 575.98px) {

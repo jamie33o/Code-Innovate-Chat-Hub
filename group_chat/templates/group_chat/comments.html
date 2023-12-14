@@ -1,7 +1,7 @@
 {% load static %}
 {% load emoji_tags %}
 <div class="comments-header border-bottom custom-box p-3 d-flex flex-dir-row">
-    <button class="btn comments-close-btn position-absolute"><i class="fa-solid fa-x"
+    <button class="btn comments-close-btn position-absolute" aria-label="close comments"><i class="fa-solid fa-x"
             style="color: var(--ci-orange);"></i></button>
     <h4 class="w-100 text-center">Comment's on {{ post.created_by.username }}'s post</h4>
 </div>

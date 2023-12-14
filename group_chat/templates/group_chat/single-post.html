@@ -29,14 +29,14 @@
                 <!-- Username and date -->
                 <div class="ml-2">
                     <div class="h5 m-2">{{ single_post.created_by }} </div>
-                    <div class="text-muted h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i, b j"|upper }}</div>
+                    <div class="dark-grey h7 ml-2"> <i class="fa fa-clock-o"></i>{{ single_post.created_date|date:"H:i, b j"|upper }}</div>
                 </div>
             </div>
             <!-- Dropdown menu -->
             {% if not comments %}
             <div class="dropdown">
-                <button class="btn btn-link dropdown-toggle" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-ellipsis-h"></i>
+                <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="dropdown menu">
+                    <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right p-0">
                     <div class="links-container m-0 p-0">
@@ -63,7 +63,7 @@
         <div class="post-images">
             {% for image_url in single_post.get_image_urls %}
                 {% if image_url %}
-                    <img src="{{ image_url }}">
+                    <img src="{{ image_url }}" alt="post image">
                 {% endif %}
             {% endfor %}
         </div>
