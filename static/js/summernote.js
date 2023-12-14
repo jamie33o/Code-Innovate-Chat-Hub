@@ -54,6 +54,7 @@ class SummernoteEnhancer {
     this.djangoUrl = djangoUrl;
     this.emojiPicker = new EmojiPicker();
 
+
     this.createForm();
 
     this.$sn = $(`${this.divToLoadIn} textarea`);  
@@ -96,7 +97,7 @@ class SummernoteEnhancer {
 
     });
 
-
+    $('.note-editable').attr('aria-label', 'editor input')
     // summernote submit button
     this.snSubmitForm = $(`${this.divToLoadIn} .sn-submit-btn`);
     // summernote form 
@@ -379,20 +380,20 @@ class SummernoteEnhancer {
               <div class="summernote-btn-bottom">   
 
                   <div class="mb-2 ml-2">  
-                      <button class="mx-1 add-image d-none" type="button">
+                      <button class="mx-1 add-image d-none" type="button" aria-label="add image button">
                           <span class="fa-solid fa-plus fa-xl" style="color: var(--ci-orange);"></span>
                       </button>
-                      <button class="mx-1 mt-1 emoji-popup-btn" type="button">
+                      <button class="mx-1 mt-1 emoji-popup-btn" type="button" aria-label="emoji button">
                           <span class="fa-regular fa-face-smile fa-xl emoji-btn" style="color: var(--ci-orange);"></span>
                       </button>
-                      <button class="mx-1 at-symbol" type="button">
+                      <button class="mx-1 at-symbol" type="button" aria-label="tagging button">
                           <span class="fa-solid fa-at fa-xl" style="color: var(--ci-orange);"></span>
                       </button>
                       
                   </div>
                   <div class="cancel-submit">   
   
-                      <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit">
+                      <button class="post-arrow-btn mx-3 sn-submit-btn" type="submit" aria-label="send message button">
                           <span class="fa-solid fa-play fa-xl" style="color: var(--ci-orange);"></span>
                       </button>
                   </div>

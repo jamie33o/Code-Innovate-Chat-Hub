@@ -78,11 +78,9 @@ class EmojiPicker {
                     $a.attr('class', 'emoji-menu-tab ' + aclass + '-selected');
                     if(i<6)
                     index = i;
-
                 } else {
                     $a.attr('class', 'emoji-menu-tab ' + aclass);
                 }
-
             });
             self.updateEmojisList(index);
         });

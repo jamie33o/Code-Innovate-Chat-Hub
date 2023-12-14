@@ -16,12 +16,12 @@
                 <p>Have a question or feedback? Fill out the form below to get in touch with us.</p>
             {% endif %}
 
-            <form method="post" action="{% url 'contact' %}">
+            <form class="w-100" method="post" action="{% url 'contact' %}">
               {% csrf_token %}
               {{ form.as_p }}
               <button class="btn btn-success" type="submit">Submit</button>
             </form>
-            <a class="btn-info btn mt-5 nav-link logo" href="{% url 'channels' %}">Back To Homepage</a>
+            <a class="btn-info btn mt-5 nav-link logo w-50 mx-auto text-dark" href="{% url 'channels' %}">Back To Homepage</a>
         </div>
     </div>
 </div>

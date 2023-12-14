@@ -274,7 +274,9 @@ function startWebSocket(type, id){
 }
 
 $(document).ready(function(){
-    startWebSocket('global_consumer', userId);
+    if(userId) {
+        startWebSocket('global_consumer', userId);
+    }
 });
 
     /**
