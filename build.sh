@@ -7,13 +7,13 @@ APPS=("group_chat" "messaging" "user_profile")
 # Minify CSS and JS files for each app
 for app_name in "${APPS[@]}"; do
   # Minify CSS files for the current app
-  find "$PROJECT_DIR/$app_name/static/$app_name/css/" -type f -name '*.css' -print0 | while IFS= read -r -d $'\0' css_file; do
+  find "$PROJECT_DIR/static/$app_name/css/" -type f -name '*.css' -print0 | while IFS= read -r -d $'\0' css_file; do
     # Minify CSS and overwrite the original file
     cleancss "$css_file" -o "$css_file"
   done
 
   # Minify JS files for the current app
-  find "$PROJECT_DIR/$app_name/static/$app_name/js/" -type f -name '*.js' -print0 | while IFS= read -r -d $'\0' js_file; do
+  find "$PROJECT_DIR/static/$app_name/js/" -type f -name '*.js' -print0 | while IFS= read -r -d $'\0' js_file; do
     # Minify JS and overwrite the original file
     uglifyjs "$js_file" -o "$js_file"
   done
