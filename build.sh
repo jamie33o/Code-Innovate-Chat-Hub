@@ -1,5 +1,5 @@
 # Get Django settings using a management command
-PROJECT_DIR=$(python manage.py shell -c "from django.conf import settings; print(settings.BASE_DIR)")
+PROJECT_DIR='https://ci-chathub-bucket.s3.amazonaws.com/'
 
 # Define an array of app names
 APPS=("group_chat" "messaging" "user_profile")
