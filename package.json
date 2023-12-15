@@ -1,0 +1,10 @@
+{
+    "scripts": {
+      "build": "bash build.sh"
+    },
+    "devDependencies": {
+      "uglify-js": "^3.14.0",
+      "clean-css-cli": "^5.3.0"
+    }
+  }
+  
