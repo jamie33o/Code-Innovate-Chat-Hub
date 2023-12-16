@@ -304,3 +304,259 @@ As a **registered user**, I want to use emojis in messages, posts, and comments 
     - **Stress Test:** Input a random route in the URL that can't be found in the declared paths of the project
 * Ensure that **500 HTTP** errors display the custom 500.html.
     - **Stress Test:** Set debug to false and try to access a path that has been broken intentionally.
+
+#### Interface Interaction
+
+* Ensure all interactive elements respond appropriately:
+    - **Desktop:**
+        - All navbar elements correctly respond to hovering.
+        - All buttons correctly respond to hovering.
+        - All authentication links correctly respond to hovering
+    - **Mobile:**
+        - All navbar elements correctly respond to touch.
+        - All buttons correctly respond to touch.
+        - All authentication links correctly respond to touch
+
+#### Links
+
+* Ensure the external links to social media present in the profile view open up in new tabs.
+
+## Automated View Testing
+### Test Overview
+- I used the local db.sqlite3 database when testing
+* **Group Chat/Homepage App**<br>
+Tests applied for Epic: **#4**<br>
+<img src="docs/read-me-images/automated-test-images/post-and-comments-results.png"><br><br>
+
+* **Messaging App**<br>
+Tests applied for Epic: **#2**<br>
+<img src="docs/read-me-images/automated-test-images/messaging-test-results.png"><br><br>
+
+* **User Profile App**<br>
+Tests applied for Epic: **#3**<br>
+<img src="docs/read-me-images/automated-test-images/user-profile-test-results.png"><br><br>
+
+
+## Browser Testing
+The website was tested on different browser for assuring the features work accordingly.
+* Chrome
+* Edge
+* Safary
+* Opera
+* Firefox
+
+## Code Validation
+### HTML
+
+The html code of the website was validated using [W3 Markup Validator](https://validator.w3.org/).<br>
+At the time of deployment the validation for all pages have the following outcome:<br><br>
+
+<img src="docs/read-me-images/validation-images/html.png"><br><br>
+
+The following pages have been tested:
+* Home/Group chat
+* Messaging
+* Profile
+* Contact us
+* Email settings
+* Change Password
+* Login/Register
+* 403/404/405/500 custom page
+
+### CSS
+
+The CSS code was validated using [W3 Jigsaw Validator](https://jigsaw.w3.org/css-validator/)<br>
+At the time of deployment the validation for All CSS files, have the following outcome:<br><br>
+
+<img src="docs/read-me-images/validation-images/css.png" width="100%"><br><br>
+
+### Javascript
+
+The Javascript code was validated using using [JsHint](https://jshint.com/)<br>
+
+<details>
+<summary>Group Chat/Home Page app Javascript validation</summary>
+
+* **tests.py**<br>
+<img src="docs/read-me-images/validation-images/post-comments-js.png" width="60%"><br><br>
+
+
+</details>
+<details>
+<summary>Messaging app Javascript validation</summary>
+
+* **me.py**<br>
+<img src="docs/read-me-images/validation-images/messaging-js.png" width="60%"><br><br>
+
+</details>
+<details>
+<summary>User profile Javascript validation</summary>
+
+* **user-profile.js**<br>
+<img src="docs/read-me-images/validation-images/u" width="60%"><br><br>
+
+</details>
+
+### Python
+The python code was tested using [PEP8](http://pep8online.com/) online validator.<br>
+
+**Pep8 results:**<br>
+<details>
+<summary>Group Chat/Home Page app</summary>
+
+* **tests.py**<br>
+<img src="docs/read-me-images/validation-images/group-chat-tests-py.png" width="60%"><br><br>
+
+* **urls.py**<br>
+<img src="docs/read-me-images/validation-images/group-chat-urls-py.png" width="60%"><br><br>
+
+* **views/posts_commets.py**<br>
+<img src="docs/read-me-images/validation-images/group-chat-post-comments-views-py.png" width="60%"><br><br>
+
+* **views/channels.py**<br>
+<img src="docs/read-me-images/validation-images/group-chat-channels-view-py.png" width="60%"><br><br>
+
+* **views/utils.py**<br>
+<img src="docs/read-me-images/validation-images/group-chat-utilsViews-py.png" width="60%"><br><br>
+
+</details>
+<details>
+<summary>Messaging app</summary>
+
+* **apps.py**<br>
+<img src="docs/read-me-images/validation-images/messaging-apps-py.png" width="60%"><br><br>
+
+* **consumers.py**<br>
+<img src="docs/read-me-images/validation-images/messaging-consumers-py.png" width="60%"><br><br>
+
+* **forms.py**<br>
+<img src="docs/read-me-images/validation-images/messaging-forms-py.png" width="60%"><br><br>
+
+* **models.py**<br>
+<img src="docs/read-me-images/validation-images/messaging-models-py.png" width="60%"><br><br>
+
+* **tests.py**<br>
+<img src="docs/read-me-images/validation-images/messaging-test-python.png" width="60%"><br><br>
+
+* **urls.py**<br>
+<img src="docs/read-me-images/validation-images/messaging-urls-python.png" width="60%"><br><br>
+
+* **views.py**<br>
+<img src="docs/read-me-images/validation-images/messaging-views-py.png" width="60%"><br><br>
+
+</details>
+<details>
+<summary>Profile app</summary>
+
+* **signals.py**<br>
+<img src="docs/read-me-images/validation-images/user-profile-signals-py.png" width="60%"><br><br>
+
+* **forms.py**<br>
+<img src="docs/read-me-images/validation-images/user-profile-forms-py.png" width="60%"><br><br>
+
+* **models.py**<br>
+<img src="docs/read-me-images/validation-images/user-profile-models-py.png" width="60%"><br><br>
+
+* **tests.py**<br>
+<img src="docs/read-me-images/validation-images/user-profile-tests-py.png" width="60%"><br><br>
+
+* **urls.py**<br>
+<img src="docs/read-me-images/validation-images/user_profile-urls-py.png" width="60%"><br><br>
+
+* **views.py**<br>
+<img src="docs/read-me-images/validation-images/user_profile-views-py.png" width="60%"><br><br>
+
+</details>
+
+### Accessibility 
+The Accessibility of the website was tested with the google plugin: [Accessibility Insights for Web](https://accessibilityinsights.io/docs/web/overview/)
+
+**Results for all pages:**<br>
+<img src="docs/read-me-images/validation-images/homepage-Accessibility.png" width="100%"><br><br>
+
+
+### Performance
+The performance of the website was tested with [Google Lighthouse](https://developer.chrome.com/docs/lighthouse/overview/)
+
+**Lighthouse reports:**<br>
+
+<details>
+<summary>Desktop</summary>
+
+* Home page<br>
+<img src="docs/read-me-images/validation-images/home-page-lighthouse.png" width="60%"><br><br>
+
+* Messaging page<br>
+<img src="docs/read-me-images/validation-images/messaging-lighthouse.png" width="60%"><br><br>
+
+* Profile page<br>
+<img src="docs/read-me-images/validation-images/profile-lighthouse.png" width="60%"><br><br>
+
+* Contact page<br>
+<img src="docs/read-me-images/validation-images/contact-lighthouse.png" width="60%"><br><br>
+
+* Change password page<br>
+<img src="docs/read-me-images/validation-images/passsword-lighthouse.png" width="60%"><br><br>
+
+* email settings page<br>
+<img src="docs/read-me-images/validation-images/email-setting-lighthouse.png" width="60%"><br><br>
+
+* Logout page<br>
+<img src="docs/read-me-images/validation-images/logout-lighthouse.png" width="60%"><br><br>
+
+* Login page<br>
+<img src="docs/read-me-images/validation-images/login-lighthouse.png" width="60%"><br><br>
+
+* Register page<br>
+<img src="docs/read-me-images/validation-images/sign-up-lighthouse.png" width="60%"><br><br>
+</details>
+
+<details>
+<summary>Mobile</summary>  
+
+* Home page<br>
+<img src="docs/read-me-images/validation-images/home-page-lighthouse.png" width="60%"><br><br>
+
+* Messaging page<br>
+<img src="docs/read-me-images/validation-images/messaging-lighthouse.png" width="60%"><br><br>
+
+* Profile page<br>
+<img src="docs/read-me-images/validation-images/profile-lighthouse.png" width="60%"><br><br>
+
+* Contact page<br>
+<img src="docs/read-me-images/validation-images/contact-lighthouse.png" width="60%"><br><br>
+
+* Change password page<br>
+<img src="docs/read-me-images/validation-images/passsword-lighthouse.png" width="60%"><br><br>
+
+* email settings page<br>
+<img src="docs/read-me-images/validation-images/email-setting-lighthouse.png" width="60%"><br><br>
+
+* Logout page<br>
+<img src="docs/read-me-images/validation-images/logout-lighthouse.png" width="60%"><br><br>
+
+* Login page<br>
+<img src="docs/read-me-images/validation-images/login-lighthouse.png" width="60%"><br><br>
+
+* Register page<br>
+<img src="docs/read-me-images/validation-images/sign-up-lighthouse.png" width="60%"><br><br>
+</details><br>
+
+## Bugs 
+
+### Unfixed bugs
+
+* **All known bugs have been fixed**
+
+### Fixed bugs
+
+| **Bug** | **Fix** |
+| --- | --- |
+| Bug: Performance is very low | Solution: Load Css and Javascript asynchronously |
+| Bug: issue where profile picture doesn't contain a file | Solution: [move the dictionary in broadcast function to context variable and only add profile picture if it exist in if statement](https://github.com/jamie33o/pp4/commit/fc70dd5261ac0d6bf112f25e91402261f4713d42)|
+| Bug: global consumer notification for comments throws exception | Solution: [get_commented_users function was returning list of dictionaries updated to return a list of user ids](https://github.com/jamie33o/pp4/commit/1cd988ff5d54ff3d593e420248117e2419948c59) |
+| Bug: Inbox search functionality search on every input | Solution: [Add if statement to check that the input is @ symbol](https://github.com/jamie33o/pp4/commit/7fcaa8d53fe5cd596c572457f20693131411296b) |
+| Bug: Issue with tagging functionality When user clicked a user name in the tags list the text with the @ symbol removed was missing part of the text | Solution: [I used a for each loop to add all html elements in the atremoved variable ](https://github.com/jamie33o/pp4/commit/948f5663e751b9787c1568a8bd8f154341daebc6) |
+| Bug: wrong url name in header links | Solution: [ add the correct url ](https://github.com/jamie33o/pp4/commit/45aa512957ae9986f12116b6dd5d2fe0085f6fd4) |
+
+Back to [README.MD](README.MD)<br>
