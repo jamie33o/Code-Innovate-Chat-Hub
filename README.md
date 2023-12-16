@@ -268,7 +268,7 @@ The Header section contains the settings icon, website name and the search bar<b
 
 ### Future Feature Considerations<hr>
 
-* One possible feature would be the implementation of a *Points system* with badges. Every time a user helps another user by answering a question or helping with bug, they get points and when they get a certain amount of points they get a badge. 
+* One possible feature would be the implementation of a *Points system* with badges. Every time a user helps another user by answering a question or helping with a bug, they get points and when they get a certain amount of points they get a badge. 
 
 ## Responsive Layout and Design
 The project design has been adapted to all types of devices using Bootstrap predefined breakpoints. For intermediate devices where the design didn't fit accordingly, custom breakpoints were used.
@@ -340,7 +340,7 @@ LightHouse - for testing performance<br>
 * autopep8
 
 ## Testing
-The testing documentation can be found at [TESTING.MD](TESTING.MD)
+The testing documentation can be found at [TESTING.MD](TESTING.md)
 
 ## Deployment
 
