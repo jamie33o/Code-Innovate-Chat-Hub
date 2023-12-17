@@ -76,6 +76,7 @@ $('#messages-list-container').on('click', '.message-delete-btn', function() {
 // listener for edit button on posts and comments dropdown menu
 $('main').on('click', '.edit-btn', function(event) {
     // cancel any other post that is in edit mode
+    let cancelBtnTxt;
     if($('.cancel-edit').length > 0){
         $('.cancel-edit').click();
     }else if($('.edit-post').length > 0 ){
@@ -97,7 +98,13 @@ $('main').on('click', '.edit-btn', function(event) {
     
     summernoteEnhancerEditPost.init('.edit-post .message-text', editPostUrl);
     summernoteEnhancerEditPost.addToSummernoteeditorField(cardText);
-    $('.edit-post .summernote-btn-bottom .cancel-submit').prepend('<button class="cancel-edit">Cancel</button>');
+    if(window.innerWidth > 991.98){
+        cancelBtnTxt = 'Cancel'
+    }else{
+        cancelBtnTxt = 'X'
+    }
+
+    $('.edit-post .summernote-btn-bottom .cancel-submit').prepend(`<button class="cancel-edit">${cancelBtnTxt}</button>`);
     
     $('main').on('click', '.cancel-edit', function(event) {
         event.preventDefault();
@@ -142,14 +149,14 @@ $('main').on({
     });
     },
     mouseenter: function() {
-        if(window.innerWidth > 1111){
+        if(window.innerWidth > 991.98){
             $(this).css('cursor', 'pointer');
             $(this).siblings('.emoji-user-count-modal').removeClass('d-none');
         }
         
     },
     mouseleave: function() {
-        if(window.innerWidth > 1111){
+        if(window.innerWidth > 991.98){
             $(this).css('cursor', 'pointer');
             $(this).siblings('.emoji-user-count-modal').addClass('d-none');
         }

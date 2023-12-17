@@ -151,8 +151,8 @@
 
 /* /////////////////  cancel-editing button ////////////////// */
 .cancel-edit {
-    width: 100px !important;
-    padding: 0 5px;
+    width: fit-content !important;
+    padding: 0 2px;
     border: 1px solid var(--ci-orange) !important;
     font-weight: 500;
     color: var(--ci-orange);
