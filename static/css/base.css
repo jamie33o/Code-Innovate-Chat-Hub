@@ -329,6 +329,29 @@ h1:hover {
     color: white;
 }
 
+/* //////////////////// contact page ///////////////////////*/
+.contact-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-container > :nth-child(2) {
+    display: flex;
+    flex-direction: row;
+}
+
+.email-subject {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding: 5px;
+}
+
+.contact-container textarea {
+    width: 100%;
+    max-height: 100px; 
+}
+
 /* //////////////////// allauth templates //////////////////// */
 
 /* for sign up/sign-in/log-out */
@@ -582,14 +605,20 @@ nav > div a.nav-item.nav-link:focus
 /* ///////////////////// media queries ////////////////////// */
 /* CSS for small screens (up to the "lg" breakpoint) */
 @media (max-width: 991.98px) {
-
+    .user_card {
+        height: fit-content;
+        width: fit-content;
+        max-width: 80%;
+        margin-top: 100px;
+        margin-bottom: 50px;
+    }
+    
     ::-webkit-scrollbar-thumb {
         display: none;
     }
 
     ::-webkit-scrollbar {
         display: none;
-
     }
 
     h1 {
@@ -625,12 +654,14 @@ nav > div a.nav-item.nav-link:focus
 
 /* CSS for small screens (up to the "sm" breakpoint) */
 @media (max-width: 575.98px) {
-    .user_card {
-        height: fit-content;
-        width: fit-content;
-        max-width: 80%;
-        margin-top: 100px;
-        margin-bottom: 50px;
+
+    .contact-container > :nth-child(2) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .email-subject {
+        width: 100%;
     }
 
     .nav-link {
