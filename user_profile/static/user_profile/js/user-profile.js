@@ -1,6 +1,5 @@
 // This function is executed when the DOM is ready
 $(document).ready(function () {
-
     // Event handler for clicking the 'Edit Profile' button
     $('body').on('click', '.edit-profile-btn', function () {
         // Show the update profile container and hide other elements
@@ -23,7 +22,7 @@ $(document).ready(function () {
     $('body').on('click', '.view-save-posts-btn', function () {
         // Show the saved posts container and hide other elements on small screens
         $('.saved-posts-container').removeClass('d-none');
-        if (window.innerWidth < 575.98) {
+        if (window.innerWidth < 991.98) {
             $('.profile-container').addClass('d-none');
             $('#nav-bar').addClass('d-none');
             $('header').addClass('d-none');
@@ -34,7 +33,7 @@ $(document).ready(function () {
     $('body').on('click', '.saved-posts-close-btn', function () {
         // Hide the saved posts container and show other elements on small screens
         $('.saved-posts-container').addClass('d-none');
-        if (window.innerWidth < 575.98) {
+        if (window.innerWidth < 991.98) {
             $('.profile-container').removeClass('d-none');
             $('#nav-bar').removeClass('d-none');
             $('header').removeClass('d-none');
@@ -88,12 +87,20 @@ $(document).ready(function () {
     // Event handler for clicking the 'Update Status' button
     $('.status-update-btn').on('click', function () {
         // Show a modal for updating the status
-        showModal('<h3>Update Your Status</h3>', statusModalBody);
+        let statusModalHeader = $(`<div class="d-flex flex-dir-row justify-content-end"><h3 class="mx-auto">Update Your Status</h3>
+        <button type="button" class="btn btn-oval btn-warning" 
+        data-dismiss="modal" aria-label="Close">X</button></div>`)
+
+        showModal(statusModalHeader, statusModalBody);
     });
 
     // Event handler for clicking the 'Update Profile Picture' button
     $('.profile-img-modal').on('click', function () {
         // Show a modal for updating the profile picture
-        showModal('<h3>Update Profile Picture</h3>', profileImgModal);
+        let imageModalHeader = $(`<div class="d-flex flex-dir-row justify-content-end"><h3 class="mx-auto">Update Profile Picture</h3>
+        <button type="button" class="btn btn-oval btn-warning" 
+        data-dismiss="modal" aria-label="Close">X</button></div>`)
+
+        showModal(imageModalHeader, profileImgModal);
     });
 });
