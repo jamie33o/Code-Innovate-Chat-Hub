@@ -8,12 +8,11 @@
 
 
 {% block content %}
-    
-    {% include 'user_profile/view-user-profile.html' with edit_profile=True %}
-   
-    <div class="update_profile_container scrollable-div d-none d-sm-flex d-lg-flex">
+<div class="user-profile ">
+        {% include 'user_profile/view-user-profile.html' with edit_profile=True %}
+    <div class="update_profile_container scrollable-div d-none d-lg-flex">
 
-        <div class="custom-box fixed-header d-flex flex-dir-row d-none d-sm-none d-lg-none">
+        <div class="custom-box fixed-header d-flex flex-dir-row d-none d-lg-none">
             <button class="btn mr-3 close-edit-profile-btn">X</button>
             <h3>Edit Profile</h3>
         </div>
@@ -41,6 +40,7 @@
             {% endif %}
         </div>
     </div>
+    </div>
 </div>
 
 {% endblock %}
@@ -56,7 +56,7 @@
                 <form class="form" method="post" enctype="multipart/form-data"  data-url='{% url "update_profile_image" %}'>
                     {% csrf_token %}
                     {{ profile_image_form.as_p }}
-                    <button class="sub-form" type="submit" data-dismiss="modal">Update Profile Image</button>
+                    <button class="sub-form btn-success btn" type="submit" data-dismiss="modal">Update Profile Image</button>
                 </form>
             `;
     
@@ -64,7 +64,7 @@
             `<form class="form" method="post" data-url='{% url "update_status" %}'>
                 {% csrf_token %}
                 {{ status_form.as_p }}
-                <button class="sub-form" type="submit" data-dismiss="modal">Update Status</button>
+                <button class="sub-form btn-success btn" type="submit" data-dismiss="modal">Update Status</button>
              </form>
             `;
 

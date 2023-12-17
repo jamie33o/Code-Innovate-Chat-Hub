@@ -6,7 +6,7 @@ let emojiPicker = new EmojiPicker();
 // boolean to check if user scrolled to top
 let scrolledToTop = false;
 // large screen size breakpoint
-const LG_BRAKE_POINT = 1111.98;
+const LG_BRAKE_POINT = 1300.98;
 let prevPageNum = null;
 let lastPageNum = null;
 let paginatedPostsUrl = null;

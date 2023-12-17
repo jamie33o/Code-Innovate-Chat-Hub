@@ -211,6 +211,7 @@
 
 /* //////////////////////////////////// messages list /////////////////////////////////// */
 #messages-list-container {
+  display: flex;
   position: relative;
   height: 100%;
   width: 100%;
@@ -583,13 +584,10 @@
 }
 
 /* ///////////////////// media queries ////////////////////// */
-/* CSS for small screens (up to the "lg" breakpoint) */
-@media (max-width: 991.98px) {
 
-}
 
 /* CSS for small screens (up to the "sm" breakpoint) */
-@media (max-width: 575.98px) {
+@media (max-width: 991.98px) {
   #messages-list-container {
     display: none;
     width: 100vw;

@@ -69,7 +69,7 @@
         </div>
     </div>
     <!-- container where posts get loaded into with ajax -->
-    <div id="channel-posts" class="posts-container w-100  flex-column justify-content-between"></div>
+    <div id="channel-posts" class="posts-container w-100 flex-column justify-content-between"></div>
 
     <!-- container where comments get loaded into with ajax -->
     <div id='post-comments' class ="comments-container flex-column justify-content-between"></div>
@@ -91,7 +91,7 @@
         // check if the id for the channel the user last visited exists
         // if it does load posts
         {% if last_viewed_channel_id %}
-            if(window.innerWidth > 575){
+            if(window.innerWidth > 991.98){
                 let lastViewedurl = `{% url 'channel_posts' last_viewed_channel_id %}`
                 ajaxRequest(lastViewedurl, 'GET', '#channel-posts', null, function(response){
                     $('#channel-posts').html(response)
@@ -107,7 +107,7 @@
                 autoScroll(null, {{ post_id }})
 
             })
-            if(window.innerWidth < 575.5){
+            if(window.innerWidth < 991.98){
                 $('#nav-bar').addClass('d-none')
                 $('header').addClass('d-none')
                 $('#channel-links-container').addClass('d-none');

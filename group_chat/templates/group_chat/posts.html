@@ -2,22 +2,25 @@
 {% load emoji_tags %}
 
 <!-- Mobile header -->
-<div class="posts-mobile-header border-bottom p-3 custom-box d-flex d-sm-none d-lg-none flex-dir-row">
+<div class="posts-mobile-header border-bottom p-3 custom-box d-flex d-lg-none flex-dir-row">
     <!-- Close button -->
     <button class="btn posts-close-btn position-absolute"><i class="fa-solid fa-x" style="color: var(--ci-orange);"></i></button>
     <h4 class="text-center w-100">Post's #{{ channel.name }}</h4>
 </div>
 
 <!-- Posts list populated by Django -->
-<div id="posts-list" class="scrollable-div" 
-                    data-summernote-url="{% url 'channel_posts' channel.id %}"
-                    data-posts-url="{% url 'channel_posts' channel_id=channel.id %}?page=0"
-                    data-channel-id="{{ channel.id }}">
+<div id="posts-list" 
+        class="scrollable-div" 
+        data-summernote-url="{% url 'channel_posts' channel.id %}"
+        data-posts-url="{% url 'channel_posts' channel_id=channel.id %}?page=0"
+        data-channel-id="{{ channel.id }}">
+
     {% for single_post in posts %}
         <!-- Post -->
         {% include 'group_chat/single-post.html' with single_post=single_post %}
         <!-- Post /////-->
     {% endfor %}
+    
     <div class="load-postbtn-container">
         <button class="load-new-posts btn d-none"><i class="fa-solid fa-arrow-down" style="color: #fcfcfd;"></i> Latest Posts</button>
     </div>

@@ -7,7 +7,6 @@
  */
 $('.toggleLinksButton').click(function() {
     var target = $(this).data('target');
-
     $(target).toggleClass('d-none');
     $(this).find('i').toggleClass('fa-rotate-90');
 });
@@ -31,12 +30,14 @@ $('main').on('click', '.channel-link', function(event) {
         autoScroll();
     });
 
-    if(window.innerWidth < 575){
+    if(window.innerWidth < 991.98){
         $('#channel-posts').addClass('d-flex');
         $('#channel-links-container').addClass('d-none');
         $('#nav-bar').addClass('d-none');
         $('header').addClass('d-none');
+    }else{
+        $('#channel-posts').addClass('d-flex');
+        $('#post-comments').removeClass('d-flex');
     }
-    $('#channel-posts').addClass('d-flex');
-    $('#post-comments').removeClass('d-flex');
+   
 });

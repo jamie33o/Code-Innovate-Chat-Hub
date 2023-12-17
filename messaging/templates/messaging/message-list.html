@@ -24,7 +24,7 @@
 
 <!-- message list populated by Django -->
 <div id="message-list" 
-    class="scrollable-div py-3" 
+    class="scrollable-div py-3 h-100" 
     data-summernote-url="{% url 'send_message' conversation_id %}"
     data-conversation-id="{{ conversation_id }}"
     data-edit-url="{% url 'edit_message' conversation_id=conversation_id message_id=0 %}">

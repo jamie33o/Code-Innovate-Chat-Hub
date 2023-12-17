@@ -384,7 +384,6 @@
     overflow-x:auto;
 }
 
-
 /* image modal btns for zoom */
 .zoom-in,.zoom-out {
     background-color: #bab6b6;
@@ -422,7 +421,7 @@
 
 /* /////////////////////// media queries ///////////////////////// */
 /* CSS for small screens (up to the "lg" breakpoint) */
-@media (max-width: 575.98px) {
+@media (max-width: 991.98px) {
     /* style for channels list on mobile*/
     .channels-list { 
         margin: 0 auto;
@@ -435,17 +434,13 @@
     .hide {
         display: none;
     }
-
-}
-
-@media (max-width: 991.98px) {
-    /* posts card */
+ /* posts card */
     .card {
         margin: 20px 5px;
     }
-} 
+}
 
-@media (max-width: 1110px) {
+@media (max-width: 1300.98px) {
     /* makes the comments list full screen at the small break point
      and covers post list on screens upto 1110px */
     .comments-container {

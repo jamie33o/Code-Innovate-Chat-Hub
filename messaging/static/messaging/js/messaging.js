@@ -25,7 +25,7 @@ $('.inbox-container').on('click', '.message-link', function(e){
     ajaxRequest(url, 'GET', '#messages-list-container', null, function(response){
         $('#messages-list-container').html(response);
         //autoScroll()
-        if(window.innerWidth < 575){
+        if(window.innerWidth < 991.98){
             $('.inbox-container').addClass('d-none');
             $('#messages-list-container').removeClass('d-none');
             $('#messages-list-container').addClass('d-flex');
