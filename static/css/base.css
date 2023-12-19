@@ -376,6 +376,7 @@ h1:hover {
     -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 5px;
+    word-wrap: break-word;
 }
 
 #div_id_remember label {
@@ -396,6 +397,10 @@ h1:hover {
     height: 110px;
     width: 110px;
     border-radius: 50%;
+}
+.user_card input, .user_card button {
+    max-width: 100% !important;
+    margin-bottom: 5px;
 }
 
 /* /////////////////////// main navigation home, messages, profile//////////////////////// */
