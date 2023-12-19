@@ -21,7 +21,7 @@
                 <h5> <i class="fa fa-clock-o"></i>{{ message.timestamp|date:"H:i, b j"|upper }}</h5>                     
                 {% if message.sender == user %}
                     <div class="dropdown message-dropdown">
-                        <button class="btn btn-link dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-label="menu dropdown">
+                        <button class="btn dropdown-toggle p-0 btn-drop-down mx-1" type="button" data-toggle="dropdown" aria-label="menu dropdown">
                             <i class="fa-solid fa-bars"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right p-0">

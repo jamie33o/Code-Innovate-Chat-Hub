@@ -218,6 +218,17 @@
   background-color: var(--background);
 }
 
+/* menu icon */
+.btn-drop-down {
+  color: var(--ci-orange);
+}
+
+.btn-drop-down:hover {
+  background-color: var(--background);
+  border-radius: 5px;
+  box-shadow: var(--sm-box-shadow); 
+}
+
 .message-body {
   background-color: #fbfcff;
   height: 100%;

@@ -98,6 +98,18 @@
     box-shadow: var(--sm-box-shadow);
 }
 
+/* menu icon */
+.btn-drop-down {
+    background-color: var(--background);
+    color: var(--ci-orange);
+}
+
+.btn-drop-down:hover {
+    background-color: var(--background);
+    border-radius: 5px;
+    box-shadow: var(--sm-box-shadow); 
+}
+
 .comments-container {
     position: relative;
     display: none;
@@ -165,18 +177,6 @@
     margin-right: 5px;
 }
 
-/* three dots icon on posts/comments */
-.btn-link {
-    color: var(--ci-orange) !important;
-
-}
-
-.btn-link:hover {
-    background-color: var(--background);
-    border-radius: 5px;
-    box-shadow: var(--sm-box-shadow); 
-}
-
 /* time on posts */
 .h7 {
     font-size: 0.8rem;
@@ -189,7 +189,7 @@
     gap: 20px; 
     width: 100%;
     height: fit-content;
-    margin: 20px auto;
+    margin: 50px auto 0 auto;
 }
 
 .post-images img {
