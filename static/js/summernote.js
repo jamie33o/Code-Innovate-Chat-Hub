@@ -75,7 +75,7 @@ class SummernoteEnhancer {
               // Attach an input event handler to the Summernote editor
               self.$sn.next().find('.note-editable').on('input', function (e) {
                   let $snText = $('<p>').html(self.$sn.summernote('code')).text();
-                  if (($snText.slice(-1) === '@' || $snText.slice(-1) === '#')&& ($snText.slice(-2, -1) === ' ' || $snText.slice(-2, -1) === ';')){
+                  if (($snText.slice(-1) === '@' || $snText.slice(-1) === '#')&& ($snText.slice(-2, -1) === ' ' || $snText.slice(-2, -1) === ';' || $snText.slice(-2, -1) === '')){
                       self.tagUser($snText.slice(-1));
                   }else{
                     self.atRemoved = self.$sn.summernote('code');
@@ -86,8 +86,6 @@ class SummernoteEnhancer {
                     self.parentDiv = $(e.target.lastChild.classList);              
                   }
               }); 
-          
-            
           },
           // image upload callback 
           onImageUpload: function(files) {
