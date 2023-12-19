@@ -18,7 +18,7 @@
         </div>
 
         <div class="p-3">
-            <h1 class="h1">Personal Info</h1>
+            <h2 class="h1">Personal Info</h2>
             <hr>
             <form class="form" method="post" action="{% url 'edit_user_profile' %}">
                 {% csrf_token %}
@@ -68,9 +68,14 @@
              </form>
             `;
 
-        {% for message in messages %}
-            displayMessage({'status': '{{ message.tags }}', 'message': '{{ message }}'}, 'body')
-        {% endfor %}
+        {% if status %}
+            let status = '{{ status }}';
+            let message = 'Updated Successfully!!'
+            if(status === 'error'){
+                message = 'Error: Updating profile!!'
+            }
+            displayMessage({'status': '{{ status }}', 'message': `${message}`}, 'body')
+        {% endif %}
 
     </script>
 
