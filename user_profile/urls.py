@@ -12,7 +12,7 @@ from .views import (UserProfileView,
 
 urlpatterns = [
      path('', UserProfileView.as_view(), name='user_profile'),
-     path('user_profile/<str:message>/',
+     path('user_profile/<str:status>/',
           UserProfileView.as_view(), name='user_profile'),
      path('update_profile_image/',
           update_profile_image, name='update_profile_image'),

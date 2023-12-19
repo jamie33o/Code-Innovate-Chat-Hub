@@ -92,7 +92,6 @@ class SummernoteEnhancer {
             self.uploadImage(files[0],self.$sn);
           }
         },  
-
     });
 
     $('.note-editable').attr('aria-label', 'editor input')

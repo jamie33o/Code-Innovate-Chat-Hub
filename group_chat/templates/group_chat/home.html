@@ -22,7 +22,7 @@
                     <ul class="list-unstyled channels">
                         {% for channel in channels %}
                             <li data-channel-id="{{ channel.id }}">
-                                <a class="channel-link btn-ci w-100 {% if last_viewed_channel_id == channel.id %}active{% endif %}" 
+                                <a class="text-left channel-link btn-ci w-100 {% if last_viewed_channel_id == channel.id %}active{% endif %}" 
                                 href="{% url 'channel_posts' channel.id %}">#{{channel.name}}
                                     <span class="pull-right">
                                         {% for key, value in user_statuses.items %}
