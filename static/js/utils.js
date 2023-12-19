@@ -214,11 +214,10 @@ function ajaxRequest(url, type, divClass, data, callBackFunction) {
             }
         },
         error: function(error) {
-            console.log(error)
             if(error.status === 500){
                 window.location.href = $('body').data('contact-url').replace('0', error.responseJSON.message)
             }else{
-                displayMessage(response, divClass);     
+                displayMessage(error, divClass);     
             }
         }
     };
@@ -394,12 +393,12 @@ function getAllChannels(form){
                 allChannels.push({name: channel.name, id: channel.id, label: channel.name, url: channel.url });
             });
 
-            autoComplete(form, allChannels, function(tag){
+            autoComplete(form, allChannels, false, function(tag){
                 window.location.href = tag.url;
             });
         });
     }else{
-        autoComplete(form, allChannels, function(tag){
+        autoComplete(form, allChannels, false, function(tag){
             window.location.href = tag.url;
         });
     }
@@ -419,7 +418,7 @@ function getAllUserProfiles(form){
             response.forEach(function(profile) {
                 profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
             });
-            autoComplete(form, profileTags, function(tag){
+            autoComplete(form, profileTags, true, function(tag){
                 let viewProfileUrl = $('body').data('view-profile-url').replace('0', tag.id);
 
                 ajaxRequest(viewProfileUrl, 'GET', 'body', null, function(response){
@@ -441,7 +440,7 @@ function getAllUserProfiles(form){
 }
 
 
-function autoComplete(formElement, availableTags, callBackFunction){
+function autoComplete(formElement, availableTags, isProfiles, callBackFunction){
     let htmlContent = null;
     $(formElement).append(`<div class="autocomplete-model">
     <input class="search-input" placeholder="start typing"><div class="list"></div> </div>`);
@@ -462,8 +461,8 @@ function autoComplete(formElement, availableTags, callBackFunction){
 
         if (filteredTags.length > 0) {
             $.each(filteredTags, function (index, tag) {
-                if(tag.profile_img){
-                    htmlContent = '<img src="' + tag.profile_img + '" class="autocomplete-img" /> ' + tag.label;
+                if(isProfiles){
+                    htmlContent = '<img src="/media/' + tag.profile_img + '" class="autocomplete-img" /> ' + tag.label;
                 }else{
                     htmlContent = `<h3># ${tag.name}</h3>`;
                 }
