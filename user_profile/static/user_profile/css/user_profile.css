@@ -88,6 +88,18 @@
     padding-bottom: 50px;
 }
 
+/* menu icon */
+.btn-drop-down {
+    background-color: var(--background);
+    color: var(--ci-orange);
+}
+
+.btn-drop-down:hover {
+    background-color: var(--background);
+    border-radius: 5px;
+    box-shadow: var(--sm-box-shadow); 
+}
+
 
 .fixed-header {
     width: 100%;

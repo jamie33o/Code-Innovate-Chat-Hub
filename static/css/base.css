@@ -384,20 +384,24 @@ h1:hover {
 }
 
 .brand_logo_container {
+    position: relative;
     margin: -61px auto 0 auto;
     height: 130px;
     width: 130px;
     border-radius: 50%;
     background: white;
-    padding: 10px;
     text-align: center;
 }
 
 .brand_logo {
-    height: 110px;
+    position: absolute;
+    height: 150px;
     width: 110px;
     border-radius: 50%;
+    left: 7px;
+    top: -25px;
 }
+
 .user_card input, .user_card button {
     max-width: 100% !important;
     margin-bottom: 5px;
