@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
 from django.conf import settings
-from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db import DatabaseError, OperationalError
 from group_chat.models import SavedPost, PostsModel
@@ -27,7 +26,7 @@ class UserProfileView(View):
     """
     template_name = 'user_profile/user_profile.html'
 
-    def get(self, request):
+    def get(self, request, status=None):
         """
         Handle GET requests to display the user profile.
 
@@ -50,6 +49,8 @@ class UserProfileView(View):
                 'posts': posts,
             }
 
+            if status:
+                context['status'] = status
             return render(request, self.template_name, context)
         except UserProfile.DoesNotExist:
             return redirect('404.html', status=404)
@@ -74,11 +75,9 @@ class UserProfileView(View):
             if edit_profile_form.is_valid():
                 edit_profile_form.save()
 
-                messages.success(request, 'Updated successfully')
-                return redirect('user_profile')
+                return redirect('user_profile', status='success')
 
-            messages.error(request, f'{edit_profile_form.error}')
-            return redirect('user_profile')
+            return redirect('user_profile', status='error')
         except Exception:
             return redirect('contact',
                             'There has been an Unexpected error \
