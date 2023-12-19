@@ -42,7 +42,6 @@ class UserProfileView(View):
             edit_profile_form = EditProfileForm(instance=user_profile)
             profile_image_form = ProfileImageForm(instance=user_profile)
             status_form = StatusForm(instance=user_profile)
-
             context = {
                 'user_profile': user_profile,
                 'Edit_profile_form': edit_profile_form,
@@ -53,13 +52,11 @@ class UserProfileView(View):
 
             return render(request, self.template_name, context)
         except UserProfile.DoesNotExist:
-            return redirect('contact',
-                            'Unexpected error your profile does not exist,\
-                            contact us or create a new profile')
+            return redirect('404.html', status=404)
         except Exception:
             return redirect('contact',
-                            'Unexpected error your profile\
-                              does not exist, contact us or create a new profile')
+                            'There has been an unexpexted error\
+                            , contact us or create a new profile')
 
     def post(self, request):
         """
@@ -76,7 +73,7 @@ class UserProfileView(View):
 
             if edit_profile_form.is_valid():
                 edit_profile_form.save()
-                
+
                 messages.success(request, 'Updated successfully')
                 return redirect('user_profile')
 
@@ -113,11 +110,11 @@ class ViewUserProfile(View):
             }
             return render(request, self.template_name, context)
 
-        except UserProfile.DoesNotExist:
+        except PermissionDenied:
             return JsonResponse(
                 {'status': 'Error',
-                 'message': 'User profile not found'},
-                status=404
+                 'message': 'Permission Denied'},
+                status=403
             )
         except Exception:
             return JsonResponse(
@@ -158,7 +155,10 @@ def update_profile_image(request):
             status=400)
 
     except PermissionDenied:
-        return render(request, '403.html')
+         return JsonResponse(
+            {'status': 'error',
+                'message': 'Permission denied'},
+            status=500)
     except Exception:
         return JsonResponse(
             {'status': 500,
