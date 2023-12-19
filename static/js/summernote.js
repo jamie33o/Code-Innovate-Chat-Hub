@@ -222,7 +222,7 @@ class SummernoteEnhancer {
           response.forEach(function(profile) {
             profileTags.push({label: profile.username, id: profile.id, profile_img: profile.profile_picture});
           });
-          autoComplete(self.$sn.closest('form'), profileTags, function(tag){
+          autoComplete(self.$sn.closest('form'), profileTags, true, function(tag){
             let profileUrl = $('body').data('view-profile-url').replace('0', tag.id);
   
             const tagLink = $('<a>', {
@@ -251,7 +251,7 @@ class SummernoteEnhancer {
           response.forEach(function(channel) {
             channelTags.push({label: channel.name, name: channel.name, id: channel.id, url: channel.url });
           });
-          autoComplete(self.$sn.closest('form'), channelTags, function(tag){
+          autoComplete(self.$sn.closest('form'), channelTags, false, function(tag){
   
             const tagLink = $('<a>', {
               text: '#' + tag.label,
@@ -371,7 +371,7 @@ class SummernoteEnhancer {
           <!-- Summernote editor form -->
           <form class="sn-form" method="post">
               
-              <textarea name="post"></textarea>
+              <textarea class='d-none' name="post"></textarea>
   
               <!-- Buttons at the bottom of summernote editor emoji,@ and arrow for posting -->
               <div class="summernote-btn-bottom">   
