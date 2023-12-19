@@ -172,9 +172,10 @@
 }
 
 .card-footer img {
-    width: 20px;
-    height: 20px;
+    width: 35px;
+    height: 35px;
     margin-right: 5px;
+    border-radius: 20% !important;
 }
 
 /* time on posts */
@@ -211,9 +212,8 @@
     transition: background-color 0.3s ease-in-out; /* Add a smooth transition effect */
     justify-content: center;
     color: black;
-    border: 1px solid var(--ci-orange);
-    background-color: var(--peach);
 }
+
 
 .comments-link:hover {
     background-color: #f0f0f0; /* Change the background color on hover */
@@ -237,6 +237,14 @@
     display: flex; 
 }
 
+.profile-pics {
+    display: flex;
+    justify-content: end;
+    margin: 0 1px;
+    display: flex;
+    flex-direction: row;
+    min-width: 40px;
+}
 /* ///////////////// emoji buttons and modal   //////////////////// */
 
 .card-emoji-btn {
