@@ -52,4 +52,40 @@
     </div>
 </div>
 
+{% else %}
+
+
+<div id="topnav" class="row d-none d-lg-flex justify-content-between">
+
+    <div class="col-lg-6">
+        <a href="{% url 'channels' %}" class="nav-link logo">
+            <h1 class="logo-font text-black my-0"><strong>Code Innovate</strong> Chat Hub</h1>
+        </a>
+    </div>
+
+    <!-- settings button -->
+    <div class="col-lg-3">
+        <ul class=" list-unstyled d-flex justify-content-end h-100 ">
+            <li class="list-inline-item dropdown my-auto mr-2">
+                <a aria-label="menu icon link" class="text-black" href="#" id="user-options" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    <div class="settings-cog ">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                </a>
+                <!-- settings drop down -->
+
+                <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="user-options">
+                    <div class="links-container m-0">
+                        <div class="links-heading">Menu <i class="fa fa-link fa-1x"></i></div>
+                        <div class="links-body pb-2">
+                            <a class="btn-ci" href="{% url 'contact' %}">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
 {% endif %}
