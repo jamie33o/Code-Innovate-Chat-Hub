@@ -87,6 +87,10 @@
     margin: 0 5%;
 }
 
+.posts-mobile-header {
+    z-index: 2;
+}
+
 .load-new-posts {
     border-radius: 30px;
     background-color: var(--ci-orange);
@@ -341,7 +345,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
-    z-index: 10; /* Ensure it's above other elements */
+    z-index: 1; /* Ensure it's above other elements */
     backdrop-filter: blur(5px); /* Apply the blur effect */
 }
 

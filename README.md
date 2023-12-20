@@ -1,9 +1,9 @@
-# Code Institute Chat Hub - Group Chat App
-<img src="" ><br>
+# Code Innovate Chat Hub - Group Chat App
+<img src="docs/read-me-images/mock-up.png" ><br>
 <hr>
 
 ## Table of contents
-- [Code Institute Chat Hub - Group Chat App](#code-institute-chat-hub---group-chat-app)
+- [Code Innovate Chat Hub - Group Chat App](#code-innovate-chat-hub---group-chat-app)
   - [Table of contents](#table-of-contents)
   - [Overview](#overview)
   - [UX](#ux)
@@ -20,6 +20,7 @@
     - [Existing Features](#existing-features)
       - [Account pages](#account-pages)
       - [Group chat/Homepage](#group-chathomepage)
+      - [Custom Error pages](#custom-error-pages)
       - [Messaging](#messaging)
       - [Profile Page](#profile-page)
       - [Header Navigation section](#header-navigation-section)
@@ -33,15 +34,13 @@
     - [Fork the repository](#fork-the-repository)
     - [Clone the repository](#clone-the-repository)
   - [Credits](#credits)
-    - [Content](#content)
-    - [Media](#media)
     - [Code](#code)
   - [Acknowledgements](#acknowledgements)
 
 ## Overview
-The Code Institute Chat Hub is a Django-based web application designed for a coding course community. The home page features group chat functionality, allowing users to participate in discussions related to the Code Institute coding course. Users can create and join different chat channels, engaging in real-time conversations with fellow learners. The Direct Message section enables one-on-one communication, allowing users to connect and share information privately. Additionally, each user has a Profile Page for managing account settings, viewing activity, and accessing joined chat channels. The application prioritizes real-time updates, supports multimedia content, and incorporates authentication and authorization features for secure user interactions. The Code Institute Chat Hub aims to foster collaborative learning and communication within the coding community, offering a platform akin to popular communication tools like Slack.
+The Code Innovate Chat Hub is a Django-based web application designed for a coding course community. The home page features group chat functionality, allowing users to participate in discussions related to the Code Innovate coding course. Users can create and join different chat channels, engaging in real-time conversations with fellow learners. The Direct Message section enables one-on-one communication, allowing users to connect and share information privately. Additionally, each user has a Profile Page for managing account settings, viewing activity, and accessing joined chat channels. The application prioritizes real-time updates, supports multimedia content, and incorporates authentication and authorization features for secure user interactions. The Code Institute Chat Hub aims to foster collaborative learning and communication within the coding community, offering a platform akin to popular communication tools like Slack.
 <br><br>
-The fully deployed project can be accessed here [Code Institute Chat Hub](https://ci-chathub-f163e2297a1b.herokuapp.com/).
+The fully deployed project can be accessed here [Code Innovate Chat Hub](https://ci-chathub-f163e2297a1b.herokuapp.com/).
 <br><br>
 
 ## UX
@@ -138,18 +137,18 @@ The first one was created before the actual development of the website which led
 ### Surface<hr>
 #### Colour Scheme
 * The primary colour scheme was used for body, headers and nav elements<br> 
-<img src="docs/color-scheme/clr1.jpg" width="30%">
-<img src="docs/color-scheme/clr2.png" width="30%">
-<img src="docs/color-scheme/clr3.jpeg" width="30%">
-<img src="docs/color-scheme/clr4.png" width="30%">
-<img src="docs/color-scheme/clr5.png" width="30%">
+<img src="docs/read-me-images/color-scheme/clr1.jpg" width="30%">
+<img src="docs/read-me-images/color-scheme/clr2.png" width="30%">
+<img src="docs/read-me-images/color-scheme/clr3.jpeg" width="30%">
+<img src="docs/read-me-images/color-scheme/clr4.png" width="30%">
+<img src="docs/read-me-images/color-scheme/clr5.png" width="30%">
 <br>
 
 * The secondary colour scheme was used for buttons, warnings, errors or for highlighting important information.<br>
-<img src="docs/color-scheme/clr6.png" width="30%">
-<img src="docs/color-scheme/clr7.png" width="30%">
-<img src="docs/color-scheme/clr8.png" width="30%">
-<img src="docs/color-scheme/clr9.png" width="30%">
+<img src="docs/read-me-images/color-scheme/clr6.png" width="30%">
+<img src="docs/read-me-images/color-scheme/clr7.png" width="30%">
+<img src="docs/read-me-images/color-scheme/clr8.png" width="30%">
+<img src="docs/read-me-images/color-scheme/clr9.png" width="30%">
 
 #### Fonts
 * The fonts I used for this site were imported from [Google Fonts](https://fonts.google.com/):<br>
@@ -163,21 +162,24 @@ Multiple box shadows were used for the cover, buttons and images. <br>
 Some animations were used for creating a dynamic and attractive design
 <details>
   <summary>Displaying notifications</summary>
-<img src="docs/animations/notification1.png">
-<img src="docs/animations/notification1.png"><br>
+<img src="docs/read-me-images/animations/notification1.png">
+<img src="docs/read-me-images/animations/notification.png"><br>
 </details>
 <details>
   <summary>Search bar</summary>
-<img src="docs/animations/search-bar.png">
-<img src="docs/animations/search-bar1.png"><br>
+<img src="docs/read-me-images/animations/search-bar.png">
+<img src="docs/read-me-images/animations/search-bar1.png"><br>
 </details>
 
 ## Agile Methodology
 This project was developed using the Agile methodology.<br>
-All epics and user stories implementation progress was registered using [Github issues](https://github.com/jamie33o/pp4/issues). As the user stories were accomplished, they were moved in the [Project Kanban board](https://github.com/users/jamie33o/projects/14) from **Epic**,**User stories**, **To Do**, to **In-progress**, **Testing** and **Done** lists. 
+All epics and user stories implementation progress was registered using [Github issues](https://github.com/jamie33o/pp4/issues). As the user stories were accomplished, they were moved in the c from **Epic**,**User stories**, **To Do**, to **In-progress**, **Testing** and **Done** lists. 
+
+[Sprints can be viewed here](https://github.com/jamie33o/pp4/milestones)
+
 <details>
 <summary>Sprints Details</summary>
-
+ 
 * **Sprint 1 - Epic #1**<br>
   - Epic: #1 Create login and register page<br>
   - complete the user stories for this epic <br>
@@ -224,6 +226,15 @@ Our website leverages the Django Allauth package for streamlined user authentica
   <img src="docs/read-me-images/comments-list-commetns.png" width="60%"><br><br>
 
 * Both the posts section and the comments section have an editor, Summer-note editor was used for this it was enhanced to also have emoji's and tagging functionality.
+
+#### Custom Error pages
+
+- 403 error page<br><br>
+  <img src="docs/read-me-images/403.png" width="60%"><br><br>
+- 404 error page<br><br>
+  <img src="docs/read-me-images/404.png" width="60%"><br><br>
+- 500 error page<br><br>
+  <img src="docs/read-me-images/500.png" width="60%"><br><br>
 
 
 #### Messaging 
@@ -312,7 +323,6 @@ The project design has been adapted to all types of devices using Bootstrap pred
 [Balsamiq](https://balsamiq.com/wireframes/) - for creating the wireframes<br>
 [LucidChart](https://www.lucidchart.com/) - used for creating the Flowchart and Database relational schema<br>
 [Favicon.io](https://favicon.io/) - used for generating the website favicon<br>
-[Grammarly](https://app.grammarly.com/) - for correcting text content<br>
 [Font Awesome](https://fontawesome.com/) - for creating atractive UX with icons<br>
 [Bootstrap5](https://getbootstrap.com/) - for adding predifined styled elements and creating responsiveness<br>
 [Google Fonts](https://fonts.google.com/) - for typography<br>
@@ -383,11 +393,17 @@ For creating a clone of the repository on your local machine, use<b>Clone</b>:
 <hr>
 
 ## Credits
-### Content
-### Media
 
 ### Code
+* The code for implementing the emoji modal was obtained from this [GitHub repository](https://github.com/trinhtam/summernote-emoji) . However, I have customized and refactored it to better align with the specific requirements of my website
+* The code for channels app was got [here](https://channels.readthedocs.io/en/latest/)
+* The html for the post card and the all auth card was inspired from [here](https://bootsnipp.com/)
+* Django pagination was taken and adapted from [here](https://stackoverflow.com/questions/12275926/django-pagination)
+
 
 
 ## Acknowledgements
 - Code Institute for all the material and support offered<br>
+- My mentor Gareth McGirr for great tips and his willingness to help me as much as possible with the problems encountered during the development of the project<br>
+- Slack community for great involvement in helping each other<br>
+<hr>

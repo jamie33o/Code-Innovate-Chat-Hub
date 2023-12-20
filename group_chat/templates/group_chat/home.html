@@ -54,7 +54,7 @@
                                         <img class="rounded-circle profile-pic-small" src="{% if message.sender == user %}{{ message.receiver.userprofile.profile_picture.url }}{% else %}{{ message.sender.userprofile.profile_picture.url }}{% endif %}" alt="Profile Picture">
                                         <span class="mr-1 {% if single_post.created_by.userprofile.status == 'active' %} user-online {% else %} user-offline {% endif %}">
                                         </span>
-                                        {% if message.sender == user %}{{ message.receiver }}{% else %}{{ message.sender }}{% endif %}<span class="pull-right"> <i class="fa-regular fa-message"></i>13</span>
+                                        {% if message.sender == user %}{{ message.receiver }}{% else %}{{ message.sender }}{% endif %}
                                     </a>
                                 </li>
                             {% endfor %}  

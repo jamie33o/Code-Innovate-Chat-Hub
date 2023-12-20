@@ -393,7 +393,7 @@ The Javascript code was validated using using [JsHint](https://jshint.com/)<br>
 <summary>User profile Javascript validation</summary>
 
 * **user-profile.js**<br>
-<img src="docs/read-me-images/validation-images/u" width="60%"><br><br>
+<img src="docs/read-me-images/validation-images/us" width="60%"><br><br>
 
 </details>
 
