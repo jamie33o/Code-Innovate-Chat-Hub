@@ -1,6 +1,6 @@
 # Testing
 
-Back to [README.MD](README.MD)<br>
+Back to [README.MD](README.md)<br>
 
 ## Table of contents
 * [User Story and Feature Testing](#user-story-and-feature-testing)
@@ -559,4 +559,4 @@ The performance of the website was tested with [Google Lighthouse](https://devel
 | Bug: Issue with tagging functionality When user clicked a user name in the tags list the text with the @ symbol removed was missing part of the text | Solution: [I used a for each loop to add all html elements in the atremoved variable ](https://github.com/jamie33o/pp4/commit/948f5663e751b9787c1568a8bd8f154341daebc6) |
 | Bug: wrong url name in header links | Solution: [ add the correct url ](https://github.com/jamie33o/pp4/commit/45aa512957ae9986f12116b6dd5d2fe0085f6fd4) |
 
-Back to [README.MD](README.MD)<br>
+Back to [README.MD](README.md)<br>

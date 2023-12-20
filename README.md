@@ -38,7 +38,7 @@
   - [Acknowledgements](#acknowledgements)
 
 ## Overview
-The Code Innovate Chat Hub is a Django-based web application designed for a coding course community. The home page features group chat functionality, allowing users to participate in discussions related to the Code Innovate coding course. Users can create and join different chat channels, engaging in real-time conversations with fellow learners. The Direct Message section enables one-on-one communication, allowing users to connect and share information privately. Additionally, each user has a Profile Page for managing account settings, viewing activity, and accessing joined chat channels. The application prioritizes real-time updates, supports multimedia content, and incorporates authentication and authorization features for secure user interactions. The Code Institute Chat Hub aims to foster collaborative learning and communication within the coding community, offering a platform akin to popular communication tools like Slack.
+The Code Innovate Chat Hub is a Django-based web application designed for a coding course community. The home page features group chat functionality, allowing users to participate in discussions related to the Code Innovate coding course. Users can create and join different chat channels, engaging in real-time conversations with fellow learners. The Direct Message section enables one-on-one communication, allowing users to connect and share information privately. Additionally, each user has a Profile Page for managing account settings, viewing activity, and accessing joined chat channels. The application prioritizes real-time updates, supports multimedia content, and incorporates authentication and authorization features for secure user interactions. The Code Innovate Chat Hub aims to foster collaborative learning and communication within the coding community, offering a platform akin to popular communication tools like Slack.
 <br><br>
 The fully deployed project can be accessed here [Code Innovate Chat Hub](https://ci-chathub-f163e2297a1b.herokuapp.com/).
 <br><br>
@@ -51,10 +51,10 @@ User stories and epics can be viewed here on the project [kanban board ](https:/
 
 
 **Project Goal:**<br>
-Create a website similar to Slack but specifically tailored for Code Institute.
+Create a website similar to Slack but specifically tailored for Code Innovate.
 
 **Project Objectives:**<br> 
-* Develop a real-time messaging platform to facilitate seamless communication among Code Institute community members.
+* Develop a real-time messaging platform to facilitate seamless communication among Code Innovate community members.
 * Implement a user-friendly interface with channels dedicated to various Code Institute topics, fostering organized discussions.
 * Enhance user engagement with multimedia support in direct messages and emoji reactions for interactive conversations.
 * Establish secure user authentication, authorization, and profile management features to ensure a personalized and protected user experience.
@@ -74,7 +74,7 @@ Create a website similar to Slack but specifically tailored for Code Institute.
 
 **Channel Management**
    - Creation, joining, and leaving of channels.
-   - Categorization of channels based on Code Institute topics or modules.
+   - Categorization of channels based on Code Innovate topics or modules.
    - Ability to search and discover relevant channels.
 
 **User Interface and Experience**
@@ -110,14 +110,13 @@ The structure of the website is divided into seven pages but with content depend
 - The **Profile** page consists of three sections the users profile view which can be viewed by other user when they click on that users profile picture in anywhere trough the site, the edit profile section and the saved posts section <br>
 
 
-* FLOWCHARTS
-The Flowchart for my program was created using <b>LucidChart</b> and it visually represents how the system works.<br>
-[![N|Solid]()]()<br><br>
-
-
 ### Skeleton<hr>
 **Wireframes**<br>
 The wireframes for mobile and desktop were created with [Balsamiq]() tool and can be viewed [here]()<br>
+
+**FLOWCHARTS**<br>
+The Flowchart for my program was created using <b>LucidChart</b> and it visually represents how the system works.<br>
+[![N|Solid]()]()<br><br>
 
 **Database**<br>
 The project uses the PostgreSQL relational database for storing the data.<br>
@@ -279,17 +278,18 @@ The Header section contains the settings icon, website name and the search bar<b
 
 ### Future Feature Considerations<hr>
 
-* One possible feature would be the implementation of a *Points system* with badges. Every time a user helps another user by answering a question or helping with a bug, they get points and when they get a certain amount of points they get a badge. 
+* One possible feature would be the implementation of a *Points system* with badges. Every time a user helps another user by answering a question or helping with a bug, they get points and when they get a certain amount of points they get a badge.
+
+* Another feature would be video calls
+
 
 ## Responsive Layout and Design
 The project design has been adapted to all types of devices using Bootstrap predefined breakpoints. For intermediate devices where the design didn't fit accordingly, custom breakpoints were used.
 
 **Breakpoints:**
-
-    - max-width:280px
-    - max-width:768px
-    - max-width:992px
-    - max-width:1024px
+    - max-width:575.98px
+    - max-width:991.98px
+    - max-width:1300.98px
 
 **Tested devices:**
 
