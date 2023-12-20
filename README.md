@@ -1,5 +1,10 @@
 # Code Innovate Chat Hub - Group Chat App
 <img src="docs/read-me-images/mock-up.png" ><br>
+
+![GitHub last commit](https://img.shields.io/github/last-commit/jamie33O/pp4?color=red)
+![GitHub contributors](https://img.shields.io/github/contributors/jamie33O/pp4?color=orange)
+![GitHub language count](https://img.shields.io/github/languages/count/jamie33O/pp4?color=yellow)
+![GitHub top language](https://img.shields.io/github/languages/top/jamie33O/pp4?color=green)
 <hr>
 
 ## Table of contents
