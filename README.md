@@ -119,9 +119,37 @@ The structure of the website is divided into seven pages but with content depend
 **Wireframes**<br>
 The wireframes for mobile and desktop were created with [Balsamiq]() tool and can be viewed [here]()<br>
 
+<details>
+  <summary>Wire Frames</summary>
+  <h4>Channels list</h4>
+  <img src="docs/read-me-images/wireframes/home-tab.png"><br>
+  <h4>Delete account modal</h4>
+  <img src="docs/read-me-images/wireframes/delete-account.png"><br>
+  <h4>Edit Profile</h4>
+  <img src="docs/read-me-images/wireframes/edit-profile-page.png"><br>
+  <h4>Login page</h4>
+  <img src="docs/read-me-images/wireframes/login-page.png"><br>
+  <h4>Logout page</h4>
+  <img src="docs/read-me-images/wireframes/logout.png"><br>
+  <h4>Comment's</h4>
+  <img src="docs/read-me-images/wireframes/message-comment-in-channel-page.png"><br>
+  <h4>Messages</h4>
+  <img src="docs/read-me-images/wireframes/messages-page.png"><br>
+  <h4>Inbox</h4>
+  <img src="docs/read-me-images/wireframes/messages-tab.png"><br>
+  <h4>View profile</h4>
+  <img src="docs/read-me-images/wireframes/profile-tab.png"><br>
+  <h4>Sign up page</h4>
+  <img src="docs/read-me-images/wireframes/register-page.png"><br>
+  <h4>Header menu drop-down</h4>
+  <img src="docs/read-me-images/wireframes/settings-drop-down.png"><br>
+</details>
+</details><br>
+
 **FLOWCHARTS**<br>
-The Flowchart for my program was created using <b>LucidChart</b> and it visually represents how the system works.<br>
-[![N|Solid]()]()<br><br>
+The Flowchart for my program was created using <b>[draw.io](https://app.diagrams.net/)</b> and it visually represents how the system works.<br>
+<img src="docs/read-me-images/flowchart/flow-chart-ci-chathub.jpg.drawio.png"><br>
+<br><br>
 
 **Database**<br>
 The project uses the PostgreSQL relational database for storing the data.<br>
@@ -130,12 +158,17 @@ The first one was created before the actual development of the website which led
 
 <details>
   <summary>Initial Schema</summary>
-<img src="" ><br>
+<img src="docs/read-me-images/database-diagrams/database_diagram.png" ><br>
 </details>
 
 <details>
   <summary>Final Schema</summary>
-<img src=""><br>
+    <h4>Group chat app</h4>
+    <img src="docs/read-me-images/database-diagrams/group_chat_app.png"><br>
+    <h4>Messaging</h4>
+    <img src="docs/read-me-images/database-diagrams/messagng.png"><br>
+    <h4>User Profile</h4>
+    <img src="docs/read-me-images/database-diagrams/user_profile.png"><br>
 </details><br>
 
 ### Surface<hr>
@@ -177,7 +210,7 @@ Some animations were used for creating a dynamic and attractive design
 
 ## Agile Methodology
 This project was developed using the Agile methodology.<br>
-All epics and user stories implementation progress was registered using [Github issues](https://github.com/jamie33o/pp4/issues). As the user stories were accomplished, they were moved in the c from **Epic**,**User stories**, **To Do**, to **In-progress**, **Testing** and **Done** lists. 
+All epics and user stories implementation progress was registered using [Github issues](https://github.com/jamie33o/pp4/issues). As the user stories were accomplished, they were moved in the Kanban Board from **Epic**,**User stories**, **To Do**, to **In-progress**, **Testing** and **Done** lists. 
 
 [Sprints can be viewed here](https://github.com/jamie33o/pp4/milestones)
 
