@@ -11,8 +11,11 @@ Signal Handlers:
 """
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.contrib.auth.signals import user_logged_in, user_logged_out
 from .models import UserProfile
+
 
 # pylint: disable=no-member
 # pylint: disable=unused-argument
@@ -73,3 +76,41 @@ def update_user_username(sender, instance, **kwargs):
             # pylint: disable=W0212
             instance.user._update_user_username = True  # Mark to avoid recursion
             instance.user.save()
+
+
+@receiver(user_logged_in)
+def user_logged_in_handler(sender, request, user, **kwargs):
+    """
+    Signal handler for updating the user status to 'active' on login.
+
+    Args:
+        sender: The sender of the signal.
+        request: The HTTP request.
+        user: The User instance who logged in.
+        **kwargs: Additional keyword arguments.
+
+    Returns:
+        None
+    """
+    profile = user.userprofile  # Access the related UserProfile
+    profile.status = 'active'
+    profile.save()
+
+
+@receiver(user_logged_out)
+def user_logged_out_handler(sender, request, user, **kwargs):
+    """
+    Signal handler for updating the user status to 'away' on logout.
+
+    Args:
+        sender: The sender of the signal.
+        request: The HTTP request.
+        user: The User instance who logged out.
+        **kwargs: Additional keyword arguments.
+
+    Returns:
+        None
+    """
+    profile = user.userprofile  # Access the related UserProfile
+    profile.status = 'away'
+    profile.save()
