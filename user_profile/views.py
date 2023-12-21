@@ -337,7 +337,7 @@ def contact_view(request, error=None):
                 sender = form.cleaned_data['email']
                 recipients = [settings.DEFAULT_FROM_EMAIL]
                 send_mail(subject, message, sender, recipients)
-                
+
                 return redirect('contact', 'Success')
             return redirect('contact', form.errors)
         else:
@@ -345,10 +345,11 @@ def contact_view(request, error=None):
 
             # Assign an empty dictionary to 'message' to
             # avoid KeyError in the next request
-            
+
             context = {'form': form}
             if error == 'Success':
-                context['success'] = 'Your message has been sent we will contact you in the next 24hr'
+                context['success'] = 'Your message has been sent \
+                    we will contact you in the next 24hr'
             elif error:
                 context['message'] = error
             return render(request, 'user_profile/contact.html', context)
