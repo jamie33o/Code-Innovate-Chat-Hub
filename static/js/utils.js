@@ -445,6 +445,7 @@ function getAllUserProfiles(form){
 
 function autoComplete(formElement, availableTags, isProfiles, callBackFunction){
     let htmlContent = null;
+    let mediaUrl = $('body').data('image-url')
     $(formElement).append(`<div class="autocomplete-model">
     <input class="search-input" placeholder="start typing"><div class="list"></div> </div>`);
     const $autocompleteModel = $(".autocomplete-model");
@@ -468,7 +469,7 @@ function autoComplete(formElement, availableTags, isProfiles, callBackFunction){
         if (filteredTags.length > 0) {
             $.each(filteredTags, function (index, tag) {
                 if(isProfiles){
-                    htmlContent = '<img src="/media/' + tag.profile_img + '" class="autocomplete-img" /> ' + tag.label;
+                    htmlContent = '<img src="' + mediaUrl + tag.profile_img + '" class="autocomplete-img" /> ' + tag.label;
                 }else{
                     htmlContent = `<h3># ${tag.name}</h3>`;
                 }
