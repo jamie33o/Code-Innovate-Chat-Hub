@@ -245,9 +245,7 @@
     display: flex;
     justify-content: end;
     margin: 0 1px;
-    display: flex;
     flex-direction: row;
-    min-width: 40px;
 }
 /* ///////////////// emoji buttons and modal   //////////////////// */
 
