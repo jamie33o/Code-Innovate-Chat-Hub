@@ -34,8 +34,6 @@ class StaticStorage(S3Boto3Storage):
         """
         Return the last accessed time of the file.
         """
-        # Implement your logic to get the accessed time of the file
-        # For example, you might use AWS S3 metadata or other means.
         raise NotImplementedError(
             "Method 'get_accessed_time' must be implemented in your StaticStorage class.")
 
@@ -69,7 +67,5 @@ class MediaStorage(S3Boto3Storage):
         """
         Return the last accessed time of the file.
         """
-        # Implement your logic to get the accessed time of the file
-        # For example, you might use AWS S3 metadata or other means.
         raise NotImplementedError(
             "Method 'get_accessed_time' must be implemented in your MediaStorage class.")

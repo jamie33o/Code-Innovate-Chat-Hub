@@ -5,6 +5,7 @@
   <head>
 
     {% block meta %}
+        <!-- Meta tags for SEO -->
         <meta name="description" content="Code Institute: Learn coding skills with our online courses. Join a vibrant community of learners. Start your coding journey today">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta charset="utf-8">
@@ -12,13 +13,16 @@
     {% endblock %}
 
     {% block extra_meta %}
+    <!-- Additional meta tags if needed -->
     {% endblock %}
 
     {% block corecss %}
+        <!-- Favicon and internal/external stylesheets -->
         <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}" >
         <link async rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link async rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
         <link async rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css">
+
         <link async rel="stylesheet" href="{% static 'css/base.css' %}">  
         <link async rel="stylesheet" href="{% static 'css/emoji.css' %}">  
         <link async rel="stylesheet" href="{% static 'user_profile/css/user_profile.css' %}"> 
@@ -26,9 +30,11 @@
     {% endblock %}
 
     {% block extra_css %}
+    <!-- Additional stylesheets if needed -->
     {% endblock %}
 
     {% block corejs %}
+        <!-- External/internal scripts -->
         <script async src="https://kit.fontawesome.com/2be66b3e41.js" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -41,11 +47,13 @@
     {% endblock %}
 
     {% block extra_js %}
+    <!-- Additional scripts if needed -->
     {% endblock %}
 
     <title>Code Innovate Chat Hub</title>
 
   </head>
+  <!-- add urls to data attribute to be used troughout the site -->
   <body data-csrf-token="{{ csrf_token }}" 
         data-emoji-img-url="{% static 'emoji-sprite-sheets/img' %}"
         data-user-profiles="{% url 'get_all_user_profiles' %}"
@@ -57,14 +65,14 @@
 
     <header class="container-fluid px-0">
         {% block page_header %}
+            <!-- Include header and mobile header -->
             {% include 'includes/header.html' %}
             {% include 'includes/mobile-header.html' %}
-
         {% endblock %}
-
 
         {% block page_header_extra %}
         <div class="d-none d-sm-flex d-lg-flex">
+            <!-- Include mobile bottom nav tabs -->
             {% include 'includes/mobile-bottom-nav-tabs.html' %}
         </div>
         {% endblock %}  
@@ -73,30 +81,31 @@
     <main>
 
         {% block content %}
+        <!-- Main content block -->
         {% endblock %}  
 
     </main>
     <footer class="stick-to-bottom">
         {% block page_footer %}
-        
+        <!-- Page footer if needed -->
         {% endblock %}
 
-
         {% block page_footer_extra %}
+        <!-- Additional footer content -->
         <div id="nav-bar" class=" d-sm-none d-lg-none">
             {% include 'includes/mobile-bottom-nav-tabs.html' %}
         </div>
         {% endblock %}
     </footer>
     <script>
+        // get current user and user id 
         {% if request.user.is_authenticated %}
             userId = '{{ request.user.id }}';
             currentUser = '{{ user }}';
         {% endif %}
     </script>
     {% block postloadjs %}
-    
-    
+    <!-- Additional post-load JavaScript if needed -->
     {% endblock %}
   </body>
 </html>

@@ -133,4 +133,3 @@ class UserProfileViewTest(TestCase):
         # Check if the response contains success message
         self.assertIn('status', response.json())
         self.assertEqual(response.json()['status'], 'Success')
-

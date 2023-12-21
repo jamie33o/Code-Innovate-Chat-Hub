@@ -10,13 +10,12 @@ Classes:
 - CommentConsumer: Handles WebSocket connections and events related to comments.
 
 """
+
 import json
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-
-
 
 
 class GlobalConsumer(AsyncWebsocketConsumer):
@@ -34,7 +33,6 @@ class GlobalConsumer(AsyncWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.room_group_name = 'global_consumer'
         self.user_id = None
-
 
     async def connect(self):
         """
@@ -73,9 +71,20 @@ class GlobalConsumer(AsyncWebsocketConsumer):
                 'created_by': event['created_by'],
                 'img_url': event['img_url'],
             }))
-    
 
     async def is_user_allowed(self, model_name, model_id):
+        """
+        Check if the user is allowed to receive notifications based on the model type.
+
+        Args:
+        - model_name: String representing the type of 
+        model (e.g., 'channel', 'post', 'conversation').
+        - model_id: ID of the specific model instance.
+
+        Returns:
+        - True if the user is allowed, False otherwise.
+
+        """
         from group_chat.models import ChannelModel, PostsModel
         from messaging.models import Conversation
         model_mapping = {
@@ -87,7 +96,7 @@ class GlobalConsumer(AsyncWebsocketConsumer):
         try:
             user = await self.get_user(self.user_id)
             model = await self.get_model(model_mapping.get(model_name), model_id)
-            # Customize the logic based on the model (e.g., PostModel, ChannelModel)
+
             if isinstance(model, ChannelModel):  # posts
                 users = await self.get_channel_users(model)
                 return user in users
@@ -95,7 +104,7 @@ class GlobalConsumer(AsyncWebsocketConsumer):
                 commented_users = await self.get_commented_users(model)
                 return user.id in commented_users
             if isinstance(model, Conversation):  # messages
-                result = await self.get_converstion_users(user, model)
+                result = await self.get_conversation_users(user, model)
                 return result
         except Exception as e:
             print(e)
@@ -103,29 +112,81 @@ class GlobalConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_user(self, user_id):
+        """
+        Retrieve a user asynchronously.
+
+        Args:
+        - user_id: ID of the user.
+
+        Returns:
+        - User object.
+
+        """
         user_model = get_user_model()
         return get_object_or_404(user_model, id=user_id)
-    
+
     @database_sync_to_async
     def get_model(self, model_class, model_id):
+        """
+        Retrieve a model instance asynchronously.
+
+        Args:
+        - model_class: Class of the model.
+        - model_id: ID of the model instance.
+
+        Returns:
+        - Model instance.
+
+        """
         return get_object_or_404(model_class, id=model_id)
 
     @database_sync_to_async
     def get_channel_users(self, channel_model):
+        """
+        Retrieve users associated with a channel asynchronously.
+
+        Args:
+        - channel_model: ChannelModel instance.
+
+        Returns:
+        - List of users associated with the channel.
+
+        """
         return list(channel_model.users.all())
 
     @database_sync_to_async
-    def get_converstion_users(self, user, conversation_model):
+    def get_conversation_users(self, user, conversation_model):
+        """
+        Check if a user is part of a conversation asynchronously.
+
+        Args:
+        - user: User object.
+        - conversation_model: ConversationModel instance.
+
+        Returns:
+        - True if the user is part of the conversation, False otherwise.
+
+        """
         conv_users = conversation_model.participants.all()
         return user in conv_users
-    
+
     @database_sync_to_async
     def get_commented_users(self, posts_model):
-        from group_chat.models import  CommentsModel
+        """
+        Retrieve users who have commented on a post asynchronously.
+
+        Args:
+        - posts_model: PostsModel instance.
+
+        Returns:
+        - List of users who have commented on the post.
+
+        """
+        from group_chat.models import CommentsModel
         commented_users = [
             item['created_by'] for item in
             CommentsModel.objects.filter(comment_post=posts_model).values('created_by').distinct()
         ]
-        if(posts_model.created_by.id not in commented_users):
+        if posts_model.created_by.id not in commented_users:
             commented_users.append(posts_model.created_by.id)
         return commented_users
