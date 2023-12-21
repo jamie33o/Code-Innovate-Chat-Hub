@@ -10,7 +10,7 @@
 
 <!-- Posts list populated by Django -->
 <div id="posts-list" 
-        class="scrollable-div" 
+        class="scrollable-div h-100" 
         data-summernote-url="{% url 'channel_posts' channel.id %}"
         data-posts-url="{% url 'channel_posts' channel_id=channel.id %}?page=0"
         data-channel-id="{{ channel.id }}">

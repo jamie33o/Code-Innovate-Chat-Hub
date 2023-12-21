@@ -431,7 +431,6 @@ function getAllUserProfiles(form){
             });
         });
     }else{
-        console.log('wwwwwwwwwwwwwwwwwwwwww')
         autoComplete(form, profileTags, function(tag){
             let viewProfileUrl = $('body').data('view-profile-url').replace('0', tag.id);
 
