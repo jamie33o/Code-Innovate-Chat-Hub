@@ -60,7 +60,7 @@ Create a website similar to Slack but specifically tailored for Code Innovate.
 
 **Project Objectives:**<br> 
 * Develop a real-time messaging platform to facilitate seamless communication among Code Innovate community members.
-* Implement a user-friendly interface with channels dedicated to various Code Institute topics, fostering organized discussions.
+* Implement a user-friendly interface with channels dedicated to various Code Innovate topics, fostering organized discussions.
 * Enhance user engagement with multimedia support in direct messages and emoji reactions for interactive conversations.
 * Establish secure user authentication, authorization, and profile management features to ensure a personalized and protected user experience.
 <br><br>
@@ -153,7 +153,7 @@ The Flowchart for my program was created using <b>[draw.io](https://app.diagrams
 
 **Database**<br>
 The project uses the PostgreSQL relational database for storing the data.<br>
-There were created two diagrams to represent the relation between the tables, the initial one and the final one.
+There was two diagrams created to represent the relation between the tables, the initial one and the final one.
 The first one was created before the actual development of the website which led to some changes to the attributes and tables for finding the most relevant and useful ones to be kept.
 
 <details>

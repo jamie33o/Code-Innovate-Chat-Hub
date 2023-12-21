@@ -1,3 +1,6 @@
+// Theses variables/functions are in another js folder and are global the line below is to let jshint know
+/* global EmojiPicker, displayMessage, ajaxRequest, autoComplete */
+
 /**
  * SummernoteEnhancer class for enhancing the functionality of Summernote editors in a web application.
  * This class provides methods to initialize, display, and handle events related to Summernote editors.
@@ -94,7 +97,7 @@ class SummernoteEnhancer {
         },  
     });
 
-    $('.note-editable').attr('aria-label', 'editor input')
+    $('.note-editable').attr('aria-label', 'editor input');
     // summernote submit button
     this.snSubmitForm = $(`${this.divToLoadIn} .sn-submit-btn`);
     // summernote form 

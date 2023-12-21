@@ -1,3 +1,6 @@
+// Theses variables/functions are in another js folder and are global the line below is to let jshint know
+/* global autoScroll */
+
 /**
  * Flag to track whether an animation is currently in progress.
  * @type {boolean}
@@ -215,7 +218,7 @@ function ajaxRequest(url, type, divClass, data, callBackFunction) {
         },
         error: function(error) {
             if(error.status === 500){
-                window.location.href = $('body').data('contact-url').replace('0', error.responseJSON.message)
+                window.location.href = $('body').data('contact-url').replace('0', error.responseJSON.message);
             }else{
                 displayMessage(error, divClass);     
             }

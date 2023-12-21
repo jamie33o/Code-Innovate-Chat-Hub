@@ -1,3 +1,6 @@
+// Theses variables/functions are in another js folder and are global the line below is to let jshint know
+/* global ConfigStorage, Config */
+
 /**
  * EmojiPicker class for handling emoji selection .
  * This class provides methods to initialize, display, and handle events related to the emoji picker.

@@ -1,4 +1,5 @@
-
+// Theses variables/functions are in another js folder and are global the line below is to let jshint know
+/* global chrome, emoji */
 /**
  * Object managing storage configurations, providing methods to interact with local storage.
  * 

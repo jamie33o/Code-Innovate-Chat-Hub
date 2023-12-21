@@ -1,3 +1,5 @@
+// Theses variables/functions are in another js folder and are global the line below is to let jshint know
+/* global EmojiPicker, ajaxRequest, displayMessage,deleteObject, summernoteEnhancerEditPost, summernoteEnhancerPosts, startWebSocket */
 // Variables
 //url for adding or removing emojis
 let emojiUrl = null;

@@ -1,3 +1,5 @@
+// Theses variables/functions are in another js folder and are global the line below is to let jshint know
+/* global EmojiPicker, ajaxRequest, autoScroll */
 /**
  * Toggle the visibility of the messages list when the button is clicked.
  * 

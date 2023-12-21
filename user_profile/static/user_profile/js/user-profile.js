@@ -1,3 +1,6 @@
+// Theses variables/functions are in another js folder and are global the line below is to let jshint know
+/* global ajaxRequest, displayMessage, showModal, statusModalBody, profileImgModal */
+
 // This function is executed when the DOM is ready
 $(document).ready(function () {
     // Event handler for clicking the 'Edit Profile' button
@@ -88,8 +91,8 @@ $(document).ready(function () {
     $('.status-update-btn').on('click', function () {
         // Show a modal for updating the status
         let statusModalHeader = $(`<div class="d-flex flex-dir-row justify-content-end"><h3 class="mx-auto">Update Your Status</h3>
-        <button type="button" class="btn btn-oval btn-warning" 
-        data-dismiss="modal" aria-label="Close">X</button></div>`)
+        <button type="button" class="btn btn-oval btn-warning"
+        data-dismiss="modal" aria-label="Close">X</button></div>`);
 
         showModal(statusModalHeader, statusModalBody);
     });
@@ -99,7 +102,7 @@ $(document).ready(function () {
         // Show a modal for updating the profile picture
         let imageModalHeader = $(`<div class="d-flex flex-dir-row justify-content-end"><h3 class="mx-auto">Update Profile Picture</h3>
         <button type="button" class="btn btn-oval btn-warning" 
-        data-dismiss="modal" aria-label="Close">X</button></div>`)
+        data-dismiss="modal" aria-label="Close">X</button></div>`);
 
         showModal(imageModalHeader, profileImgModal);
     });

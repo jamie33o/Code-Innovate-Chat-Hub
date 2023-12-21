@@ -375,27 +375,49 @@ At the time of deployment the validation for All CSS files, have the following o
 The Javascript code was validated using using [JsHint](https://jshint.com/)<br>
 
 <details>
-<summary>Group Chat/Home Page app Javascript validation</summary>
-
-* **tests.py**<br>
-<img src="docs/read-me-images/validation-images/post-comments-js.png" width="60%"><br><br>
-
-
+<summary>Channels.js</summary>
+<br><br>
+<img src="docs/read-me-images/validation-images/channel-js.png" width="60%"><br><br>
 </details>
 <details>
-<summary>Messaging app Javascript validation</summary>
+<summary>postsAndComments.js</summary>
+<br><br>
+<img src="docs/read-me-images/validation-images/post-comments-js.png" width="60%"><br><br>
+</details>
 
-* **me.py**<br>
+<details>
+<summary>Messaging.js</summary>
+<br><br>
 <img src="docs/read-me-images/validation-images/messaging-js.png" width="60%"><br><br>
 
 </details>
 <details>
-<summary>User profile Javascript validation</summary>
-
-* **user-profile.js**<br>
-<img src="docs/read-me-images/validation-images/us" width="60%"><br><br>
-
+<summary>user-profile.js</summary>
+<br><br>
+<img src="docs/read-me-images/validation-images/user-profile-js.png" width="60%"><br><br>
 </details>
+
+<details>
+<summary>Utils.js</summary>
+<br><br>
+<img src="docs/read-me-images/validation-images/utils-js.png" width="60%"><br><br>
+</details>
+<details>
+<summary>Summernote.js</summary>
+<br><br>
+<img src="docs/read-me-images/validation-images/summernote-js.png" width="60%"><br><br>
+</details>
+<details>
+<summary>Emoji.js</summary>
+<br><br>
+<img src="docs/read-me-images/validation-images/emoji-js.png" width="60%"><br><br>
+</details>
+<details>
+<summary>Config.js</summary>
+<br><br>
+<img src="docs/read-me-images/validation-images/emoji-config.png" width="60%"><br><br>
+</details>
+
 
 ### Python
 The python code was tested using [PEP8](http://pep8online.com/) online validator.<br>
