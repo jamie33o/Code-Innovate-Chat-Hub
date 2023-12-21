@@ -427,12 +427,12 @@ The testing documentation can be found at [TESTING.MD](TESTING.md)
     
 ### Fork the repository
 For creating a copy of the repository on your account and change it without affecting the original project, use<b>Fork</b> directly from GitHub:
-- On [My Repository Page](https://(https://github.com/jamie33o/pp4)), press <i>Fork</i> in the top right of the page
+- On [My Repository Page](https://github.com/jamie33o/pp4), press <i>Fork</i> in the top right of the page
 - A forked version of my project will appear in your repository<br></br>
 
 ### Clone the repository
 For creating a clone of the repository on your local machine, use<b>Clone</b>:
-- On [My Repository Page](https://https://github.com/jamie33o/pp4), click the <i>Code</i> green button, right above the code window
+- On [My Repository Page](https://github.com/jamie33o/pp4), click the <i>Code</i> green button, right above the code window
 - Chose from <i>HTTPS, SSH and GitClub CLI</i> format and copy (preferably <i>HTTPS</i>)
 - In your <i>IDE</i> open <i>Git Bash</i>
 - Enter the command <code>git clone</code> followed by the copied URL
