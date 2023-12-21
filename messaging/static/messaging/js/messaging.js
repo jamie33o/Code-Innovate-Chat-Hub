@@ -90,7 +90,7 @@ $('main').on('click', '.edit-btn', function(event) {
     
     let editPostUrl = $('#message-list').data('edit-url');
     let msgId = card.data('msg-id');
-    editPostUrl = editPostUrl.replace('0', msgId);
+    editPostUrl = editPostUrl.replace(/0(?!.*0)/, msgId);
 
     card.find('.message-text').html('');
     card.find('.post-images').html('');

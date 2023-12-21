@@ -129,7 +129,7 @@ $('main').on('click', '.edit-btn', function(event) {
 ////////////////////////// functions for posts ///////////////////////////////////
 
 $('main').on('click', '.load-new-posts', function(){
-    let newPostsUrl = paginatedPostsUrl.replace(/0/g, lastPageNum);
+    let newPostsUrl = paginatedPostsUrl.replace(/0(?!.*0)/, lastPageNum);
     $(this).addClass('d-none');
     ajaxRequest(newPostsUrl, 'GET', '#channel-posts', null, function(response){
         // Update the div with the returned template
@@ -149,7 +149,7 @@ function loadOldPosts(){
     // Attach scroll event to load older posts when scrolling to the top
     if ($scrollElement.scrollTop() === 0 && !scrolledToTop && prevPageNum != "") {
         scrolledToTop = true;
-        let olderPostsUrl = paginatedPostsUrl.replace(/0/g, prevPageNum);
+        let olderPostsUrl = paginatedPostsUrl.replace(/0(?!.*0)/, prevPageNum);
         ajaxRequest(olderPostsUrl, 'GET', '#channel-posts', null, function(response){
             // Update the div with the returned template
             $('#posts-list').prepend(response);
@@ -201,7 +201,7 @@ function autoScroll(bottomBool, id) {
 //  function gets called when user changes group
 function changeGroup(){
     if ($('.card').length < 10 && prevPageNum != "") {
-        let olderPostsUrl = $('#posts-list').data('posts-url').replace(/0/g, prevPageNum);
+        let olderPostsUrl = $('#posts-list').data('posts-url').replace(/0(?!.*0)/, prevPageNum);
         ajaxRequest(olderPostsUrl, 'GET', '#channel-posts', null, function(response){
             $('#posts-list').prepend(response);
             autoScroll();
