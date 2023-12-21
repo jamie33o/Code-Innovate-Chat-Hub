@@ -431,6 +431,7 @@ function getAllUserProfiles(form){
             });
         });
     }else{
+        console.log('wwwwwwwwwwwwwwwwwwwwww')
         autoComplete(form, profileTags, function(tag){
             let viewProfileUrl = $('body').data('view-profile-url').replace('0', tag.id);
 
@@ -449,6 +450,9 @@ function autoComplete(formElement, availableTags, isProfiles, callBackFunction){
     <input class="search-input" placeholder="start typing"><div class="list"></div> </div>`);
     const $autocompleteModel = $(".autocomplete-model");
     const $autocompleteList = $(".list");
+    if($autocompleteModel.length > 1){
+        $autocompleteModel[0].remove()
+    }
 
     const $searchInput = $('.search-input');
     $autocompleteModel.show();
