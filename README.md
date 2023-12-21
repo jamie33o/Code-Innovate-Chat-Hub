@@ -29,6 +29,7 @@
       - [Messaging](#messaging)
       - [Profile Page](#profile-page)
       - [Header Navigation section](#header-navigation-section)
+      - [Emoji modal](#emoji-modal)
     - [Future Feature Considerations](#future-feature-considerations)
   - [Responsive Layout and Design](#responsive-layout-and-design)
   - [Tools Used](#tools-used)
@@ -314,6 +315,11 @@ The Header section contains the settings icon, website name and the search bar<b
 - Search bar list<br><br>
 <img src="docs/read-me-images/search-box.png" width="40%"><br><br>
 
+#### Emoji modal
+The Emoji model is used to add emoji's to posts, comments, messages and summernote editor<br>
+ <br>
+<img src="docs/read-me-images/emoji-modal.png" width="40%"><br><br>
+<br>
 ### Future Feature Considerations<hr>
 
 * One possible feature would be the implementation of a *Points system* with badges. Every time a user helps another user by answering a question or helping with a bug, they get points and when they get a certain amount of points they get a badge.
