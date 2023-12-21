@@ -377,24 +377,78 @@ The project design has been adapted to all types of devices using Bootstrap pred
 [Chrome Del Tools](https://developer.chrome.com/docs/devtools/) - for debugging the project<br>
 [W.A.V.E.](https://wave.webaim.org/) - for testing accessibility<br>
 [ElephantSQL](https://www.elephantsql.com/) - for storing static data<br>
-[Docker desktop](https://www.docker.com/products/docker-desktop/) - for testing the websockets<br>
+[Docker desktop](https://www.docker.com/products/docker-desktop/) - for testing the websockets locally<br>
 LightHouse - for testing performance<br>
 
 ### Python packages
 
-* django 
-* gunicorn 
-* dj-database-url
-* psycopg2
-* pylint-django 
-* django-allauth
-* django-crispy-forms 
-* pylint 
-* python-dotenv 
-* dateutils 
-* autopep8
-* redis
-* daphne
+asgiref==3.7.2
+astroid==2.15.8
+attrs==23.1.0
+autobahn==23.6.2
+Automat==22.10.0
+bleach==3.3.1
+boto3==1.28.57
+botocore==1.31.57
+cachetools==5.3.1
+certifi==2023.7.22
+cffi==1.16.0
+channels==4.0.0
+channels-redis==4.1.0
+charset-normalizer==3.2.0
+constantly==15.1.0
+cryptography==41.0.4
+daphne==4.0.0
+defusedxml==0.7.1
+dill==0.3.7
+dj-database-url==2.1.0
+Django==3.2.21
+django-allauth==0.41.0
+django-crispy-forms==1.14.0
+django-emoji==2.2.2
+django-storages==1.14.1
+emoji==2.8.0
+gunicorn==21.2.0
+hyperlink==21.0.0
+idna==3.4
+incremental==22.10.0
+isort==5.12.0
+jmespath==1.0.1
+lazy-object-proxy==1.9.0
+mccabe==0.7.0
+msgpack==1.0.7
+oauthlib==3.2.2
+packaging==23.1
+Pillow==10.0.1
+platformdirs==3.10.0
+psycopg2==2.9.8
+pyasn1==0.5.0
+pyasn1-modules==0.3.0
+pycparser==2.21
+Pygments==2.16.1
+pylint==2.17.6
+pylint-django==2.5.3
+pylint-plugin-utils==0.8.2
+pyOpenSSL==23.2.0
+python-dateutil==2.8.2
+python3-openid==3.2.0
+pytz==2023.3.post1
+redis==5.0.1
+requests==2.31.0
+requests-oauthlib==1.3.1
+rsa==4.9
+s3transfer==0.7.0
+service-identity==23.1.0
+six==1.16.0
+sqlparse==0.4.4
+tomlkit==0.12.1
+txaio==23.1.1
+typing_extensions==4.8.0
+urllib3==1.26.16
+webencodings==0.5.1
+wrapt==1.15.0
+zope.interface==6.1
+
 
 ## Testing
 The testing documentation can be found at [TESTING.MD](TESTING.md)
