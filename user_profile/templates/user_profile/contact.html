@@ -11,7 +11,9 @@
             <h2>Contact Us</h2>
             <hr>
             {% if message %}
-                <p class="p-3{% if message %} bg-danger text-white{% else %} bg-success text-white{% endif %}"> Error: {{ message }}</p>
+                <p class="p-3 bg-danger text-white"> Error: {{ message }}</p>
+            {% elif success %}
+                <p class="p-3 bg-success text-white"> Success: {{ success }}</p>
             {% else %}
                 <p>Have a question or feedback? Fill out the form below to get in touch with us.</p>
             {% endif %}
