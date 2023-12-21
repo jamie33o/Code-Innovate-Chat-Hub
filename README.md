@@ -365,7 +365,7 @@ The project design has been adapted to all types of devices using Bootstrap pred
 [Visual Studio](https://code.visualstudio.com/) - for writing and testing the code<br>
 [Heroku](https://dashboard.heroku.com/) - used for deploying the project<br>
 [Balsamiq](https://balsamiq.com/wireframes/) - for creating the wireframes<br>
-[LucidChart](https://www.lucidchart.com/) - used for creating the Flowchart and Database relational schema<br>
+[Draw.io](http://draw.io/) - used for creating the Flowchart and Database relational schema<br>
 [Favicon.io](https://favicon.io/) - used for generating the website favicon<br>
 [Font Awesome](https://fontawesome.com/) - for creating atractive UX with icons<br>
 [Bootstrap5](https://getbootstrap.com/) - for adding predifined styled elements and creating responsiveness<br>
@@ -377,6 +377,7 @@ The project design has been adapted to all types of devices using Bootstrap pred
 [Chrome Del Tools](https://developer.chrome.com/docs/devtools/) - for debugging the project<br>
 [W.A.V.E.](https://wave.webaim.org/) - for testing accessibility<br>
 [ElephantSQL](https://www.elephantsql.com/) - for storing static data<br>
+[Docker desktop](https://www.docker.com/products/docker-desktop/) - for testing the websockets<br>
 LightHouse - for testing performance<br>
 
 ### Python packages
@@ -392,6 +393,8 @@ LightHouse - for testing performance<br>
 * python-dotenv 
 * dateutils 
 * autopep8
+* redis
+* daphne
 
 ## Testing
 The testing documentation can be found at [TESTING.MD](TESTING.md)
