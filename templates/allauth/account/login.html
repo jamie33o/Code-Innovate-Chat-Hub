@@ -46,4 +46,9 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
   </p>
 </form>
 
+<script>
+  {% for message in messages %}
+      displayMessage({'status': '{{ message.tags }}', 'message': '{{ message }}'}, 'body')
+  {% endfor %}
+</script>
 {% endblock %}

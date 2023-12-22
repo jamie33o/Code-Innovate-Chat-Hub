@@ -65,6 +65,9 @@ class ChannelsView(View):
                 'channel_id': channel_id,
                 'unread_messages': unread_messages
             }
+            if request.session.pop('logged_in', False):
+                context['logged_in'] = True
+
 
             return render(request, self.template_name, context)
 

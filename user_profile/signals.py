@@ -92,6 +92,7 @@ def user_logged_in_handler(sender, request, user, **kwargs):
     Returns:
         None
     """
+    request.session['logged_in'] = True
     profile = user.userprofile  # Access the related UserProfile
     profile.status = 'active'
     profile.save()

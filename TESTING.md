@@ -20,34 +20,33 @@ All the user stories were tested manually, that including all the representative
 **User Story #16:**<br>
 As a **User** I can **input my username and password** so that **I can login** 
 
-| **Feature** | **Action** | **Expected Result** | **Actual Result** |
-|-------------|------------|---------------------|-------------------|
-| Input Username and Password | User provides username and password | Successfully logs in | Works as expected |
+| **Feature** | **Action** | **Expected Result** | **Actual Result** | **Feature Image** | **Result Image** |
+|-------------|------------|---------------------|-------------------|-------------------|-------------------|
+| Input Username and Password | User provides username and password | Successfully logs in | Works as expected | <img src="docs/read-me-images/sign-in.png" width="70%"> | <img src="docs/read-me-images/logged-in-message.png" width="90%"> |
 <br><br>
 
 **User Story #17:**<br>
 As a **User** I can **input my details** so that **I can register**
 
-| **Feature** | **Action** | **Expected Result** | **Actual Result** |
-|-------------|------------|---------------------|-------------------|
-| Input Details for Registration | User provides necessary details | Successfully registers | Works as expected |
+| **Feature** | **Action** | **Expected Result** | **Actual Result** | **Feature Image** | **Result Image** |
+|-------------|------------|---------------------|-------------------|-------------------|-------------------|
+| Input Details for Registration | User provides necessary details | User is registered and brought to email verification page | Works as expected | <img src="docs/read-me-images/sign-up.png" width="70%"> | <img src="docs/read-me-images/verify-email-page.png" width="90%"> |
 <br><br>
 
 **User Story #19:**<br>
 As a **User** I can **Change my email** so that **receive important communications and notifications at my preferred and current email**
 
-| **Feature** | **Action** | **Expected Result** | **Actual Result** |
-|-------------|------------|---------------------|-------------------|
-| Change Email | User updates email in settings | Email is successfully changed | Works as expected |
+| **Feature** | **Action** | **Expected Result** | **Actual Result** | **Feature Image** | **Result Image** |
+|-------------|------------|---------------------|-------------------|-------------------|-------------------|
+| Change Email | User updates email in settings | Email is successfully changed | Works as expected | <img src="docs/read-me-images/email-settings.png" width="70%"> | <img src="docs/read-me-images/email-result.png" width="90%"> |
 <br><br>
 
 **User Story #18:**<br>
 As a **User** I want **to have an option to change my password** so that **I can keep my account secure**
 
-
-| **Feature** | **Action** | **Expected Result** | **Actual Result** |
-|-------------|------------|---------------------|-------------------|
-| Change Password | User updates password in settings | Password is successfully changed | Works as expected |
+| **Feature** | **Action** | **Expected Result** | **Actual Result** | **Feature Image** | **Result Image** |
+|-------------|------------|---------------------|-------------------|---------------------|-------------------|
+| Change Password | User updates password in settings | Password is successfully changed | Works as expected | <img src="docs/read-me-images/change-password.png" width="70%"> | <img src="docs/read-me-images/password-result.png" width="90%"> |
 <br><br>
 
 

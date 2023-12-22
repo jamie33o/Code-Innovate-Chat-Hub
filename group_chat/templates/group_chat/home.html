@@ -87,6 +87,9 @@
     <script>     
 
     $(document).ready(function() {
+        {% if logged_in %}
+            displayMessage({'status': 'success', 'message': '{{ user }} logged in successfully'}, 'body')
+        {% endif %}
         currentUser = '{{ user }}'
         // check if the id for the channel the user last visited exists
         // if it does load posts
