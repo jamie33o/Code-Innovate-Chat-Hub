@@ -502,9 +502,8 @@ For creating a clone of the repository on your local machine, use<b>Clone</b>:
 * Django pagination was taken and adapted from [here](https://stackoverflow.com/questions/12275926/django-pagination)
 
 
-
 ## Acknowledgements
 - [Code Institute](https://github.com/Code-Institute-Org/full_stack_solutions) for all the material and support offered<br>
-- My mentor [Gareth McGirr](https://github.com/Gareth-McGirr) for great tips and his willingness to help me as much as possible with the problems encountered during the development of the project<br>
+- My mentor [Gareth Mc Girr](https://github.com/Gareth-McGirr) for great tips and his willingness to help me as much as possible with the problems encountered during the development of the project<br>
 - Slack community for great involvement in helping each other<br>
 <hr>
