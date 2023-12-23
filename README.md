@@ -498,6 +498,7 @@ For creating a clone of the repository on your local machine, use<b>Clone</b>:
 * The code for channels app was got [here](https://channels.readthedocs.io/en/latest/)
 * The html for the post card and the all auth card was inspired from [here](https://bootsnipp.com/)
 * Django pagination was taken and adapted from [here](https://stackoverflow.com/questions/12275926/django-pagination)
+* The summernote code was got form [here](https://summernote.org/) However, I have customized and refactored it to better align with the specific requirements of my website
 
 
 ## Acknowledgements
