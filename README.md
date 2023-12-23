@@ -1,10 +1,14 @@
 # Code Innovate Chat Hub - Group Chat App
 <img src="docs/read-me-images/mock-up.png" ><br>
 
-![GitHub last commit](https://img.shields.io/github/last-commit/jamie33O/pp4?color=red)
-![GitHub contributors](https://img.shields.io/github/contributors/jamie33O/pp4?color=orange)
-![GitHub language count](https://img.shields.io/github/languages/count/jamie33O/pp4?color=yellow)
-![GitHub top language](https://img.shields.io/github/languages/top/jamie33O/pp4?color=green)
+![GitHub last commit](https://img.shields.io/github/last-commit/jamie33O/Code-Innovate-Chat-Hub
+?color=red)
+![GitHub contributors](https://img.shields.io/github/contributors/jamie33O/Code-Innovate-Chat-Hub
+?color=orange)
+![GitHub language count](https://img.shields.io/github/languages/count/jamie33O/Code-Innovate-Chat-Hub
+?color=yellow)
+![GitHub top language](https://img.shields.io/github/languages/top/jamie33O/Code-Innovate-Chat-Hub
+?color=green)
 <hr>
 
 ## Table of contents
@@ -469,9 +473,9 @@ The testing documentation can be found at [TESTING.MD](TESTING.md)
     * Navigate to the *Deploy* tab
     * Click on *Connect to Github* and search for your repository
     * Navigate to the *Settings* tab
-    * Reveal Config Vars and add your Cloudinary, Database URL (from Heroku-Postgres) and Secret key.    
+    * Reveal Config Vars and add your aws, Database URL and Secret key.    
 
-3. Deployment on Heroku
+1. Deployment on Heroku
 
     * Go to the Deploy tab.
     * Choose the main branch for deploying and enable automatic deployment 
